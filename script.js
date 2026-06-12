@@ -63,8 +63,6 @@ let isRunning = false;
 
 const primaryAction = document.getElementById("primaryAction");
 const newTaskBtn = document.getElementById("newTaskBtn");
-const endSessionBtn = document.getElementById("endSessionBtn");
-const secondaryControls = document.getElementById("secondaryControls");
 const timerEl = document.getElementById("timer");
 const loadingMessageEl = document.getElementById("loadingMessage");
 const taskArea = document.getElementById("taskArea");
@@ -132,8 +130,8 @@ function startSession() {
 
   showTask();
 
-  primaryAction.hidden = true;
-  secondaryControls.hidden = false;
+  primaryAction.textContent = "End Session";
+  newTaskBtn.hidden = false;
 }
 
 function endSession() {
@@ -145,7 +143,7 @@ function endSession() {
   loadingMessageInterval = null;
 
   taskArea.hidden = true;
-  secondaryControls.hidden = true;
+  newTaskBtn.hidden = true;
 
   const savedTime = formatTime(seconds);
   resultTextEl.textContent = `You saved ${savedTime} from doomscrolling.`;
@@ -153,17 +151,20 @@ function endSession() {
 
   loadingMessageEl.textContent = randomItem(LOADING_MESSAGES);
 
-  primaryAction.hidden = false;
-  primaryAction.textContent = "Give Me Another Tiny Task";
+  primaryAction.textContent = "Start Waiting";
 }
 
-primaryAction.addEventListener("click", startSession);
+primaryAction.addEventListener("click", () => {
+  if (isRunning) {
+    endSession();
+  } else {
+    startSession();
+  }
+});
 
 newTaskBtn.addEventListener("click", () => {
   showTask();
 });
-
-endSessionBtn.addEventListener("click", endSession);
 
 copyResultBtn.addEventListener("click", () => {
   const savedTime = formatTime(seconds);
