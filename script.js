@@ -56,9 +56,7 @@ const LOADING_MESSAGES = [
 
 let timerInterval = null;
 let loadingMessageInterval = null;
-let tokenInterval = null;
 let seconds = 0;
-let tokenCount = 0;
 let isRunning = false;
 
 // ---- Elements ----
@@ -73,9 +71,6 @@ const taskTextEl = document.getElementById("taskText");
 const resultArea = document.getElementById("resultArea");
 const resultTextEl = document.getElementById("resultText");
 const copyResultBtn = document.getElementById("copyResultBtn");
-const tokenCounter = document.getElementById("tokenCounter");
-const tokenCountEl = document.getElementById("tokenCount");
-const confidenceEl = document.getElementById("confidence");
 
 // ---- Helpers ----
 
@@ -117,23 +112,14 @@ function rotateLoadingMessage() {
   }, 200);
 }
 
-function tickTokenCounter() {
-  tokenCount += Math.floor(Math.random() * 180) + 20;
-  tokenCountEl.textContent = tokenCount.toLocaleString();
-  confidenceEl.textContent = `${Math.floor(Math.random() * 30) + 65}%`;
-}
-
 // ---- Session control ----
 
 function startSession() {
   isRunning = true;
   seconds = 0;
-  tokenCount = 0;
   timerEl.textContent = formatTime(seconds);
 
   resultArea.hidden = true;
-  tokenCounter.hidden = false;
-  tickTokenCounter();
 
   timerInterval = setInterval(() => {
     seconds += 1;
@@ -141,7 +127,6 @@ function startSession() {
   }, 1000);
 
   loadingMessageInterval = setInterval(rotateLoadingMessage, 2800);
-  tokenInterval = setInterval(tickTokenCounter, 900);
 
   showTask();
 
@@ -154,14 +139,11 @@ function endSession() {
 
   clearInterval(timerInterval);
   clearInterval(loadingMessageInterval);
-  clearInterval(tokenInterval);
   timerInterval = null;
   loadingMessageInterval = null;
-  tokenInterval = null;
 
   taskArea.hidden = true;
   newTaskBtn.hidden = true;
-  tokenCounter.hidden = true;
 
   const savedTime = formatTime(seconds);
   resultTextEl.textContent = `You saved ${savedTime} from doomscrolling.`;
@@ -196,23 +178,6 @@ copyResultBtn.addEventListener("click", () => {
     }, 1800);
   });
 });
-
-// ---- Live stat strip ----
-
-const statTasksEl = document.getElementById("statTasks");
-const statTimeEl = document.getElementById("statTime");
-
-if (statTasksEl && statTimeEl) {
-  setInterval(() => {
-    const tasks = parseInt(statTasksEl.textContent.replace(/,/g, ""), 10);
-    statTasksEl.textContent = (tasks + Math.floor(Math.random() * 3) + 1).toLocaleString();
-
-    if (Math.random() < 0.3) {
-      const hours = parseInt(statTimeEl.textContent.replace(/,/g, ""), 10);
-      statTimeEl.textContent = (hours + 1).toLocaleString();
-    }
-  }, 4000);
-}
 
 // ---- Waitlist ----
 
