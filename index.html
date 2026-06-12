@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>While Claude Thinks</title>
   <meta name="description" content="Tiny things to do while your AI agent is cooking. Don't doomscroll. Do one tiny thing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- Background glow -->
+  <!-- Background -->
   <div class="bg-glow"></div>
+  <div class="bg-grid"></div>
 
   <!-- NAV -->
   <header class="nav">
@@ -26,8 +30,8 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
-      <span class="badge">For developers stuck in the "thinking…" gap</span>
-      <h1>While Claude Thinks</h1>
+      <span class="badge"><span class="badge-cursor">&gt;</span> currently rendering excuses for devs everywhere</span>
+      <h1>While Claude<br/>Thinks</h1>
       <p class="subtitle">Tiny things to do while your AI agent is cooking.</p>
       <p class="tagline">Don't doomscroll. Do one tiny thing.</p>
 
@@ -37,6 +41,21 @@
       </div>
 
       <p class="hero-footnote">For the 3-minute gaps where you're too busy to relax and too stuck to work.</p>
+
+      <div class="stat-strip">
+        <div class="stat-pill">
+          <span class="stat-number" id="statTasks">48,213</span>
+          <span class="stat-label">tiny tasks completed</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-number" id="statTime">812</span>
+          <span class="stat-label">hrs reclaimed from doomscrolling</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-number">∞</span>
+          <span class="stat-label">bugs created (allegedly)</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -46,34 +65,45 @@
       <h2>Claude is thinking. You can too.</h2>
       <p class="section-sub">Turn AI wait time into tiny wins.</p>
 
-      <div class="demo-card">
-        <div class="demo-card-top">
-          <div class="status-dot-wrap">
-            <span class="status-dot"></span>
-            <span class="status-label">Agent status</span>
+      <div class="terminal">
+        <div class="terminal-chrome">
+          <div class="terminal-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
           </div>
-          <div class="timer" id="timer">00:00</div>
+          <span class="terminal-title">claude — thinking…</span>
+          <span class="terminal-timer" id="timer">00:00</span>
         </div>
 
-        <div class="loading-row">
-          <div class="loader">
-            <span></span><span></span><span></span>
+        <div class="terminal-body">
+          <div class="loading-row">
+            <div class="loader">
+              <span></span><span></span><span></span>
+            </div>
+            <p class="loading-message" id="loadingMessage">Claude is cooking… allegedly.</p>
           </div>
-          <p class="loading-message" id="loadingMessage">Claude is cooking… allegedly.</p>
-        </div>
 
-        <div class="task-area" id="taskArea" hidden>
-          <span class="task-category" id="taskCategory">Next Prompt</span>
-          <p class="task-text" id="taskText"></p>
-        </div>
+          <p class="token-counter" id="tokenCounter" hidden>
+            <span id="tokenCount">0</span> tokens generated · confidence: <span id="confidence">94%</span>
+          </p>
 
-        <div class="result-area" id="resultArea" hidden>
-          <p class="result-text" id="resultText"></p>
-        </div>
+          <div class="task-area" id="taskArea" hidden>
+            <span class="task-category" id="taskCategory">Next Prompt</span>
+            <p class="task-text" id="taskText"></p>
+          </div>
 
-        <div class="demo-controls">
-          <button class="btn btn-primary" id="primaryAction">Start Waiting</button>
-          <button class="btn btn-secondary" id="newTaskBtn" hidden>New Task</button>
+          <div class="result-area" id="resultArea" hidden>
+            <p class="result-text" id="resultText"></p>
+            <div class="result-actions">
+              <button class="btn btn-ghost" id="copyResultBtn">Copy for X</button>
+            </div>
+          </div>
+
+          <div class="demo-controls">
+            <button class="btn btn-primary" id="primaryAction">Start Waiting</button>
+            <button class="btn btn-secondary" id="newTaskBtn" hidden>New Task</button>
+          </div>
         </div>
       </div>
     </div>
@@ -83,7 +113,7 @@
   <section class="categories">
     <div class="section-inner">
       <h2>What you'll get</h2>
-      <p class="section-sub">Four flavors of tiny tasks, served at random.</p>
+      <p class="section-sub">Six flavors of tiny tasks, served at random. Pick your chaos.</p>
 
       <div class="category-grid">
         <div class="category-card">
@@ -106,10 +136,15 @@
           <h3>Brain Dump</h3>
           <p>Write the next 3 things you need to do.</p>
         </div>
-        <div class="category-card category-card-wide">
+        <div class="category-card">
           <div class="category-icon">☕</div>
           <h3>Funny Break</h3>
-          <p>Stare dramatically at the screen like you understand the codebase. Whisper "please work" to your laptop.</p>
+          <p>Stare dramatically at the screen like you understand the codebase.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">🚀</div>
+          <h3>Founder Mode</h3>
+          <p>Write the tweet you'll post when this actually works.</p>
         </div>
       </div>
     </div>
@@ -137,7 +172,7 @@
 
   <!-- FOOTER -->
   <footer class="footer">
-    <p>While Claude Thinks &mdash; built for the "thinking…" gap.</p>
+    <p>While Claude Thinks &mdash; built during approximately <span id="footerMinutes">1,482</span> minutes of AI "thinking" time.</p>
   </footer>
 
   <script src="script.js"></script>
