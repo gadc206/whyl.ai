@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>While Claude Thinks</title>
+  <meta name="description" content="Tiny things to do while your AI agent is cooking. Don't doomscroll. Do one tiny thing." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background glow -->
+  <div class="bg-glow"></div>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="logo-dot"></span>
+        While Claude Thinks
+      </div>
+      <a class="nav-link" href="#waitlist">Join Waitlist</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner">
+      <span class="badge">For developers stuck in the "thinking…" gap</span>
+      <h1>While Claude Thinks</h1>
+      <p class="subtitle">Tiny things to do while your AI agent is cooking.</p>
+      <p class="tagline">Don't doomscroll. Do one tiny thing.</p>
+
+      <div class="hero-buttons">
+        <a href="#demo" class="btn btn-primary">Try the Demo</a>
+        <a href="#waitlist" class="btn btn-secondary">Join Waitlist</a>
+      </div>
+
+      <p class="hero-footnote">For the 3-minute gaps where you're too busy to relax and too stuck to work.</p>
+    </div>
+  </section>
+
+  <!-- DEMO -->
+  <section class="demo" id="demo">
+    <div class="section-inner">
+      <h2>Claude is thinking. You can too.</h2>
+      <p class="section-sub">Turn AI wait time into tiny wins.</p>
+
+      <div class="demo-card">
+        <div class="demo-card-top">
+          <div class="status-dot-wrap">
+            <span class="status-dot"></span>
+            <span class="status-label">Agent status</span>
+          </div>
+          <div class="timer" id="timer">00:00</div>
+        </div>
+
+        <div class="loading-row">
+          <div class="loader">
+            <span></span><span></span><span></span>
+          </div>
+          <p class="loading-message" id="loadingMessage">Claude is cooking… allegedly.</p>
+        </div>
+
+        <div class="task-area" id="taskArea" hidden>
+          <span class="task-category" id="taskCategory">Next Prompt</span>
+          <p class="task-text" id="taskText"></p>
+        </div>
+
+        <div class="result-area" id="resultArea" hidden>
+          <p class="result-text" id="resultText"></p>
+        </div>
+
+        <div class="demo-controls">
+          <button class="btn btn-primary" id="primaryAction">Start Waiting</button>
+          <button class="btn btn-secondary" id="newTaskBtn" hidden>New Task</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASK CATEGORIES -->
+  <section class="categories">
+    <div class="section-inner">
+      <h2>What you'll get</h2>
+      <p class="section-sub">Four flavors of tiny tasks, served at random.</p>
+
+      <div class="category-grid">
+        <div class="category-card">
+          <div class="category-icon">💬</div>
+          <h3>Next Prompt</h3>
+          <p>Write the next prompt you'll send.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">🐛</div>
+          <h3>Bug Checklist</h3>
+          <p>Check the console for errors.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">✨</div>
+          <h3>App Polish</h3>
+          <p>Find one ugly loading state.</p>
+        </div>
+        <div class="category-card">
+          <div class="category-icon">🧠</div>
+          <h3>Brain Dump</h3>
+          <p>Write the next 3 things you need to do.</p>
+        </div>
+        <div class="category-card category-card-wide">
+          <div class="category-icon">☕</div>
+          <h3>Funny Break</h3>
+          <p>Stare dramatically at the screen like you understand the codebase. Whisper "please work" to your laptop.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITLIST -->
+  <section class="waitlist" id="waitlist">
+    <div class="section-inner">
+      <h2>Want this as a Chrome extension?</h2>
+      <p class="section-sub">We'll let you know the moment it ships. No spam, just tiny wins.</p>
+
+      <form class="waitlist-form" id="waitlistForm">
+        <input
+          type="email"
+          id="emailInput"
+          class="waitlist-input"
+          placeholder="you@example.com"
+          required
+        />
+        <button type="submit" class="btn btn-primary">Join the waitlist</button>
+      </form>
+      <p class="waitlist-message" id="waitlistMessage" hidden></p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>While Claude Thinks &mdash; built for the "thinking…" gap.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
