@@ -300,6 +300,42 @@ copyResultBtn.addEventListener("click", () => {
   });
 });
 
+// ---- Hero typing animation ----
+
+const AI_TOOLS = ["CURSOR", "CLAUDE", "CHATGPT", "GEMINI", "REPLIT", "LOVABLE", "GROK"];
+const TYPE_SPEED_MS = 90;
+const DELETE_SPEED_MS = 50;
+const HOLD_MS = 1400;
+
+const rotatingWordTextEl = document.getElementById("rotatingWordText");
+
+function typeLoop() {
+  let toolIndex = 0;
+
+  function typeWord(word, charIndex) {
+    rotatingWordTextEl.textContent = word.slice(0, charIndex);
+    if (charIndex < word.length) {
+      setTimeout(() => typeWord(word, charIndex + 1), TYPE_SPEED_MS);
+    } else {
+      setTimeout(() => deleteWord(word, word.length), HOLD_MS);
+    }
+  }
+
+  function deleteWord(word, charIndex) {
+    rotatingWordTextEl.textContent = word.slice(0, charIndex);
+    if (charIndex > 0) {
+      setTimeout(() => deleteWord(word, charIndex - 1), DELETE_SPEED_MS);
+    } else {
+      toolIndex = (toolIndex + 1) % AI_TOOLS.length;
+      setTimeout(() => typeWord(AI_TOOLS[toolIndex], 0), 300);
+    }
+  }
+
+  typeWord(AI_TOOLS[toolIndex], 0);
+}
+
+typeLoop();
+
 // ---- Waitlist ----
 
 const waitlistForm = document.getElementById("waitlistForm");

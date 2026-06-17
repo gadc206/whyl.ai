@@ -103,6 +103,10 @@ body {
   animation: blink 1s steps(1) infinite;
 }
 
+.rotating-word {
+  color: var(--accent);
+}
+
 .subtitle {
   font-size: clamp(1.05rem, 3vw, 1.3rem);
   color: var(--fg);
