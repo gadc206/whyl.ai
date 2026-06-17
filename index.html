@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>While Claude Thinks</title>
-  <meta name="description" content="Earn AI tokens watching startup ads and stay productive during AI wait times. Don't doomscroll. Earn credits and do one tiny thing." />
+  <title>Whyl — Earn Tokens While Your AI Thinks</title>
+  <meta name="description" content="Whyl turns AI wait times into AI tokens. Watch startup ads, do a tiny task, stay productive instead of doomscrolling." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -15,7 +15,7 @@
   <!-- NAV -->
   <header class="nav">
     <div class="nav-inner">
-      <div class="logo">while<span class="accent">(</span>claude.thinks<span class="accent">)</span></div>
+      <div class="logo">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
       <a class="nav-link" href="#waitlist">join waitlist</a>
     </div>
   </header>
@@ -23,9 +23,9 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-inner">
-      <h1>While Claude<br/>Thinks<span class="cursor">_</span></h1>
-      <p class="subtitle">Earn AI tokens. Stay in flow. Skip the doomscroll.</p>
-      <p class="tagline">Watch startup ads during AI wait times — on purpose — and get more Claude, Cursor, or ChatGPT credits. Plus tiny tasks that keep your brain on the code.</p>
+      <h1>Whyl Your AI<br/>Thinks, Earn<span class="cursor">_</span></h1>
+      <p class="subtitle">Dead time isn't dead. It's tokens.</p>
+      <p class="tagline">Whyl turns every AI wait into a tiny win — watch a startup ad, bank tokens for Claude, Cursor, or ChatGPT, and run a science-backed micro-task instead of doomscrolling Slack.</p>
 
       <div class="hero-buttons">
         <a href="#demo" class="btn btn-primary">Try the Demo</a>
@@ -199,8 +199,13 @@
   <!-- WAITLIST -->
   <section class="waitlist" id="waitlist">
     <div class="section-inner">
-      <h2>Want this as a Chrome extension?</h2>
-      <p class="section-sub">Earn tokens during AI waits. Stay productive. Ship faster. We'll email you when it launches.</p>
+      <h2>Join the whyl waitlist</h2>
+      <p class="section-sub">Want this as a Chrome extension, or want to put your startup in front of coders? Pick a side — we'll email you when whyl launches.</p>
+
+      <div class="waitlist-tabs" role="tablist">
+        <button type="button" class="waitlist-tab active" id="tabWatcher" data-role="watcher">⚡ I want to earn tokens</button>
+        <button type="button" class="waitlist-tab" id="tabAdvertiser" data-role="advertiser">📣 I want to advertise</button>
+      </div>
 
       <form class="waitlist-form" id="waitlistForm">
         <input
@@ -210,6 +215,13 @@
           placeholder="you@example.com"
           required
         />
+        <input
+          type="text"
+          id="companyInput"
+          class="waitlist-input"
+          placeholder="Company / startup name"
+          hidden
+        />
         <button type="submit" class="btn btn-primary">Join the waitlist</button>
       </form>
       <p class="waitlist-message" id="waitlistMessage" hidden></p>
@@ -218,7 +230,7 @@
 
   <!-- FOOTER -->
   <footer class="footer">
-    <p>while(claude.thinks) {</p>
+    <p>whyl(ai.thinks) {</p>
     <p class="footer-indent">earn_tokens(); do_one_tiny_thing();</p>
     <p>}</p>
   </footer>

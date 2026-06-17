@@ -285,11 +285,11 @@ adsToggle.addEventListener("change", updateAdsVisibility);
 
 copyResultBtn.addEventListener("click", () => {
   const savedTime = formatTime(seconds);
-  let shareText = `I stayed productive for ${savedTime} while Claude was "thinking" 🧠`;
+  let shareText = `I stayed productive for ${savedTime} while my AI was "thinking" 🧠`;
   if (tokens > 0) {
     shareText += `\nEarned ${tokens} AI tokens watching startup ads ⚡`;
   }
-  shareText += `\n\nwhileclaudethinks.com`;
+  shareText += `\n\nwhyl.ai`;
 
   navigator.clipboard.writeText(shareText).then(() => {
     const original = copyResultBtn.textContent;
@@ -305,13 +305,37 @@ copyResultBtn.addEventListener("click", () => {
 const waitlistForm = document.getElementById("waitlistForm");
 const waitlistMessage = document.getElementById("waitlistMessage");
 const emailInput = document.getElementById("emailInput");
+const companyInput = document.getElementById("companyInput");
+const tabWatcher = document.getElementById("tabWatcher");
+const tabAdvertiser = document.getElementById("tabAdvertiser");
+
+let waitlistRole = "watcher";
+
+function setWaitlistRole(role) {
+  waitlistRole = role;
+  tabWatcher.classList.toggle("active", role === "watcher");
+  tabAdvertiser.classList.toggle("active", role === "advertiser");
+  companyInput.hidden = role !== "advertiser";
+  companyInput.required = role === "advertiser";
+  if (role !== "advertiser") companyInput.value = "";
+}
+
+tabWatcher.addEventListener("click", () => setWaitlistRole("watcher"));
+tabAdvertiser.addEventListener("click", () => setWaitlistRole("advertiser"));
 
 waitlistForm.addEventListener("submit", (e) => {
   e.preventDefault();
   if (!emailInput.value) return;
+  if (waitlistRole === "advertiser" && !companyInput.value) return;
 
-  waitlistMessage.textContent = "You're on the list. Start stacking tokens soon.";
+  waitlistMessage.textContent =
+    waitlistRole === "advertiser"
+      ? "You're on the advertiser list. We'll reach out about putting your startup in front of coders."
+      : "You're on the list. Start stacking tokens soon.";
   waitlistMessage.hidden = false;
   waitlistForm.querySelector("button").disabled = true;
   emailInput.disabled = true;
+  companyInput.disabled = true;
+  tabWatcher.disabled = true;
+  tabAdvertiser.disabled = true;
 });
