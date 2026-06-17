@@ -359,19 +359,47 @@ function setWaitlistRole(role) {
 tabWatcher.addEventListener("click", () => setWaitlistRole("watcher"));
 tabAdvertiser.addEventListener("click", () => setWaitlistRole("advertiser"));
 
-waitlistForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  if (!emailInput.value) return;
-  if (waitlistRole === "advertiser" && !companyInput.value) return;
-
-  waitlistMessage.textContent =
-    waitlistRole === "advertiser"
-      ? "You're on the advertiser list. We'll reach out about putting your startup in front of coders."
-      : "You're on the list. Start stacking tokens soon.";
-  waitlistMessage.hidden = false;
+function lockWaitlistForm() {
   waitlistForm.querySelector("button").disabled = true;
   emailInput.disabled = true;
   companyInput.disabled = true;
   tabWatcher.disabled = true;
   tabAdvertiser.disabled = true;
+}
+
+waitlistForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!emailInput.value) return;
+  if (waitlistRole === "advertiser" && !companyInput.value) return;
+
+  const submitBtn = waitlistForm.querySelector("button");
+  const originalLabel = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Joining...";
+
+  try {
+    const res = await fetch("/api/waitlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: emailInput.value,
+        role: waitlistRole,
+        company: waitlistRole === "advertiser" ? companyInput.value : undefined,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Request failed");
+
+    waitlistMessage.textContent =
+      waitlistRole === "advertiser"
+        ? "You're on the advertiser list. We'll reach out about putting your startup in front of coders."
+        : "You're on the list. Start stacking tokens soon.";
+    waitlistMessage.hidden = false;
+    lockWaitlistForm();
+  } catch (err) {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalLabel;
+    waitlistMessage.textContent = "Something went wrong. Please try again.";
+    waitlistMessage.hidden = false;
+  }
 });
