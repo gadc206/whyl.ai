@@ -1,0 +1,46 @@
+body {
+  width: 280px;
+}
+
+.popup-wrap {
+  padding: 16px;
+}
+
+.logo {
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.balance-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.balance-label {
+  font-size: 0.7rem;
+  color: var(--dim);
+  text-transform: uppercase;
+}
+
+.balance-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.balance-sub {
+  font-size: 0.75rem;
+  color: var(--dim);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.actions .btn {
+  text-align: left;
+}

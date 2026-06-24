@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Whyl</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup-wrap">
+    <div class="logo">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
+
+    <div class="card balance-card">
+      <span class="balance-label">Total Balance</span>
+      <span class="balance-value" id="balanceValue">0</span>
+      <span class="balance-sub">Credits</span>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" id="withdrawBtn">Withdraw</button>
+      <button class="btn btn-secondary" id="inviteBtn">Invite Friends</button>
+      <button class="btn btn-secondary" id="dashboardBtn">Open Dashboard</button>
+      <button class="btn btn-secondary" id="historyBtn">View History</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

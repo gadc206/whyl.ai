@@ -1,0 +1,61 @@
+:host {
+  all: initial;
+}
+
+.whyl-panel {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 280px;
+  background: #0d0d0c;
+  color: #f2f2ee;
+  border: 2px solid #f2f2ee;
+  border-radius: 4px;
+  box-shadow: 6px 6px 0 #d6ff3f;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Roboto Mono', monospace;
+  font-size: 0.8rem;
+  padding: 14px;
+  z-index: 2147483647;
+  animation: whyl-slide-in 0.2s ease-out;
+}
+
+@keyframes whyl-slide-in {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.whyl-header {
+  font-weight: 700;
+  color: #d6ff3f;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.whyl-ad-message {
+  margin-bottom: 4px;
+}
+
+.whyl-ad-by {
+  color: #9a9a92;
+  font-size: 0.7rem;
+  margin-bottom: 12px;
+}
+
+.whyl-earnings {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid #2a2a28;
+  padding-top: 8px;
+}
+
+.whyl-session {
+  color: #d6ff3f;
+  font-weight: 700;
+}
+
+.whyl-balance {
+  color: #f2f2ee;
+}

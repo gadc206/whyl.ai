@@ -1,0 +1,74 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.onboard-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.onboard-card {
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 6px 6px 0 var(--accent);
+}
+
+.logo {
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.onboard-sub {
+  color: var(--dim);
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--dim);
+  margin-bottom: 6px;
+  margin-top: 14px;
+}
+
+.field-input {
+  width: 100%;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--fg);
+  font-family: var(--font);
+  padding: 10px 12px;
+  font-size: 0.85rem;
+}
+
+.field-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--dim);
+  margin: 18px 0;
+}
+
+.onboard-card .btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.onboard-done {
+  margin-top: 16px;
+  color: var(--accent);
+  font-size: 0.85rem;
+}

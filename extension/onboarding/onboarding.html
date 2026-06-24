@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome to Whyl</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/theme.css" />
+  <link rel="stylesheet" href="onboarding.css" />
+</head>
+<body>
+  <main class="onboard-wrap">
+    <div class="card onboard-card">
+      <div class="logo">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
+      <h1>Set up Whyl</h1>
+      <p class="onboard-sub">Takes less than 60 seconds. Earn credits while ChatGPT thinks.</p>
+
+      <form id="onboardForm">
+        <label class="field-label" for="name">Name</label>
+        <input class="field-input" id="name" type="text" placeholder="Your name" required />
+
+        <label class="field-label" for="email">Email</label>
+        <input class="field-input" id="email" type="email" placeholder="you@example.com" required />
+
+        <label class="field-checkbox">
+          <input type="checkbox" id="permissions" required />
+          I agree to let Whyl detect AI wait time on supported sites to show sponsored content.
+        </label>
+
+        <button class="btn btn-primary" type="submit">Create account</button>
+      </form>
+      <p class="onboard-done" id="onboardDone" hidden>You're all set. Close this tab and start using ChatGPT.</p>
+    </div>
+  </main>
+  <script src="onboarding.js"></script>
+</body>
+</html>
