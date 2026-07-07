@@ -305,10 +305,10 @@ waitlistForm.addEventListener("submit", async (e) => {
 // ---- Goals ----
 
 let goals = [
-  { id: "lang", icon: "🌎", label: "Learn Spanish", detail: "420 words · 15 min/day", pct: 62, on: true },
-  { id: "book", icon: "📖", label: "Finish 'Dune'", detail: "p.412 of 528", pct: 78, on: true },
-  { id: "cs", icon: "💻", label: "CS assignment", detail: "2 of 5 problems", pct: 40, on: false },
-  { id: "streak", icon: "🧘", label: "Daily stretch", detail: "12-day streak", pct: 55, on: false },
+  { id: "lang", label: "Learn Spanish", detail: "420 words · 15 min/day", pct: 62, on: true },
+  { id: "book", label: "Finish 'Dune'", detail: "p.412 of 528", pct: 78, on: true },
+  { id: "cs", label: "CS assignment", detail: "2 of 5 problems", pct: 40, on: false },
+  { id: "streak", label: "Daily stretch", detail: "12-day streak", pct: 55, on: false },
 ];
 let banked = 47;
 
@@ -328,7 +328,6 @@ function renderGoals() {
     item.className = "goal-item" + (g.on ? " on" : "");
     item.innerHTML = `
       <div class="goal-item-top">
-        <span class="goal-icon">${g.icon}</span>
         <div class="goal-copy">
           <div class="goal-label">${g.label}</div>
           <div class="goal-detail">${g.detail}</div>
