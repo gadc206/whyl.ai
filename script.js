@@ -1,6 +1,6 @@
 // ---- Routing ----
 
-const PAGES = ["home", "how", "ads", "waitlist", "dashboard"];
+const PAGES = ["home", "how", "ads", "waitlist"];
 
 function navigate(page) {
   if (!PAGES.includes(page)) page = "home";
@@ -240,9 +240,7 @@ let goals = [
 let banked = 47;
 
 const goalsListHome = document.getElementById("goalsListHome");
-const goalsListDash = document.getElementById("goalsListDash");
 const bankedLabelHome = document.getElementById("bankedLabelHome");
-const bankedLabelDash = document.getElementById("bankedLabelDash");
 const logWaitBtn = document.getElementById("logWaitBtn");
 
 function bankedLabel() {
@@ -250,8 +248,8 @@ function bankedLabel() {
   return h > 0 ? `${h}h ${banked % 60}m` : `${banked} min`;
 }
 
-function renderGoalsInto(container) {
-  container.innerHTML = "";
+function renderGoals() {
+  goalsListHome.innerHTML = "";
   goals.forEach((g) => {
     const item = document.createElement("div");
     item.className = "goal-item" + (g.on ? " on" : "");
@@ -270,15 +268,9 @@ function renderGoalsInto(container) {
       g.on = !g.on;
       renderGoals();
     });
-    container.appendChild(item);
+    goalsListHome.appendChild(item);
   });
-}
-
-function renderGoals() {
-  renderGoalsInto(goalsListHome);
-  renderGoalsInto(goalsListDash);
   bankedLabelHome.textContent = `${bankedLabel()} banked this week`;
-  bankedLabelDash.textContent = `${bankedLabel()} banked this week`;
 }
 
 logWaitBtn.addEventListener("click", () => {

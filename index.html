@@ -20,7 +20,6 @@
         <button type="button" class="nav-link" data-nav="home">home</button>
         <button type="button" class="nav-link" data-nav="how">how_it_works</button>
         <button type="button" class="nav-link" data-nav="ads">showcase</button>
-        <button type="button" class="nav-link" data-nav="dashboard">dashboard</button>
       </nav>
       <button type="button" class="btn btn-primary btn-small" data-nav="waitlist">join waitlist →</button>
     </div>
@@ -87,11 +86,93 @@
 
   <!-- ============ HOW IT WORKS ============ -->
   <main class="page" id="page-how" hidden>
+
+    <!-- USER EXPERIENCE -->
+    <section class="section">
+      <div class="section-head">
+        <div class="eyebrow">user experience</div>
+        <h1 class="page-title sm">What using whyl feels like</h1>
+        <p class="section-sub">Your wallet, your goals, your activity — all in one place.</p>
+      </div>
+
+      <div class="dash-head">
+        <div>
+          <div class="mono muted uppercase small">good afternoon, dev</div>
+          <h2 class="page-title sm">Your token wallet</h2>
+        </div>
+        <div class="dash-status mono accent"><span class="dot"></span>whyl active on 3 tools</div>
+      </div>
+
+      <div class="dash-stats">
+        <div class="card card-accent">
+          <div class="mono muted uppercase small">token balance</div>
+          <div class="dash-num accent">4,820</div>
+          <div class="dash-sub">+312 this week · redeemable across Claude, Cursor &amp; ChatGPT</div>
+        </div>
+        <div class="card">
+          <div class="mono muted uppercase small">pitches watched</div>
+          <div class="dash-num">318</div>
+          <div class="dash-sub">≈ 79 min reclaimed</div>
+        </div>
+        <div class="card">
+          <div class="mono muted uppercase small">focus streak</div>
+          <div class="dash-num">12 <span class="dash-num-unit">days</span></div>
+          <div class="dash-sub">0 doomscroll relapses</div>
+        </div>
+      </div>
+
+      <div class="dash-cols">
+        <div class="card">
+          <div class="dash-card-head">
+            <h3 class="sm">Tokens earned · last 7 days</h3>
+            <span class="mono accent">▲ 18%</span>
+          </div>
+          <div class="bars">
+            <div class="bar-col"><div class="bar" style="height:46%"></div><span class="mono muted">Mo</span></div>
+            <div class="bar-col"><div class="bar" style="height:62%"></div><span class="mono muted">Tu</span></div>
+            <div class="bar-col"><div class="bar" style="height:38%"></div><span class="mono muted">We</span></div>
+            <div class="bar-col"><div class="bar" style="height:78%"></div><span class="mono muted">Th</span></div>
+            <div class="bar-col"><div class="bar" style="height:56%"></div><span class="mono muted">Fr</span></div>
+            <div class="bar-col"><div class="bar bar-peak" style="height:90%"></div><span class="mono accent">Sa</span></div>
+            <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Su</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="sm">Redeem tokens</h3>
+          <div class="redeem-list">
+            <div class="redeem-row"><div><div class="redeem-title">+500 Claude tokens</div><div class="mono muted small">costs 120 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+            <div class="redeem-row"><div><div class="redeem-title">Cursor Pro · 1 week</div><div class="mono muted small">costs 900 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+            <div class="redeem-row"><div><div class="redeem-title">+2,000 ChatGPT credits</div><div class="mono muted small">costs 400 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card activity-card">
+        <div class="dash-card-head">
+          <h3 class="sm">Goals fed by your waits</h3>
+          <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
+        </div>
+        <div class="goals-list goals-list-grid" id="goalsListHome"></div>
+        <button type="button" class="btn btn-primary btn-block" id="logWaitBtn" style="margin-top:14px;">▶ simulate a 3-min wait</button>
+      </div>
+
+      <div class="card activity-card">
+        <h3 class="sm">Recent waits</h3>
+        <div class="activity-header mono muted small">
+          <div>pitch</div><div>tool</div><div>duration</div><div>earned</div>
+        </div>
+        <div class="activity-row"><div>Nimbus — edge cron for agents</div><div class="muted">Claude</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+        <div class="activity-row"><div>Parsel — typed API mocks</div><div class="muted">Cursor</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+        <div class="activity-row activity-row-last"><div>Cadence — auto standups</div><div class="muted">Copilot</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+      </div>
+    </section>
+
+    <!-- LIFECYCLE -->
     <section class="section narrow">
       <div class="section-head">
-        <div class="eyebrow">how it works</div>
-        <h1 class="page-title">Every spinner is a<br>tiny opportunity.</h1>
-        <p class="section-sub">AI wait times are unpredictable, unavoidable, and right now completely wasted. Whyl turns each one into tokens and a moment of genuine recovery.</p>
+        <div class="eyebrow">the lifecycle</div>
+        <h2>From first wait to payout</h2>
       </div>
 
       <div class="steps">
@@ -105,60 +186,30 @@
         <div class="step">
           <div class="step-num">02</div>
           <div>
-            <h3>The moment it stalls, a pitch appears</h3>
-            <p>A single 15-second startup pitch slides into the chat box — right where you're already looking. No new tab, no popup, no context leaving the screen.</p>
+            <h3>A wait triggers a pitch or a goal</h3>
+            <p>A 15-second startup pitch slides into the chat box, or Whyl points the wait at a goal you're chipping away at — right where you're already looking.</p>
           </div>
         </div>
         <div class="step">
           <div class="step-num">03</div>
           <div>
-            <h3>Tokens land in your balance</h3>
-            <p>Finish the pitch and compute tokens drop straight into your wallet — redeemable for more prompts and longer agent runs across the tools you already use.</p>
+            <h3>Tokens and progress land automatically</h3>
+            <p>Finish the pitch and compute tokens drop into your wallet, while goal progress bars move forward on their own — no extra effort.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div>
+            <h3>Redeem tokens for more AI compute</h3>
+            <p>Cash tokens in for more prompts, longer agent runs, or provider credits across the tools you already use.</p>
           </div>
         </div>
         <div class="step step-last">
-          <div class="step-num">04</div>
+          <div class="step-num">05</div>
           <div>
-            <h3>Longer waits get a micro-task</h3>
-            <p>If the wait stretches, Whyl suggests a research-backed reset sized to the estimate — always something you can abandon the second output arrives.</p>
+            <h3>Showcase your own startup back</h3>
+            <p>Spend tokens — or place a bid — to put your own pitch in front of other builders at the exact moment they're watching.</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GOALS -->
-    <section class="section narrow">
-      <div class="goals-grid">
-        <div>
-          <div class="eyebrow">bank the wait</div>
-          <h2 class="max-w-sm">Set a goal. Let the waiting finish it.</h2>
-          <p class="section-sub max-w-sm">Learn a language, get through a book, close out an assignment, keep a streak. Whyl points each wait at a goal you actually care about — so dead time compounds into something real.</p>
-          <div class="checklist">
-            <div class="checklist-item"><span class="check-icon">✓</span>Sized to the wait — one flashcard or a full chapter</div>
-            <div class="checklist-item"><span class="check-icon">✓</span>Progress you can see stack up, wait after wait</div>
-            <div class="checklist-item"><span class="check-icon">✓</span>Drop it the instant your output lands</div>
-          </div>
-        </div>
-
-        <!-- interactive goals card -->
-        <div class="goals-card">
-          <div class="goals-card-head">
-            <div class="goals-card-title">Your goals</div>
-            <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
-          </div>
-          <div class="goals-list" id="goalsListHome"></div>
-          <button type="button" class="btn btn-primary btn-block" id="logWaitBtn">▶ simulate a 3-min wait</button>
-          <p class="mono dim center-text small" style="margin:12px 0 0;">tap goals to pick what this wait feeds</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section narrow">
-      <div class="cta-band">
-        <h2>Try the live demo above, or reserve your spot.</h2>
-        <div class="hero-buttons center">
-          <button type="button" class="btn btn-secondary" data-nav="home">← back to demo</button>
-          <button type="button" class="btn btn-primary" data-nav="waitlist">Join waitlist →</button>
         </div>
       </div>
     </section>
@@ -166,28 +217,7 @@
 
   <!-- ============ SHOWCASE / ADVERTISERS ============ -->
   <main class="page" id="page-ads" hidden>
-    <section class="section narrow center-text">
-      <div class="eyebrow">showcase your startup</div>
-      <h1 class="page-title max-w center">Put your build in front of builders, the moment they're actually watching.</h1>
-      <p class="section-sub center max-w-sm">No banner blindness. No skippable pre-rolls. Your 15-second pitch lands in the chat box while a fellow founder waits on their AI, full attention, zero competition.</p>
-      <button type="button" class="btn btn-primary" data-nav="waitlist">Showcase on whyl →</button>
-    </section>
-
     <section class="section narrow">
-      <div class="grid-3">
-        <div class="card"><div class="stat-big">100%</div><p>on-screen attention — the pitch is the thing they're staring at</p></div>
-        <div class="card"><div class="stat-big">15s</div><p>of undivided time, opted into — not interrupted</p></div>
-        <div class="card"><div class="stat-big">1:1</div><p>builder intent — every viewer is mid-build, wants what you shipped</p></div>
-      </div>
-    </section>
-
-    <section class="section narrow">
-      <div class="section-head center">
-        <div class="eyebrow">the pitch marketplace</div>
-        <h2>No fixed rates. You set the price.</h2>
-        <p class="section-sub center max-w-sm">It's an open auction. Bid per <strong>block</strong> (1,000 completed pitches). Highest bid serves first, outbid the top to jump the queue, or bid low and wait your turn. You only pay for completed views.</p>
-      </div>
-
       <div class="marketplace">
         <!-- LIVE ORDER BOOK -->
         <div class="orderbook">
@@ -291,82 +321,6 @@
         </form>
         <div class="waitlist-success" id="waitlistSuccess" hidden>✓ you're on the list — check your inbox</div>
         <p class="mono dim center-text small built-with">built_with: 34,000 minutes of AI thinking</p>
-      </div>
-    </section>
-  </main>
-
-  <!-- ============ DASHBOARD ============ -->
-  <main class="page" id="page-dashboard" hidden>
-    <section class="section">
-      <div class="dash-head">
-        <div>
-          <div class="mono muted uppercase small">good afternoon, dev</div>
-          <h1 class="page-title sm">Your token wallet</h1>
-        </div>
-        <div class="dash-status mono accent"><span class="dot"></span>whyl active on 3 tools</div>
-      </div>
-
-      <div class="dash-stats">
-        <div class="card card-accent">
-          <div class="mono muted uppercase small">token balance</div>
-          <div class="dash-num accent">4,820</div>
-          <div class="dash-sub">+312 this week · redeemable across Claude, Cursor &amp; ChatGPT</div>
-        </div>
-        <div class="card">
-          <div class="mono muted uppercase small">pitches watched</div>
-          <div class="dash-num">318</div>
-          <div class="dash-sub">≈ 79 min reclaimed</div>
-        </div>
-        <div class="card">
-          <div class="mono muted uppercase small">focus streak</div>
-          <div class="dash-num">12 <span class="dash-num-unit">days</span></div>
-          <div class="dash-sub">0 doomscroll relapses</div>
-        </div>
-      </div>
-
-      <div class="dash-cols">
-        <div class="card">
-          <div class="dash-card-head">
-            <h3 class="sm">Tokens earned · last 7 days</h3>
-            <span class="mono accent">▲ 18%</span>
-          </div>
-          <div class="bars">
-            <div class="bar-col"><div class="bar" style="height:46%"></div><span class="mono muted">Mo</span></div>
-            <div class="bar-col"><div class="bar" style="height:62%"></div><span class="mono muted">Tu</span></div>
-            <div class="bar-col"><div class="bar" style="height:38%"></div><span class="mono muted">We</span></div>
-            <div class="bar-col"><div class="bar" style="height:78%"></div><span class="mono muted">Th</span></div>
-            <div class="bar-col"><div class="bar" style="height:56%"></div><span class="mono muted">Fr</span></div>
-            <div class="bar-col"><div class="bar bar-peak" style="height:90%"></div><span class="mono accent">Sa</span></div>
-            <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Su</span></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 class="sm">Redeem tokens</h3>
-          <div class="redeem-list">
-            <div class="redeem-row"><div><div class="redeem-title">+500 Claude tokens</div><div class="mono muted small">costs 120 ⚡</div></div><span class="redeem-btn">redeem</span></div>
-            <div class="redeem-row"><div><div class="redeem-title">Cursor Pro · 1 week</div><div class="mono muted small">costs 900 ⚡</div></div><span class="redeem-btn">redeem</span></div>
-            <div class="redeem-row"><div><div class="redeem-title">+2,000 ChatGPT credits</div><div class="mono muted small">costs 400 ⚡</div></div><span class="redeem-btn">redeem</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card activity-card">
-        <div class="dash-card-head">
-          <h3 class="sm">Goals fed by your waits</h3>
-          <div class="mono muted small" id="bankedLabelDash">0 min banked this week</div>
-        </div>
-        <div class="goals-list goals-list-grid" id="goalsListDash"></div>
-      </div>
-
-      <div class="card activity-card">
-        <h3 class="sm">Recent waits</h3>
-        <div class="activity-header mono muted small">
-          <div>pitch</div><div>tool</div><div>duration</div><div>earned</div>
-        </div>
-        <div class="activity-row"><div>Nimbus — edge cron for agents</div><div class="muted">Claude</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
-        <div class="activity-row"><div>Parsel — typed API mocks</div><div class="muted">Cursor</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
-        <div class="activity-row activity-row-last"><div>Cadence — auto standups</div><div class="muted">Copilot</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
       </div>
     </section>
   </main>
