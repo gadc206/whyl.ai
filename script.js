@@ -66,41 +66,46 @@ typeLoop();
 // ---- Ad pitch video ----
 
 const adVideo = document.getElementById("adVideo");
-const adPlayButton = document.getElementById("adPlayButton");
+const adMuteToggle = document.getElementById("adMuteToggle");
+const mockProgress = document.getElementById("mockProgress");
+const mockTokens = document.getElementById("mockTokens");
 
-adPlayButton.addEventListener("click", () => {
-  adVideo.controls = true;
-  adVideo.play();
-  adPlayButton.classList.add("hidden");
+let mockTokenCount = 0;
+let lastVideoTime = 0;
+
+adMuteToggle.addEventListener("click", () => {
+  adVideo.muted = !adVideo.muted;
+  adMuteToggle.textContent = adVideo.muted ? "🔇" : "🔊";
 });
-adVideo.addEventListener("pause", () => adPlayButton.classList.remove("hidden"));
-adVideo.addEventListener("play", () => adPlayButton.classList.add("hidden"));
-adVideo.addEventListener("ended", () => adPlayButton.classList.remove("hidden"));
+
+adVideo.addEventListener("timeupdate", () => {
+  if (!adVideo.duration) return;
+
+  if (adVideo.currentTime < lastVideoTime) {
+    // looped back to the start — one full pitch watched
+    mockProgress.classList.add("no-transition");
+    mockTokenCount += 25;
+    mockTokens.textContent = `⚡ ${mockTokenCount} tokens`;
+    mockTokens.classList.add("token-bump");
+    setTimeout(() => mockTokens.classList.remove("token-bump"), 400);
+    requestAnimationFrame(() => mockProgress.classList.remove("no-transition"));
+  }
+  lastVideoTime = adVideo.currentTime;
+
+  mockProgress.style.width = (adVideo.currentTime / adVideo.duration) * 100 + "%";
+});
 
 // ---- Animated extension mock ----
 
 const mockClock = document.getElementById("mockClock");
-const mockProgress = document.getElementById("mockProgress");
-const mockTokens = document.getElementById("mockTokens");
 
 let mockElapsed = 0;
-let mockTokenCount = 0;
 
 setInterval(() => {
   mockElapsed += 1;
   const mm = String(Math.floor(mockElapsed / 60)).padStart(2, "0");
   const ss = String(mockElapsed % 60).padStart(2, "0");
   mockClock.textContent = `${mm}:${ss}`;
-
-  const cyc = mockElapsed % 15;
-  mockProgress.style.width = Math.round((cyc / 15) * 100) + "%";
-
-  if (cyc === 0) {
-    mockTokenCount += 25;
-    mockTokens.textContent = `⚡ ${mockTokenCount} tokens`;
-    mockTokens.classList.add("token-bump");
-    setTimeout(() => mockTokens.classList.remove("token-bump"), 400);
-  }
 }, 1000);
 
 // ---- Showcase marketplace ----
