@@ -35,17 +35,9 @@
         <div>
           <div class="badge"><span class="dot"></span>the waiting platform · private beta</div>
           <h1 class="hero-title">Whyl <span class="accent" id="rotatingWordText"></span><span class="hero-cursor"></span><br>thinks,<br>you earn.</h1>
-          <p class="hero-sub">Every AI wait is dead time — until now. Whyl is the waiting platform: earn tokens, showcase your startup, or chip away at a real goal, all in the seconds your AI is thinking.</p>
           <div class="hero-buttons">
             <button type="button" class="btn btn-primary" data-nav="waitlist">Get early access</button>
             <button type="button" class="btn btn-secondary" data-nav="how">See how it works</button>
-          </div>
-          <div class="hero-stats">
-            <div class="stat"><div class="stat-num">15s</div><div class="stat-label">per pitch</div></div>
-            <div class="stat-divider"></div>
-            <div class="stat"><div class="stat-num">3 ways</div><div class="stat-label">to spend a wait</div></div>
-            <div class="stat-divider"></div>
-            <div class="stat"><div class="stat-num accent">∞</div><div class="stat-label">rate-limit walls, gone</div></div>
           </div>
         </div>
 
@@ -79,63 +71,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- FLYWHEEL -->
-    <section class="section">
-      <div class="section-head">
-        <div class="eyebrow">the flywheel</div>
-        <h2 class="max-w">Builders discover builders. Everyone earns. Rate limits want to die.</h2>
-      </div>
-      <div class="grid-4">
-        <div class="card">
-          <div class="card-num">01</div>
-          <h3>You opt in</h3>
-          <p>While your AI runs, choose to watch a short pitch from a fellow builder instead of drifting off.</p>
-        </div>
-        <div class="card">
-          <div class="card-num">02</div>
-          <h3>You earn tokens</h3>
-          <p>Each pitch watched = AI compute. Redeem for more prompts, longer agent runs, fewer walls.</p>
-        </div>
-        <div class="card">
-          <div class="card-num">03</div>
-          <h3>You showcase back</h3>
-          <p>Spend those tokens — or a small bid — to pitch <em>your</em> project to builders at the one moment they're fully watching.</p>
-        </div>
-        <div class="card">
-          <div class="card-num">04</div>
-          <h3>You stay productive</h3>
-          <p>Between ads, get micro-tasks matched to your wait. No context-switching, no attention residue.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- GOALS -->
-    <section class="section">
-      <div class="goals-grid">
-        <div>
-          <div class="eyebrow">bank the wait</div>
-          <h2 class="max-w-sm">Set a goal. Let the waiting finish it.</h2>
-          <p class="section-sub max-w-sm">Learn a language, get through a book, close out an assignment, keep a streak. Whyl points each wait at a goal you actually care about — so dead time compounds into something real.</p>
-          <div class="checklist">
-            <div class="checklist-item"><span class="check-icon">✓</span>Sized to the wait — one flashcard or a full chapter</div>
-            <div class="checklist-item"><span class="check-icon">✓</span>Progress you can see stack up, wait after wait</div>
-            <div class="checklist-item"><span class="check-icon">✓</span>Drop it the instant your output lands</div>
-          </div>
-        </div>
-
-        <!-- interactive goals card -->
-        <div class="goals-card">
-          <div class="goals-card-head">
-            <div class="goals-card-title">Your goals</div>
-            <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
-          </div>
-          <div class="goals-list" id="goalsListHome"></div>
-          <button type="button" class="btn btn-primary btn-block" id="logWaitBtn">▶ simulate a 3-min wait</button>
-          <p class="mono dim center-text small" style="margin:12px 0 0;">tap goals to pick what this wait feeds</p>
         </div>
       </div>
     </section>
@@ -189,7 +124,36 @@
           </div>
         </div>
       </div>
+    </section>
 
+    <!-- GOALS -->
+    <section class="section narrow">
+      <div class="goals-grid">
+        <div>
+          <div class="eyebrow">bank the wait</div>
+          <h2 class="max-w-sm">Set a goal. Let the waiting finish it.</h2>
+          <p class="section-sub max-w-sm">Learn a language, get through a book, close out an assignment, keep a streak. Whyl points each wait at a goal you actually care about — so dead time compounds into something real.</p>
+          <div class="checklist">
+            <div class="checklist-item"><span class="check-icon">✓</span>Sized to the wait — one flashcard or a full chapter</div>
+            <div class="checklist-item"><span class="check-icon">✓</span>Progress you can see stack up, wait after wait</div>
+            <div class="checklist-item"><span class="check-icon">✓</span>Drop it the instant your output lands</div>
+          </div>
+        </div>
+
+        <!-- interactive goals card -->
+        <div class="goals-card">
+          <div class="goals-card-head">
+            <div class="goals-card-title">Your goals</div>
+            <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
+          </div>
+          <div class="goals-list" id="goalsListHome"></div>
+          <button type="button" class="btn btn-primary btn-block" id="logWaitBtn">▶ simulate a 3-min wait</button>
+          <p class="mono dim center-text small" style="margin:12px 0 0;">tap goals to pick what this wait feeds</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section narrow">
       <div class="cta-band">
         <h2>Try the live demo above, or reserve your spot.</h2>
         <div class="hero-buttons center">

@@ -162,7 +162,6 @@ p { margin: 0; }
   margin-bottom: 12px;
 }
 
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
 
 .card {
@@ -176,8 +175,6 @@ p { margin: 0; }
 .card h3 { font-size: 19px; margin: 0 0 10px; font-weight: 600; }
 .card h3.sm { font-size: 16px; margin-bottom: 6px; }
 .card p { font-size: 14px; line-height: 1.5; color: var(--text-muted); }
-.card-num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 36px; }
-.card-icon { font-size: 26px; margin-bottom: 14px; }
 .stat-big { font-family: var(--font-heading); font-weight: 700; font-size: 44px; color: var(--accent); letter-spacing: -0.02em; margin-bottom: 8px; }
 
 /* ---- hero ---- */
@@ -214,14 +211,8 @@ p { margin: 0; }
   background: var(--accent);
   animation: whyl-blink 1s step-end infinite;
 }
-.hero-sub { font-size: 19px; line-height: 1.55; color: var(--text-body); max-width: 470px; margin: 0 0 34px; }
 .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
 .hero-buttons.center { justify-content: center; }
-
-.hero-stats { display: flex; gap: 32px; margin-top: 44px; font-family: var(--font-mono); }
-.stat-num { font-size: 26px; font-weight: 700; color: var(--text-heading); }
-.stat-label { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
-.stat-divider { width: 1px; background: var(--border-soft); }
 
 /* ---- mock window (extension / video) ---- */
 
@@ -564,7 +555,6 @@ p { margin: 0; }
   .hero-title { font-size: 44px; }
   .page-title { font-size: 40px; }
   .page-title.max-w { font-size: 40px; }
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
   .grid-3 { grid-template-columns: 1fr; }
   .marketplace { grid-template-columns: 1fr; }
   .bid-panel { position: static; }
@@ -584,7 +574,6 @@ p { margin: 0; }
   .section { padding: 56px 20px; }
   .hero { padding: 48px 20px 24px; }
   .hero-title { font-size: 34px; }
-  .hero-stats { flex-wrap: wrap; gap: 20px; }
   .cta-band { padding: 32px; }
   .cta-band h2 { font-size: 30px; }
   .orderbook-cols, .ob-row { grid-template-columns: 32px 1fr 72px; }
