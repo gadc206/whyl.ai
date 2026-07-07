@@ -247,7 +247,10 @@ waitlistForm.addEventListener("submit", async (e) => {
       }),
     });
 
-    if (!res.ok) throw new Error("Request failed");
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Request failed (${res.status})`);
+    }
 
     waitlistSubmit.textContent = "you're in ✓";
     waitlistSuccess.hidden = false;
@@ -258,7 +261,7 @@ waitlistForm.addEventListener("submit", async (e) => {
   } catch (err) {
     waitlistSubmit.disabled = false;
     waitlistSubmit.textContent = originalLabel;
-    waitlistSuccess.textContent = "Something went wrong. Please try again.";
+    waitlistSuccess.textContent = err.message || "Something went wrong. Please try again.";
     waitlistSuccess.hidden = false;
   }
 });

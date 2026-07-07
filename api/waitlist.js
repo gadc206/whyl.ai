@@ -1,13 +1,16 @@
 const { createClient } = require("@supabase/supabase-js");
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
 module.exports = async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.error(
+      "waitlist: missing SUPABASE_URL and/or SUPABASE_SERVICE_ROLE_KEY env vars"
+    );
+    res.status(500).json({ error: "Server misconfigured: Supabase env vars not set" });
     return;
   }
 
@@ -23,6 +26,11 @@ module.exports = async function handler(req, res) {
     return;
   }
 
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
   const { error } = await supabase.from("waitlist").insert({
     email,
     role,
@@ -34,6 +42,7 @@ module.exports = async function handler(req, res) {
       res.status(200).json({ ok: true, duplicate: true });
       return;
     }
+    console.error("waitlist: supabase insert failed:", error);
     res.status(500).json({ error: "Could not save signup" });
     return;
   }
