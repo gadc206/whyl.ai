@@ -65,33 +65,12 @@ typeLoop();
 
 // ---- Animated extension mock ----
 
-const MOCK_ADS = [
-  { title: "Nimbus", initial: "N", tag: "devtools · seed", desc: "Edge cron for AI agents — retries without a server." },
-  { title: "Parsel", initial: "P", tag: "API · pre-seed", desc: "Typed API mocks that stay in sync with your spec." },
-  { title: "Cadence", initial: "C", tag: "productivity", desc: "Standups that write themselves from your commits." },
-];
-
 const mockClock = document.getElementById("mockClock");
 const mockProgress = document.getElementById("mockProgress");
 const mockTokens = document.getElementById("mockTokens");
-const mockAdTitle = document.getElementById("mockAdTitle");
-const mockAdInitial = document.getElementById("mockAdInitial");
-const mockAdTag = document.getElementById("mockAdTag");
-const mockAdDesc = document.getElementById("mockAdDesc");
 
 let mockElapsed = 0;
 let mockTokenCount = 0;
-let mockAdIndex = 0;
-
-function renderMockAd() {
-  const ad = MOCK_ADS[mockAdIndex];
-  mockAdTitle.textContent = ad.title;
-  mockAdInitial.textContent = ad.initial;
-  mockAdTag.textContent = ad.tag;
-  mockAdDesc.textContent = ad.desc;
-}
-
-renderMockAd();
 
 setInterval(() => {
   mockElapsed += 1;
@@ -103,8 +82,6 @@ setInterval(() => {
   mockProgress.style.width = Math.round((cyc / 15) * 100) + "%";
 
   if (cyc === 0) {
-    mockAdIndex = (mockAdIndex + 1) % MOCK_ADS.length;
-    renderMockAd();
     mockTokenCount += 25;
     mockTokens.textContent = `⚡ ${mockTokenCount} tokens`;
     mockTokens.classList.add("token-bump");

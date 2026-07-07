@@ -282,15 +282,8 @@ p { margin: 0; }
 }
 .ad-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .ad-eyebrow { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-.ad-card-body { display: flex; gap: 12px; align-items: center; }
-.ad-avatar {
-  width: 44px; height: 44px; border-radius: 10px; background: var(--accent); color: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--font-heading); font-weight: 700; font-size: 20px; flex-shrink: 0;
-}
-.ad-copy { min-width: 0; }
-.ad-title { font-family: var(--font-heading); font-weight: 600; font-size: 15px; color: var(--text-heading); }
-.ad-desc { font-size: 12px; color: var(--text-muted); line-height: 1.35; }
+.ad-video-wrap { border-radius: 10px; overflow: hidden; background: #000; }
+.ad-video { display: block; width: 100%; height: 110px; object-fit: cover; }
 .ad-progress { margin-top: 12px; height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
 .ad-progress-bar { height: 100%; background: var(--accent); border-radius: 3px; width: 0%; transition: width 0.9s linear; }
 .ad-card-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; font-size: 12px; }
