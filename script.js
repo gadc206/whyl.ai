@@ -1,6 +1,6 @@
 // ---- Routing ----
 
-const PAGES = ["home", "how", "ads", "waitlist"];
+const PAGES = ["home", "ads", "waitlist"];
 
 function navigate(page) {
   if (!PAGES.includes(page)) page = "home";
