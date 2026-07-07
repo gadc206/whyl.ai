@@ -63,6 +63,20 @@ function typeLoop() {
 
 typeLoop();
 
+// ---- Ad pitch video ----
+
+const adVideo = document.getElementById("adVideo");
+const adPlayButton = document.getElementById("adPlayButton");
+
+adPlayButton.addEventListener("click", () => {
+  adVideo.controls = true;
+  adVideo.play();
+  adPlayButton.classList.add("hidden");
+});
+adVideo.addEventListener("pause", () => adPlayButton.classList.remove("hidden"));
+adVideo.addEventListener("play", () => adPlayButton.classList.add("hidden"));
+adVideo.addEventListener("ended", () => adPlayButton.classList.remove("hidden"));
+
 // ---- Animated extension mock ----
 
 const mockClock = document.getElementById("mockClock");

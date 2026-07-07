@@ -59,9 +59,10 @@
                 <span class="ad-eyebrow">whyl · sponsored pitch</span>
               </div>
               <div class="ad-video-wrap">
-                <video class="ad-video" autoplay muted loop playsinline>
+                <video class="ad-video" id="adVideo" preload="metadata" playsinline>
                   <source src="assets/whyl-pitch.mp4" type="video/mp4">
                 </video>
+                <button type="button" class="play-button play-button-sm" id="adPlayButton" aria-label="Play pitch video"><span class="play-triangle play-triangle-sm"></span></button>
               </div>
               <div class="ad-progress"><div class="ad-progress-bar" id="mockProgress"></div></div>
               <div class="ad-card-bottom">
@@ -70,6 +71,35 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLYWHEEL -->
+    <section class="section">
+      <div class="section-head">
+        <div class="eyebrow">the flywheel</div>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-num">01</div>
+          <h3>You opt in</h3>
+          <p>While your AI runs, choose to watch a short pitch from a fellow builder instead of drifting off.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">02</div>
+          <h3>You earn tokens</h3>
+          <p>Each pitch watched = AI compute. Redeem for more prompts, longer agent runs, fewer walls.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">03</div>
+          <h3>You showcase back</h3>
+          <p>Spend those tokens — or a small bid — to pitch <em>your</em> project to builders at the one moment they're fully watching.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">04</div>
+          <h3>You stay productive</h3>
+          <p>Between ads, get micro-tasks matched to your wait. No context-switching, no attention residue.</p>
         </div>
       </div>
     </section>
