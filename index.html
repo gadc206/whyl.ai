@@ -95,11 +95,15 @@
       <div class="mock-window">
         <div class="mock-titlebar">
           <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
-          <span class="mock-url" style="margin-left:12px;">whyl_extension_demo.mp4</span>
+          <span class="mock-url" style="margin-left:12px;">whyl_extension_demo.mov</span>
         </div>
-        <div class="video-placeholder">
-          <div class="play-button"><span class="play-triangle"></span></div>
-          <div class="mono muted center-text">▶ drop your screen recording here · 16:9<br><span class="dim">ad appears in the chat box while your AI is thinking</span></div>
+        <div class="video-embed">
+          <video id="demoVideo" preload="metadata" playsinline>
+            <source src="assets/whyl-demo.mov" type="video/quicktime">
+            <source src="assets/whyl-demo.mov" type="video/mp4">
+            Your browser can't play this video inline. <a href="assets/whyl-demo.mov">Download the demo</a>.
+          </video>
+          <button type="button" class="play-button" id="demoPlayButton" aria-label="Play demo video"><span class="play-triangle"></span></button>
         </div>
       </div>
     </section>

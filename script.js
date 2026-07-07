@@ -26,6 +26,20 @@ window.addEventListener("hashchange", () => {
 
 navigate(window.location.hash.replace("#", "") || "home");
 
+// ---- Demo video ----
+
+const demoVideo = document.getElementById("demoVideo");
+const demoPlayButton = document.getElementById("demoPlayButton");
+
+demoPlayButton.addEventListener("click", () => {
+  demoVideo.controls = true;
+  demoVideo.play();
+  demoPlayButton.classList.add("hidden");
+});
+demoVideo.addEventListener("pause", () => demoPlayButton.classList.remove("hidden"));
+demoVideo.addEventListener("play", () => demoPlayButton.classList.add("hidden"));
+demoVideo.addEventListener("ended", () => demoPlayButton.classList.remove("hidden"));
+
 // ---- Hero typing animation ----
 
 const TYPE_WORDS = ["Cursor", "ChatGPT", "Grok", "Claude", "Copilot"];
