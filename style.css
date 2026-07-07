@@ -396,12 +396,6 @@ p { margin: 0; }
 /* ---- waitlist ---- */
 
 .waitlist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
-.perk-list { display: flex; flex-direction: column; gap: 14px; margin-top: 34px; }
-.perk { display: flex; gap: 12px; align-items: center; font-size: 15px; color: #B7BCAF; }
-.perk-icon {
-  width: 28px; height: 28px; border-radius: 8px; background: var(--accent-soft); color: var(--accent);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
 
 .waitlist-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 36px; }
 .waitlist-card .label { text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; display: block; }
@@ -418,7 +412,6 @@ p { margin: 0; }
   font-family: var(--font-body);
 }
 .side-option.active { border-color: rgba(199, 240, 61, 0.5); background: var(--accent-bg-soft); }
-.side-icon { font-size: 22px; margin-bottom: 8px; }
 .side-title { font-family: var(--font-heading); font-weight: 600; font-size: 16px; color: var(--text-heading); }
 .side-sub { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
