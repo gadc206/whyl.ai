@@ -56,6 +56,21 @@ if (experienceTabs) {
   });
 }
 
+// ---- How it works: match dashboard height to the extension mock ----
+
+const userExperienceMockWindow = document.querySelector("#experience-user .mock-window");
+const userExperienceDashboardShell = document.querySelector("#experience-user .dashboard-shell");
+
+if (userExperienceMockWindow && userExperienceDashboardShell) {
+  const syncDashboardHeight = () => {
+    const height = userExperienceMockWindow.offsetHeight;
+    if (height > 0) userExperienceDashboardShell.style.height = `${height}px`;
+  };
+
+  new ResizeObserver(syncDashboardHeight).observe(userExperienceMockWindow);
+  window.addEventListener("resize", syncDashboardHeight);
+}
+
 // ---- How it works: dashboard tabs (Overview / My Goals) ----
 
 const dashboardTabs = document.getElementById("dashboardTabs");
@@ -80,32 +95,51 @@ const PAUSE_MS = 380;
 
 const rotatingWordTextEl = document.getElementById("rotatingWordText");
 
-function typeLoop() {
+function startTypewriter(el, words, opts = {}) {
+  if (!el) return;
+  const { typeSpeed = TYPE_SPEED_MS, deleteSpeed = DELETE_SPEED_MS, holdMs = HOLD_MS, pauseMs = PAUSE_MS } = opts;
   let wordIndex = 0;
 
   function typeWord(word, charIndex) {
-    rotatingWordTextEl.textContent = word.slice(0, charIndex);
+    el.textContent = word.slice(0, charIndex);
     if (charIndex < word.length) {
-      setTimeout(() => typeWord(word, charIndex + 1), TYPE_SPEED_MS);
+      setTimeout(() => typeWord(word, charIndex + 1), typeSpeed);
     } else {
-      setTimeout(() => deleteWord(word, word.length), HOLD_MS);
+      setTimeout(() => deleteWord(word, word.length), holdMs);
     }
   }
 
   function deleteWord(word, charIndex) {
-    rotatingWordTextEl.textContent = word.slice(0, charIndex);
+    el.textContent = word.slice(0, charIndex);
     if (charIndex > 0) {
-      setTimeout(() => deleteWord(word, charIndex - 1), DELETE_SPEED_MS);
+      setTimeout(() => deleteWord(word, charIndex - 1), deleteSpeed);
     } else {
-      wordIndex = (wordIndex + 1) % TYPE_WORDS.length;
-      setTimeout(() => typeWord(TYPE_WORDS[wordIndex], 0), PAUSE_MS);
+      wordIndex = (wordIndex + 1) % words.length;
+      setTimeout(() => typeWord(words[wordIndex], 0), pauseMs);
     }
   }
 
-  typeWord(TYPE_WORDS[wordIndex], 0);
+  typeWord(words[0], 0);
 }
 
-typeLoop();
+startTypewriter(rotatingWordTextEl, TYPE_WORDS);
+
+// ---- Extension mock: rotating prompt bubble ----
+
+const MOCK_PROMPTS = [
+  "Can you refactor this auth middleware to support rate limiting?",
+  "Why is this useEffect firing twice in dev mode?",
+  "Write a migration to add a composite index on (user_id, created_at).",
+  "Help me figure out why this Cypress test is flaky in CI.",
+  "Convert this class component to hooks without breaking the tests.",
+];
+
+startTypewriter(document.getElementById("mockPrompt2"), MOCK_PROMPTS, {
+  typeSpeed: 20,
+  deleteSpeed: 10,
+  holdMs: 2000,
+  pauseMs: 400,
+});
 
 // ---- Ad pitch video (wired per-instance so it can appear more than once) ----
 
@@ -143,7 +177,7 @@ function wireAdVideo(videoId, muteToggleId, progressId, tokensId, tokenIcon) {
 }
 
 wireAdVideo("adVideo", "adMuteToggle", "mockProgress", "mockTokens", "+");
-wireAdVideo("adVideo2", "adMuteToggle2", "mockProgress2", "mockTokens2", "⚡");
+wireAdVideo("adVideo2", "adMuteToggle2", "mockProgress2", "mockTokens2", "+");
 
 // ---- Animated extension mock "thinking" clocks ----
 

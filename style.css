@@ -491,7 +491,12 @@ p { margin: 0; }
 .experience-columns .mock-bubble { font-size: 12px; padding: 8px 11px; }
 .experience-columns .mock-thinking { font-size: 12px; }
 
-.experience-columns .dashboard-body { padding: 18px; }
+.experience-columns .dashboard-shell { display: flex; flex-direction: column; }
+.experience-columns .dashboard-body { padding: 18px; flex: 1; min-height: 0; overflow-y: auto; }
+.experience-columns .dashboard-body::-webkit-scrollbar { width: 8px; }
+.experience-columns .dashboard-body::-webkit-scrollbar-track { background: transparent; }
+.experience-columns .dashboard-body::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
+.experience-columns .dashboard-body::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 .experience-columns .dashboard-group { margin-bottom: 18px; }
 .experience-columns .dashboard-group-label { font-size: 11px; margin-bottom: 8px; }
 .experience-columns .dash-stats,
