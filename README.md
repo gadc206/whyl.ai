@@ -56,6 +56,7 @@ Set the publish directory to `.` (the project root).
 
 ## Files
 
-- `index.html` — page structure, flywheel explainer, wait-time guide
-- `style.css` — neo-brutalist dark styling, animations, responsive layout
-- `script.js` — demo logic (timer, startup ads, token counter, productivity tasks, waitlist form)
+- `index.html` — page structure: home, how it works, showcase (advertiser marketplace), waitlist, dashboard
+- `style.css` — dark theme styling, animations, responsive layout
+- `script.js` — client-side page routing, hero typing animation, animated extension mock, bid marketplace, waitlist form
+- `api/waitlist.js` — Vercel serverless function that writes waitlist signups to Supabase

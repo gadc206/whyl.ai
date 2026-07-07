@@ -1,316 +1,43 @@
-// ---- Data ----
+// ---- Routing ----
 
-const TASKS = {
-  "Physical Reset": [
-    "20-20-20: look 20 feet away for 20 seconds.",
-    "Roll shoulders back. Unclench your jaw.",
-    "Stand and stretch for 30 seconds.",
-    "Grab water. Mild dehydration kills focus.",
-    "Three slow deep breaths. Fifteen seconds, zero context.",
-  ],
-  "Stay in Context": [
-    "Re-read the prompt you just sent.",
-    "Scan the functions above and below where you're working.",
-    "Mental walkthrough: what should the output look like?",
-    "What assumption might be wrong here?",
-    "Trace the expected behavior in your head.",
-  ],
-  "Prep & Plan": [
-    "Draft your next instruction to the AI.",
-    "Review your recent git diff while it's fresh.",
-    "Sketch test scenarios: empty input, API down, no permissions.",
-    "Write the next 3 things you need to do on this task.",
-    "Note one blocker or question for a colleague.",
-  ],
-  "Diffuse Mode": [
-    "Look out a window. Let your mind wander back to the problem.",
-    "Walk to the kitchen. Don't check your phone.",
-    "Doodle or fidget for 30 seconds.",
-    "Close your eyes briefly. Not meditation — just disengage.",
-    "Ask: what would a simpler version of this look like?",
-  ],
-  "Task Hygiene": [
-    "Update your notes: what you finished, what's left.",
-    "Log time worked on this task.",
-    "Bookmark that article — don't read it now.",
-    "Clear exactly one notification. Not five.",
-    "Capture what broke last time before you forget.",
-  ],
-  "Token Earn": [
-    "Watch the startup ad above. That's +5 tokens.",
-    "Another ad, another 5 tokens. Stack them.",
-    "You're earning compute credits right now. Weird flex.",
-    "This ad pays for your next Claude prompt. You're welcome.",
-  ],
-};
+const PAGES = ["home", "how", "ads", "waitlist", "dashboard"];
 
-const STARTUP_ADS = [
-  {
-    startup: "DeployKit",
-    tagline: "Zero-config deploys for side projects you'll abandon in 3 weeks.",
-    cta: "deploykit.dev — YC W26",
-  },
-  {
-    startup: "LintSoul",
-    tagline: "AI that judges your code style harder than your senior engineer.",
-    cta: "lintsoul.com — try free",
-  },
-  {
-    startup: "MergePray",
-    tagline: "CI/CD with built-in prayer circles for your failing tests.",
-    cta: "mergepray.io — seed round open",
-  },
-  {
-    startup: "TabHoarder Pro",
-    tagline: "Organize your 847 browser tabs. Finally.",
-    cta: "tabhoarder.pro — $9/mo",
-  },
-  {
-    startup: "VibeCheck API",
-    tagline: "Sentiment analysis for your commit messages.",
-    cta: "vibecheck.dev — API keys free",
-  },
-  {
-    startup: "StandupBot",
-    tagline: "Automated standups for teams that hate standups.",
-    cta: "standupbot.ai — 14-day trial",
-  },
-  {
-    startup: "RubberDuck++",
-    tagline: "A physical rubber duck with WiFi and opinions.",
-    cta: "rubberduck.plus — pre-order now",
-  },
-  {
-    startup: "ContextSwitch",
-    tagline: "Ironically named tool that actually prevents context switching.",
-    cta: "contextswitch.io — built by ex-Meta",
-  },
-];
+function navigate(page) {
+  if (!PAGES.includes(page)) page = "home";
 
-const LOADING_MESSAGES = [
-  "Claude is cooking… allegedly.",
-  "Your AI agent is either fixing it or making it worse.",
-  "Perfect time to earn tokens and stay in flow.",
-  "Generating confidence… accuracy not guaranteed.",
-  "One small wait for you, one giant hallucination for AI.",
-  "Stacking tokens while the agent stacks bugs.",
-  "Your app is being emotionally processed.",
-  "The agent is thinking. You're earning. Everyone wins.",
-  "Reticulating splines. Redeeming tokens.",
-  "Compiling vibes and roughly 3 bugs.",
-];
-
-const TOKENS_PER_AD = 5;
-const AD_ROTATION_MS = 8000;
-
-// ---- State ----
-
-let timerInterval = null;
-let loadingMessageInterval = null;
-let adInterval = null;
-let seconds = 0;
-let tokens = 0;
-let isRunning = false;
-let adsEnabled = true;
-
-// ---- Elements ----
-
-const primaryAction = document.getElementById("primaryAction");
-const newTaskBtn = document.getElementById("newTaskBtn");
-const timerEl = document.getElementById("timer");
-const loadingMessageEl = document.getElementById("loadingMessage");
-const taskArea = document.getElementById("taskArea");
-const taskCategoryEl = document.getElementById("taskCategory");
-const taskTextEl = document.getElementById("taskText");
-const resultArea = document.getElementById("resultArea");
-const resultTextEl = document.getElementById("resultText");
-const copyResultBtn = document.getElementById("copyResultBtn");
-const adsToggle = document.getElementById("adsToggle");
-const tokenCountEl = document.getElementById("tokenCount");
-const tokenDisplay = document.getElementById("tokenDisplay");
-const adArea = document.getElementById("adArea");
-const adStartupEl = document.getElementById("adStartup");
-const adTaglineEl = document.getElementById("adTagline");
-const adCtaEl = document.getElementById("adCta");
-
-// ---- Helpers ----
-
-function randomItem(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function pickRandomTask() {
-  const categories = Object.keys(TASKS);
-  const category = randomItem(categories);
-  const task = randomItem(TASKS[category]);
-  return { category, task };
-}
-
-function formatTime(totalSeconds) {
-  const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
-  const s = (totalSeconds % 60).toString().padStart(2, "0");
-  return `${m}:${s}`;
-}
-
-function showTask() {
-  const { category, task } = pickRandomTask();
-  taskCategoryEl.textContent = category;
-  taskTextEl.textContent = task;
-  taskArea.hidden = false;
-
-  taskArea.style.animation = "none";
-  requestAnimationFrame(() => {
-    taskArea.style.animation = "";
+  document.querySelectorAll(".page").forEach((el) => {
+    el.hidden = el.id !== `page-${page}`;
   });
-}
-
-function rotateLoadingMessage() {
-  loadingMessageEl.style.opacity = 0;
-  setTimeout(() => {
-    loadingMessageEl.textContent = randomItem(LOADING_MESSAGES);
-    loadingMessageEl.style.opacity = 1;
-  }, 200);
-}
-
-function showAd() {
-  const ad = randomItem(STARTUP_ADS);
-  adStartupEl.textContent = ad.startup;
-  adTaglineEl.textContent = ad.tagline;
-  adCtaEl.textContent = ad.cta;
-
-  adArea.style.animation = "none";
-  requestAnimationFrame(() => {
-    adArea.style.animation = "";
+  document.querySelectorAll(".nav-link").forEach((el) => {
+    el.classList.toggle("active", el.dataset.nav === page);
   });
 
-  if (isRunning && adsEnabled) {
-    tokens += TOKENS_PER_AD;
-    tokenCountEl.textContent = tokens;
-    tokenCountEl.classList.add("token-bump");
-    setTimeout(() => tokenCountEl.classList.remove("token-bump"), 400);
-  }
+  window.location.hash = page;
+  window.scrollTo(0, 0);
 }
 
-function updateAdsVisibility() {
-  adsEnabled = adsToggle.checked;
-  if (isRunning) {
-    adArea.hidden = !adsEnabled;
-    if (adsEnabled && !adInterval) {
-      showAd();
-      adInterval = setInterval(showAd, AD_ROTATION_MS);
-    } else if (!adsEnabled && adInterval) {
-      clearInterval(adInterval);
-      adInterval = null;
-    }
-  }
-}
-
-// ---- Session control ----
-
-function startSession() {
-  isRunning = true;
-  seconds = 0;
-  tokens = 0;
-  adsEnabled = adsToggle.checked;
-  timerEl.textContent = formatTime(seconds);
-  tokenCountEl.textContent = "0";
-
-  resultArea.hidden = true;
-  adsToggle.disabled = true;
-
-  timerInterval = setInterval(() => {
-    seconds += 1;
-    timerEl.textContent = formatTime(seconds);
-  }, 1000);
-
-  loadingMessageInterval = setInterval(rotateLoadingMessage, 2800);
-
-  if (adsEnabled) {
-    adArea.hidden = false;
-    showAd();
-    adInterval = setInterval(showAd, AD_ROTATION_MS);
-  } else {
-    adArea.hidden = true;
-  }
-
-  showTask();
-
-  primaryAction.textContent = "End Session";
-  newTaskBtn.hidden = false;
-}
-
-function endSession() {
-  isRunning = false;
-
-  clearInterval(timerInterval);
-  clearInterval(loadingMessageInterval);
-  clearInterval(adInterval);
-  timerInterval = null;
-  loadingMessageInterval = null;
-  adInterval = null;
-
-  taskArea.hidden = true;
-  adArea.hidden = true;
-  newTaskBtn.hidden = true;
-  adsToggle.disabled = false;
-
-  const savedTime = formatTime(seconds);
-  let resultMsg = `You stayed in flow for ${savedTime}.`;
-  if (tokens > 0) {
-    resultMsg += ` Earned ${tokens} AI tokens — that's ~${tokens} extra prompts.`;
-  } else {
-    resultMsg += ` No doomscrolling. No context-switching.`;
-  }
-  resultTextEl.textContent = resultMsg;
-  resultArea.hidden = false;
-
-  loadingMessageEl.textContent = randomItem(LOADING_MESSAGES);
-
-  primaryAction.textContent = "Start Waiting";
-}
-
-primaryAction.addEventListener("click", () => {
-  if (isRunning) {
-    endSession();
-  } else {
-    startSession();
-  }
+document.querySelectorAll("[data-nav]").forEach((el) => {
+  el.addEventListener("click", () => navigate(el.dataset.nav));
 });
 
-newTaskBtn.addEventListener("click", () => {
-  showTask();
+window.addEventListener("hashchange", () => {
+  navigate(window.location.hash.replace("#", ""));
 });
 
-adsToggle.addEventListener("change", updateAdsVisibility);
-
-copyResultBtn.addEventListener("click", () => {
-  const savedTime = formatTime(seconds);
-  let shareText = `I stayed productive for ${savedTime} while my AI was "thinking" 🧠`;
-  if (tokens > 0) {
-    shareText += `\nEarned ${tokens} AI tokens watching startup ads ⚡`;
-  }
-  shareText += `\n\nwhyl.ai`;
-
-  navigator.clipboard.writeText(shareText).then(() => {
-    const original = copyResultBtn.textContent;
-    copyResultBtn.textContent = "Copied!";
-    setTimeout(() => {
-      copyResultBtn.textContent = original;
-    }, 1800);
-  });
-});
+navigate(window.location.hash.replace("#", "") || "home");
 
 // ---- Hero typing animation ----
 
-const AI_TOOLS = ["CURSOR", "CLAUDE", "CHATGPT", "GEMINI", "REPLIT", "LOVABLE", "GROK"];
-const TYPE_SPEED_MS = 90;
-const DELETE_SPEED_MS = 50;
-const HOLD_MS = 1400;
+const TYPE_WORDS = ["Cursor", "ChatGPT", "Grok", "Claude", "Copilot"];
+const TYPE_SPEED_MS = 95;
+const DELETE_SPEED_MS = 48;
+const HOLD_MS = 1500;
+const PAUSE_MS = 380;
 
 const rotatingWordTextEl = document.getElementById("rotatingWordText");
 
 function typeLoop() {
-  let toolIndex = 0;
+  let wordIndex = 0;
 
   function typeWord(word, charIndex) {
     rotatingWordTextEl.textContent = word.slice(0, charIndex);
@@ -326,56 +53,174 @@ function typeLoop() {
     if (charIndex > 0) {
       setTimeout(() => deleteWord(word, charIndex - 1), DELETE_SPEED_MS);
     } else {
-      toolIndex = (toolIndex + 1) % AI_TOOLS.length;
-      setTimeout(() => typeWord(AI_TOOLS[toolIndex], 0), 300);
+      wordIndex = (wordIndex + 1) % TYPE_WORDS.length;
+      setTimeout(() => typeWord(TYPE_WORDS[wordIndex], 0), PAUSE_MS);
     }
   }
 
-  typeWord(AI_TOOLS[toolIndex], 0);
+  typeWord(TYPE_WORDS[wordIndex], 0);
 }
 
 typeLoop();
 
+// ---- Animated extension mock ----
+
+const MOCK_ADS = [
+  { title: "Nimbus", initial: "N", tag: "devtools · seed", desc: "Edge cron for AI agents — retries without a server." },
+  { title: "Parsel", initial: "P", tag: "API · pre-seed", desc: "Typed API mocks that stay in sync with your spec." },
+  { title: "Cadence", initial: "C", tag: "productivity", desc: "Standups that write themselves from your commits." },
+];
+
+const mockClock = document.getElementById("mockClock");
+const mockProgress = document.getElementById("mockProgress");
+const mockTokens = document.getElementById("mockTokens");
+const mockAdTitle = document.getElementById("mockAdTitle");
+const mockAdInitial = document.getElementById("mockAdInitial");
+const mockAdTag = document.getElementById("mockAdTag");
+const mockAdDesc = document.getElementById("mockAdDesc");
+
+let mockElapsed = 0;
+let mockTokenCount = 0;
+let mockAdIndex = 0;
+
+function renderMockAd() {
+  const ad = MOCK_ADS[mockAdIndex];
+  mockAdTitle.textContent = ad.title;
+  mockAdInitial.textContent = ad.initial;
+  mockAdTag.textContent = ad.tag;
+  mockAdDesc.textContent = ad.desc;
+}
+
+renderMockAd();
+
+setInterval(() => {
+  mockElapsed += 1;
+  const mm = String(Math.floor(mockElapsed / 60)).padStart(2, "0");
+  const ss = String(mockElapsed % 60).padStart(2, "0");
+  mockClock.textContent = `${mm}:${ss}`;
+
+  const cyc = mockElapsed % 15;
+  mockProgress.style.width = Math.round((cyc / 15) * 100) + "%";
+
+  if (cyc === 0) {
+    mockAdIndex = (mockAdIndex + 1) % MOCK_ADS.length;
+    renderMockAd();
+    mockTokenCount += 25;
+    mockTokens.textContent = `⚡ ${mockTokenCount} tokens`;
+    mockTokens.classList.add("token-bump");
+    setTimeout(() => mockTokens.classList.remove("token-bump"), 400);
+  }
+}, 1000);
+
+// ---- Showcase marketplace ----
+
+const CAMPAIGNS = [
+  { name: "Ramp", initial: "R", bid: 4.20, impr: "128k" },
+  { name: "Vercel", initial: "V", bid: 3.85, impr: "96k" },
+  { name: "Linear", initial: "L", bid: 2.10, impr: "54k" },
+  { name: "Neon", initial: "N", bid: 1.60, impr: "40k" },
+  { name: "Resend", initial: "S", bid: 1.15, impr: "22k" },
+];
+
+const bidRange = document.getElementById("bidRange");
+const blocksRange = document.getElementById("blocksRange");
+const bidValueEl = document.getElementById("bidValue");
+const blocksValueEl = document.getElementById("blocksValue");
+const rankPhraseEl = document.getElementById("rankPhrase");
+const totalCostEl = document.getElementById("totalCost");
+const reachEl = document.getElementById("reach");
+const devPayoutEl = document.getElementById("devPayout");
+const orderbookRows = document.getElementById("orderbookRows");
+const liveBiddersEl = document.getElementById("liveBidders");
+
+function fmt(n) {
+  return n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+}
+
+function renderMarketplace() {
+  const bid = parseFloat(bidRange.value);
+  const blocks = parseInt(blocksRange.value, 10);
+
+  bidValueEl.textContent = "$" + bid.toFixed(2);
+  blocksValueEl.textContent = blocks;
+
+  const you = { name: "Your campaign", initial: "★", bid, impr: blocks + "k", isYou: true };
+  const merged = CAMPAIGNS.concat([you]).sort((a, b) => b.bid - a.bid);
+  const rank = merged.findIndex((c) => c.isYou) + 1;
+
+  orderbookRows.innerHTML = "";
+  merged.forEach((c, i) => {
+    const r = i + 1;
+    const serving = r <= 2;
+    const row = document.createElement("div");
+    row.className = "ob-row" + (c.isYou ? " you" : "");
+    row.innerHTML = `
+      <div class="ob-rank">${r}</div>
+      <div class="ob-name-wrap">
+        <div class="ob-chip">${c.initial}</div>
+        <div>
+          <div class="ob-name">${c.name}</div>
+          <div class="ob-impr">${c.impr} left</div>
+        </div>
+      </div>
+      <div class="ob-bid">$${c.bid.toFixed(2)}</div>
+      <div class="ob-status${c.isYou ? " you" : serving ? " serving" : ""}">${c.isYou ? "you" : serving ? "● serving" : "queued"}</div>
+    `;
+    orderbookRows.appendChild(row);
+  });
+
+  const totalCost = bid * blocks;
+  rankPhraseEl.textContent = rank === 1 ? "#1 — top slot" : `#${rank} in queue`;
+  totalCostEl.textContent = "$" + fmt(totalCost);
+  reachEl.textContent = fmt(blocks * 1000);
+  devPayoutEl.textContent = "$" + fmt(totalCost * 0.5);
+  liveBiddersEl.textContent = CAMPAIGNS.length + 1;
+}
+
+bidRange.addEventListener("input", renderMarketplace);
+blocksRange.addEventListener("input", renderMarketplace);
+renderMarketplace();
+
 // ---- Waitlist ----
 
 const waitlistForm = document.getElementById("waitlistForm");
-const waitlistMessage = document.getElementById("waitlistMessage");
+const waitlistSuccess = document.getElementById("waitlistSuccess");
+const waitlistSubmit = document.getElementById("waitlistSubmit");
 const emailInput = document.getElementById("emailInput");
-const companyInput = document.getElementById("companyInput");
-const tabWatcher = document.getElementById("tabWatcher");
-const tabAdvertiser = document.getElementById("tabAdvertiser");
+const secondaryInput = document.getElementById("secondaryInput");
+const secondaryLabel = document.getElementById("secondaryLabel");
+const pickEarn = document.getElementById("pickEarn");
+const pickAd = document.getElementById("pickAd");
 
-let waitlistRole = "watcher";
+let waitlistSide = "earn";
 
-function setWaitlistRole(role) {
-  waitlistRole = role;
-  tabWatcher.classList.toggle("active", role === "watcher");
-  tabAdvertiser.classList.toggle("active", role === "advertiser");
-  companyInput.hidden = role !== "advertiser";
-  companyInput.required = role === "advertiser";
-  if (role !== "advertiser") companyInput.value = "";
+function setWaitlistSide(side) {
+  waitlistSide = side;
+  pickEarn.classList.toggle("active", side === "earn");
+  pickAd.classList.toggle("active", side === "ad");
+
+  if (side === "ad") {
+    secondaryLabel.textContent = "company / startup name";
+    secondaryInput.placeholder = "Acme Inc.";
+    secondaryInput.required = true;
+  } else {
+    secondaryLabel.textContent = "which tools? (optional)";
+    secondaryInput.placeholder = "Claude, Cursor, Copilot…";
+    secondaryInput.required = false;
+  }
 }
 
-tabWatcher.addEventListener("click", () => setWaitlistRole("watcher"));
-tabAdvertiser.addEventListener("click", () => setWaitlistRole("advertiser"));
-
-function lockWaitlistForm() {
-  waitlistForm.querySelector("button").disabled = true;
-  emailInput.disabled = true;
-  companyInput.disabled = true;
-  tabWatcher.disabled = true;
-  tabAdvertiser.disabled = true;
-}
+pickEarn.addEventListener("click", () => setWaitlistSide("earn"));
+pickAd.addEventListener("click", () => setWaitlistSide("ad"));
 
 waitlistForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!emailInput.value) return;
-  if (waitlistRole === "advertiser" && !companyInput.value) return;
+  if (waitlistSide === "ad" && !secondaryInput.value) return;
 
-  const submitBtn = waitlistForm.querySelector("button");
-  const originalLabel = submitBtn.textContent;
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Joining...";
+  const originalLabel = waitlistSubmit.textContent;
+  waitlistSubmit.disabled = true;
+  waitlistSubmit.textContent = "joining…";
 
   try {
     const res = await fetch("/api/waitlist", {
@@ -383,23 +228,23 @@ waitlistForm.addEventListener("submit", async (e) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: emailInput.value,
-        role: waitlistRole,
-        company: waitlistRole === "advertiser" ? companyInput.value : undefined,
+        role: waitlistSide === "ad" ? "advertiser" : "watcher",
+        company: waitlistSide === "ad" ? secondaryInput.value : undefined,
       }),
     });
 
     if (!res.ok) throw new Error("Request failed");
 
-    waitlistMessage.textContent =
-      waitlistRole === "advertiser"
-        ? "You're on the advertiser list. We'll reach out about putting your startup in front of coders."
-        : "You're on the list. Start stacking tokens soon.";
-    waitlistMessage.hidden = false;
-    lockWaitlistForm();
+    waitlistSubmit.textContent = "you're in ✓";
+    waitlistSuccess.hidden = false;
+    emailInput.disabled = true;
+    secondaryInput.disabled = true;
+    pickEarn.disabled = true;
+    pickAd.disabled = true;
   } catch (err) {
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalLabel;
-    waitlistMessage.textContent = "Something went wrong. Please try again.";
-    waitlistMessage.hidden = false;
+    waitlistSubmit.disabled = false;
+    waitlistSubmit.textContent = originalLabel;
+    waitlistSuccess.textContent = "Something went wrong. Please try again.";
+    waitlistSuccess.hidden = false;
   }
 });

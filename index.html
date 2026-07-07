@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Whyl — Earn Tokens While Your AI Thinks</title>
-  <meta name="description" content="Whyl turns AI wait times into AI tokens. Watch startup ads, do a tiny task, stay productive instead of doomscrolling." />
+  <title>Whyl — AI Thinks, You Earn</title>
+  <meta name="description" content="Whyl turns AI wait times into AI tokens. Watch 15-second startup pitches while Claude, Cursor, or ChatGPT thinks, then showcase your own startup back." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -15,216 +15,423 @@
   <!-- NAV -->
   <header class="nav">
     <div class="nav-inner">
-      <div class="logo">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
-      <a class="nav-link" href="#waitlist">join waitlist</a>
+      <div class="logo" data-nav="home">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
+      <nav class="nav-links">
+        <button type="button" class="nav-link" data-nav="home">home</button>
+        <button type="button" class="nav-link" data-nav="how">how_it_works</button>
+        <button type="button" class="nav-link" data-nav="ads">showcase</button>
+        <button type="button" class="nav-link" data-nav="dashboard">dashboard</button>
+      </nav>
+      <button type="button" class="btn btn-primary btn-small" data-nav="waitlist">join waitlist →</button>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-inner">
-      <h1>Whyl <span class="rotating-word" id="rotatingWord"><span id="rotatingWordText"></span><span class="cursor">_</span></span><br/>Thinks,<br/>You Earn.</h1>
-      <p class="subtitle">Earn AI tokens. Stay in flow. Skip the doomscroll.</p>
-      <p class="tagline">Watch startup ads during AI wait times and get more Claude, Cursor, or ChatGPT credits.</p>
+  <!-- ============ HOME ============ -->
+  <main class="page" id="page-home">
 
-      <div class="hero-buttons">
-        <a href="#demo" class="btn btn-primary">Try the Demo</a>
-        <a href="#how-it-works" class="btn btn-secondary">How It Works</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <section class="how-it-works" id="how-it-works">
-    <div class="section-inner">
-      <h2>The flywheel</h2>
-      <p class="section-sub">Developers want ads. Startups want developers. AI rate limits want to die.</p>
-
-      <div class="flywheel-grid">
-        <div class="flywheel-card">
-          <span class="flywheel-step">01</span>
-          <h3>You opt in</h3>
-          <p>While Claude (or Cursor, Copilot, whatever) runs, you choose to watch short startup ads instead of doomscrolling Slack.</p>
-        </div>
-        <div class="flywheel-card">
-          <span class="flywheel-step">02</span>
-          <h3>You earn tokens</h3>
-          <p>Each ad watched = AI compute tokens. Redeem them for more prompts, longer agent runs, fewer rate-limit walls.</p>
-        </div>
-        <div class="flywheel-card">
-          <span class="flywheel-step">03</span>
-          <h3>Startups pay us</h3>
-          <p>Early-stage companies pay to showcase their product to coders who actually care — during the one moment they're guaranteed to be staring at a screen.</p>
-        </div>
-        <div class="flywheel-card">
-          <span class="flywheel-step">04</span>
-          <h3>You stay productive</h3>
-          <p>Between ads, get research-backed micro-tasks matched to your wait time. No context-switching. No attention residue.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DEMO -->
-  <section class="demo" id="demo">
-    <div class="section-inner">
-      <h2>Claude is thinking. You can earn.</h2>
-      <p class="section-sub">Toggle ads on, start waiting, do a tiny task between pitches.</p>
-
-      <div class="card demo-card">
-        <div class="demo-mode">
-          <label class="toggle-label">
-            <input type="checkbox" id="adsToggle" checked />
-            <span class="toggle-switch"></span>
-            <span class="toggle-text">Watch startup ads for AI tokens</span>
-          </label>
-          <div class="token-display" id="tokenDisplay">
-            <span class="token-icon">⚡</span>
-            <span class="token-count" id="tokenCount">0</span>
-            <span class="token-label">tokens</span>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge"><span class="dot"></span>chrome extension · private beta</div>
+          <h1 class="hero-title">Whyl <span class="accent" id="rotatingWordText"></span><span class="hero-cursor"></span> thinks,<br>you earn.</h1>
+          <p class="hero-sub">You're building something with AI. While it thinks, watch a 15-second pitch from another builder, stack tokens for more compute, then put your own startup in front of the same crowd.</p>
+          <div class="hero-buttons">
+            <button type="button" class="btn btn-primary" data-nav="waitlist">Get early access</button>
+            <button type="button" class="btn btn-secondary" data-nav="how">See how it works</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><div class="stat-num">15s</div><div class="stat-label">per pitch</div></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><div class="stat-num">2-way</div><div class="stat-label">discover &amp; showcase</div></div>
+            <div class="stat-divider"></div>
+            <div class="stat"><div class="stat-num accent">∞</div><div class="stat-label">rate-limit walls, gone</div></div>
           </div>
         </div>
 
-        <div class="ad-box" id="adArea" hidden>
-          <span class="ad-badge">Sponsored</span>
-          <p class="ad-startup" id="adStartup"></p>
-          <p class="ad-tagline" id="adTagline"></p>
-          <p class="ad-cta" id="adCta"></p>
-        </div>
+        <!-- ANIMATED EXTENSION MOCK -->
+        <div class="mock-window glow">
+          <div class="mock-titlebar">
+            <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+            <span class="mock-url">claude.ai/new</span>
+            <span class="mock-status"><span class="dot"></span>whyl on</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-bubble">Refactor the auth middleware to use the new token store.</div>
+            <div class="mock-thinking">
+              <span class="thinking-dots"><span></span><span></span><span></span></span>
+              Claude is thinking… <span class="mono" id="mockClock">00:00</span>
+            </div>
 
-        <p class="loading-message" id="loadingMessage">Claude is cooking… allegedly.</p>
-
-        <div class="loader">
-          <span></span><span></span><span></span>
-        </div>
-
-        <div class="task-box" id="taskArea" hidden>
-          <span class="task-category" id="taskCategory">Next Prompt</span>
-          <p class="task-text" id="taskText"></p>
-        </div>
-
-        <div class="result-box" id="resultArea" hidden>
-          <p class="result-text" id="resultText"></p>
-          <button class="btn btn-secondary btn-small" id="copyResultBtn">Copy for X</button>
-        </div>
-
-        <div class="demo-controls">
-          <button class="btn btn-primary" id="primaryAction">Start Waiting</button>
-          <button class="btn btn-secondary" id="newTaskBtn" hidden>New Task</button>
-          <span class="timer" id="timer">00:00</span>
+            <div class="ad-card">
+              <div class="ad-card-top">
+                <span class="ad-eyebrow">whyl · sponsored pitch</span>
+                <span class="mono muted" id="mockAdTag">devtools · seed</span>
+              </div>
+              <div class="ad-card-body">
+                <div class="ad-avatar" id="mockAdInitial">N</div>
+                <div class="ad-copy">
+                  <div class="ad-title" id="mockAdTitle">Nimbus</div>
+                  <div class="ad-desc" id="mockAdDesc">Edge cron for AI agents — retries without a server.</div>
+                </div>
+              </div>
+              <div class="ad-progress"><div class="ad-progress-bar" id="mockProgress"></div></div>
+              <div class="ad-card-bottom">
+                <span class="mono muted">watching pitch…</span>
+                <span class="mono accent" id="mockTokens">⚡ 0 tokens</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- TASK CATEGORIES -->
-  <section class="categories">
-    <div class="section-inner">
-      <h2>What you'll get</h2>
-      <p class="section-sub">Research-backed micro-tasks matched to unpredictable AI wait times. Picked at random.</p>
-
-      <div class="category-grid">
-        <div class="category-card">
-          <h3>👁 Physical Reset</h3>
-          <p>20-20-20 eye rule, posture check, three deep breaths. Drop instantly when output arrives.</p>
+    <!-- DEMO VIDEO -->
+    <section class="section">
+      <div class="section-head center">
+        <div class="eyebrow">the 90-second demo</div>
+        <h2>See exactly how it works</h2>
+      </div>
+      <div class="mock-window">
+        <div class="mock-titlebar">
+          <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+          <span class="mock-url" style="margin-left:12px;">whyl_extension_demo.mp4</span>
         </div>
-        <div class="category-card">
-          <h3>💬 Stay in Context</h3>
-          <p>Re-read your prompt, scan nearby code, mental walkthrough of expected behavior.</p>
-        </div>
-        <div class="category-card">
-          <h3>📝 Prep & Plan</h3>
-          <p>Draft your next instruction, review your git diff, sketch test scenarios.</p>
-        </div>
-        <div class="category-card">
-          <h3>🧠 Diffuse Mode</h3>
-          <p>Window gazing, short walk, doodle, close eyes briefly. Let your brain keep working.</p>
-        </div>
-        <div class="category-card">
-          <h3>📋 Task Hygiene</h3>
-          <p>Update notes, log time worked, note a blocker. Write-only — no new context loaded.</p>
-        </div>
-        <div class="category-card">
-          <h3>⚡ Token Earn</h3>
-          <p>Watch a 15-second startup pitch. Stack tokens for more AI compute. Coders actually want this.</p>
+        <div class="video-placeholder">
+          <div class="play-button"><span class="play-triangle"></span></div>
+          <div class="mono muted center-text">▶ drop your screen recording here · 16:9<br><span class="dim">ad appears in the chat box while your AI is thinking</span></div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- WAIT TIME GUIDE -->
-  <section class="wait-guide">
-    <div class="section-inner">
-      <h2>Match activity to uncertainty</h2>
-      <p class="section-sub">You don't know if it's 30 seconds or 5 minutes. Choose things you can drop instantly.</p>
+    <!-- FLYWHEEL -->
+    <section class="section">
+      <div class="section-head">
+        <div class="eyebrow">the flywheel</div>
+        <h2 class="max-w">Builders discover builders. Everyone earns. Rate limits want to die.</h2>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-num">01</div>
+          <h3>You opt in</h3>
+          <p>While your AI runs, choose to watch a short pitch from a fellow builder instead of drifting off.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">02</div>
+          <h3>You earn tokens</h3>
+          <p>Each pitch watched = AI compute. Redeem for more prompts, longer agent runs, fewer walls.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">03</div>
+          <h3>You showcase back</h3>
+          <p>Spend those tokens — or a small bid — to pitch <em>your</em> project to builders at the one moment they're fully watching.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">04</div>
+          <h3>You stay productive</h3>
+          <p>Between ads, get micro-tasks matched to your wait. No context-switching, no attention residue.</p>
+        </div>
+      </div>
+    </section>
 
-      <div class="wait-table">
-        <div class="wait-row wait-header">
-          <span>Wait</span>
-          <span>Best move</span>
+    <!-- MICRO TASKS -->
+    <section class="section section-alt">
+      <div class="section-head">
+        <div class="eyebrow">between the pitches</div>
+        <h2>Research-backed micro-tasks</h2>
+        <p class="section-sub">Matched to unpredictable wait times, picked at random. Everything you can drop the instant output arrives.</p>
+      </div>
+      <div class="grid-3">
+        <div class="card"><div class="card-icon">👁</div><h3>Physical Reset</h3><p>20-20-20 eye rule, posture check, three deep breaths.</p></div>
+        <div class="card"><div class="card-icon">💬</div><h3>Stay in Context</h3><p>Re-read your prompt, scan nearby code, walk through expected behavior.</p></div>
+        <div class="card"><div class="card-icon">📝</div><h3>Prep &amp; Plan</h3><p>Draft your next instruction, review your git diff, sketch test scenarios.</p></div>
+        <div class="card"><div class="card-icon">🧠</div><h3>Diffuse Mode</h3><p>Window gazing, short walk, doodle. Let your brain keep working.</p></div>
+        <div class="card"><div class="card-icon">📋</div><h3>Task Hygiene</h3><p>Update notes, log time, note a blocker. Write-only — no new context.</p></div>
+        <div class="card card-accent"><div class="card-icon">⚡</div><h3 class="accent">Token Earn</h3><p>Watch a 15-second startup pitch. Stack tokens for more compute.</p></div>
+      </div>
+    </section>
+
+    <!-- MATCH ACTIVITY -->
+    <section class="section">
+      <div class="section-head">
+        <div class="eyebrow">match activity to uncertainty</div>
+        <h2>You don't know if it's 30 seconds or 5 minutes</h2>
+      </div>
+      <div class="table">
+        <div class="table-row table-head"><span>wait</span><span>best move</span></div>
+        <div class="table-row"><span class="mono accent">30s – 1m</span><span>Posture check, deep breaths, 20-20-20.</span></div>
+        <div class="table-row"><span class="mono accent">1 – 3m</span><span>Re-read prompt, scan surrounding code, hydrate.</span></div>
+        <div class="table-row"><span class="mono accent">3 – 5m</span><span>Draft next instruction, review changes, stretch.</span></div>
+        <div class="table-row"><span class="mono accent">5m+</span><span>Diffuse thinking, update notes, watch a pitch for tokens.</span></div>
+      </div>
+      <div class="tag-row">
+        <span class="mono muted">context destroyers →</span>
+        <span class="tag-bad">✕ Doomscrolling</span>
+        <span class="tag-bad">✕ Checking slack</span>
+        <span class="tag-bad">✕ losing focus</span>
+        <span class="tag-bad">✕ New tasks</span>
+        <span class="tag-bad">✕ Refresh spam</span>
+      </div>
+    </section>
+
+    <!-- CTA BAND -->
+    <section class="section">
+      <div class="cta-band">
+        <h2>Stop doomscrolling the spinner.</h2>
+        <p>Join the waitlist — we'll email you the moment whyl launches.</p>
+        <button type="button" class="btn btn-primary" data-nav="waitlist">Claim your spot →</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <main class="page" id="page-how" hidden>
+    <section class="section narrow">
+      <div class="section-head">
+        <div class="eyebrow">how it works</div>
+        <h1 class="page-title">Every spinner is a<br>tiny opportunity.</h1>
+        <p class="section-sub">AI wait times are unpredictable, unavoidable, and right now completely wasted. Whyl turns each one into tokens and a moment of genuine recovery.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div>
+            <h3>Install &amp; toggle on</h3>
+            <p>Whyl lives as a Chrome extension beside your AI tools. Flip it on and it quietly watches for the "thinking" state in Claude, Cursor, Copilot, or ChatGPT.</p>
+          </div>
         </div>
-        <div class="wait-row">
-          <span class="wait-time">30s – 1 min</span>
-          <span>Posture check, deep breaths, 20-20-20</span>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div>
+            <h3>The moment it stalls, a pitch appears</h3>
+            <p>A single 15-second startup pitch slides into the chat box — right where you're already looking. No new tab, no popup, no context leaving the screen.</p>
+          </div>
         </div>
-        <div class="wait-row">
-          <span class="wait-time">1 – 3 min</span>
-          <span>Re-read prompt, scan surrounding code, hydrate</span>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div>
+            <h3>Tokens land in your balance</h3>
+            <p>Finish the pitch and compute tokens drop straight into your wallet — redeemable for more prompts and longer agent runs across the tools you already use.</p>
+          </div>
         </div>
-        <div class="wait-row">
-          <span class="wait-time">3 – 5 min</span>
-          <span>Draft next instruction, review changes, stretch</span>
-        </div>
-        <div class="wait-row">
-          <span class="wait-time">5+ min</span>
-          <span>Diffuse thinking, update notes, watch an ad for tokens</span>
+        <div class="step step-last">
+          <div class="step-num">04</div>
+          <div>
+            <h3>Longer waits get a micro-task</h3>
+            <p>If the wait stretches, Whyl suggests a research-backed reset sized to the estimate — always something you can abandon the second output arrives.</p>
+          </div>
         </div>
       </div>
 
-      <div class="avoid-box">
-        <h3>Avoid these (context destroyers)</h3>
-        <div class="avoid-tags">
-          <span>✕ Slack</span>
-          <span>✕ Social media</span>
-          <span>✕ Other PRs</span>
-          <span>✕ New tasks</span>
-          <span>✕ Refresh spam</span>
+      <div class="cta-band">
+        <h2>Try the live demo above, or reserve your spot.</h2>
+        <div class="hero-buttons center">
+          <button type="button" class="btn btn-secondary" data-nav="home">← back to demo</button>
+          <button type="button" class="btn btn-primary" data-nav="waitlist">Join waitlist →</button>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <!-- WAITLIST -->
-  <section class="waitlist" id="waitlist">
-    <div class="section-inner">
-      <h2>Join the whyl waitlist</h2>
-      <p class="section-sub">Want this as a Chrome extension, or want to put your startup in front of coders? Pick a side — we'll email you when whyl launches.</p>
+  <!-- ============ SHOWCASE / ADVERTISERS ============ -->
+  <main class="page" id="page-ads" hidden>
+    <section class="section narrow center-text">
+      <div class="eyebrow">showcase your startup</div>
+      <h1 class="page-title max-w center">Put your build in front of builders, the moment they're actually watching.</h1>
+      <p class="section-sub center max-w-sm">No banner blindness. No skippable pre-rolls. Your 15-second pitch lands in the chat box while a fellow founder waits on their AI, full attention, zero competition.</p>
+      <button type="button" class="btn btn-primary" data-nav="waitlist">Showcase on whyl →</button>
+    </section>
 
-      <div class="waitlist-tabs" role="tablist">
-        <button type="button" class="waitlist-tab active" id="tabWatcher" data-role="watcher">⚡ I want to earn tokens</button>
-        <button type="button" class="waitlist-tab" id="tabAdvertiser" data-role="advertiser">📣 I want to advertise</button>
+    <section class="section narrow">
+      <div class="grid-3">
+        <div class="card"><div class="stat-big">100%</div><p>on-screen attention — the pitch is the thing they're staring at</p></div>
+        <div class="card"><div class="stat-big">15s</div><p>of undivided time, opted into — not interrupted</p></div>
+        <div class="card"><div class="stat-big">1:1</div><p>builder intent — every viewer is mid-build, wants what you shipped</p></div>
+      </div>
+    </section>
+
+    <section class="section narrow">
+      <div class="section-head center">
+        <div class="eyebrow">the pitch marketplace</div>
+        <h2>No fixed rates. You set the price.</h2>
+        <p class="section-sub center max-w-sm">It's an open auction. Bid per <strong>block</strong> (1,000 completed pitches). Highest bid serves first, outbid the top to jump the queue, or bid low and wait your turn. You only pay for completed views.</p>
       </div>
 
-      <form class="waitlist-form" id="waitlistForm">
-        <input
-          type="email"
-          id="emailInput"
-          class="waitlist-input"
-          placeholder="you@example.com"
-          required
-        />
-        <input
-          type="text"
-          id="companyInput"
-          class="waitlist-input"
-          placeholder="Company / startup name"
-          hidden
-        />
-        <button type="submit" class="btn btn-primary">Join the waitlist</button>
-      </form>
-      <p class="waitlist-message" id="waitlistMessage" hidden></p>
-    </div>
-  </section>
+      <div class="marketplace">
+        <!-- LIVE ORDER BOOK -->
+        <div class="orderbook">
+          <div class="orderbook-head">
+            <div class="orderbook-title">Live order book</div>
+            <div class="mono accent live-indicator"><span class="dot"></span><span id="liveBidders">6</span> advertisers bidding</div>
+          </div>
+          <div class="orderbook-cols mono muted">
+            <div>#</div><div>advertiser</div><div class="right">bid / block</div><div class="right">status</div>
+          </div>
+          <div id="orderbookRows"></div>
+        </div>
+
+        <!-- BID PANEL -->
+        <div class="bid-panel">
+          <div class="bid-panel-title">Place your bid</div>
+
+          <div class="bid-row">
+            <label class="mono muted">bid per block</label>
+            <span class="bid-value accent" id="bidValue">$2.75</span>
+          </div>
+          <input type="range" min="0.5" max="6" step="0.05" value="2.75" id="bidRange" class="range">
+
+          <div class="bid-row">
+            <label class="mono muted">blocks (1k pitches each)</label>
+            <span class="bid-value" id="blocksValue">20</span>
+          </div>
+          <input type="range" min="1" max="120" step="1" value="20" id="blocksRange" class="range">
+
+          <div class="bid-summary">
+            <div class="bid-summary-top">
+              <span class="mono muted">you'd serve</span>
+              <span class="bid-rank accent" id="rankPhrase">#1 — top slot</span>
+            </div>
+            <div class="bid-summary-divider"></div>
+            <div class="bid-summary-row"><span>total budget</span><span class="mono" id="totalCost">$55</span></div>
+            <div class="bid-summary-row"><span>≈ pitches reached</span><span class="mono" id="reach">20,000</span></div>
+            <div class="bid-summary-row"><span>to fellow builders (50%)</span><span class="mono accent" id="devPayout">$27</span></div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" data-nav="waitlist">Fund this campaign →</button>
+          <p class="mono dim center-text small">no minimum · pause or re-bid anytime</p>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:36px;">
+        <div class="card card-sm"><h3 class="sm">Pay per completed view</h3><p>Skips and half-watches are free. Your budget only burns on a full 15-second pitch.</p></div>
+        <div class="card card-sm"><h3 class="sm">Re-bid anytime</h3><p>Losing the top slot? Raise your bid and jump the queue instantly. No contracts.</p></div>
+        <div class="card card-sm"><h3 class="sm">Half funds the devs</h3><p>50% of every bid becomes AI tokens for the builder who watched. That's the flywheel.</p></div>
+      </div>
+    </section>
+
+    <section class="section narrow">
+      <div class="cta-band cta-row">
+        <div>
+          <h2 class="sm">Put your product in the flow.</h2>
+          <p>Reserve advertiser access for the beta cohort.</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-nav="waitlist">Reserve access →</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ WAITLIST ============ -->
+  <main class="page" id="page-waitlist" hidden>
+    <section class="section narrow waitlist-grid">
+      <div>
+        <div class="eyebrow">join the waitlist</div>
+        <h1 class="page-title">Pick a side.<br>We'll email you at launch.</h1>
+        <p class="section-sub">Want whyl as a Chrome extension, or want to put your startup in front of other builders? Choose one — early access ships to the waitlist first.</p>
+        <div class="perk-list">
+          <div class="perk"><span class="perk-icon">⚡</span>First tokens are on us when you join</div>
+          <div class="perk"><span class="perk-icon">🔒</span>No spam, no selling your data</div>
+          <div class="perk"><span class="perk-icon">🚪</span>Leave anytime, one click</div>
+        </div>
+      </div>
+
+      <div class="waitlist-card">
+        <div class="mono muted label">I want to…</div>
+        <div class="side-picker">
+          <button type="button" class="side-option active" id="pickEarn" data-side="earn">
+            <div class="side-icon">⚡</div>
+            <div class="side-title">Earn tokens</div>
+            <div class="side-sub">I'm building with AI</div>
+          </button>
+          <button type="button" class="side-option" id="pickAd" data-side="ad">
+            <div class="side-icon">📣</div>
+            <div class="side-title">Advertise</div>
+            <div class="side-sub">I have a startup</div>
+          </button>
+        </div>
+
+        <form id="waitlistForm">
+          <label class="mono muted label" for="emailInput">email</label>
+          <input type="email" id="emailInput" class="input" placeholder="you@company.dev" required>
+
+          <label class="mono muted label" id="secondaryLabel" for="secondaryInput">which tools? (optional)</label>
+          <input type="text" id="secondaryInput" class="input" placeholder="Claude, Cursor, Copilot…">
+
+          <button type="submit" class="btn btn-primary btn-block" id="waitlistSubmit">Join the waitlist →</button>
+        </form>
+        <div class="waitlist-success" id="waitlistSuccess" hidden>✓ you're on the list — check your inbox</div>
+        <p class="mono dim center-text small built-with">built_with: 34,000 minutes of AI thinking</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ DASHBOARD ============ -->
+  <main class="page" id="page-dashboard" hidden>
+    <section class="section">
+      <div class="dash-head">
+        <div>
+          <div class="mono muted uppercase small">good afternoon, dev</div>
+          <h1 class="page-title sm">Your token wallet</h1>
+        </div>
+        <div class="dash-status mono accent"><span class="dot"></span>whyl active on 3 tools</div>
+      </div>
+
+      <div class="dash-stats">
+        <div class="card card-accent">
+          <div class="mono muted uppercase small">token balance</div>
+          <div class="dash-num accent">4,820</div>
+          <div class="dash-sub">+312 this week · redeemable across Claude, Cursor &amp; ChatGPT</div>
+        </div>
+        <div class="card">
+          <div class="mono muted uppercase small">pitches watched</div>
+          <div class="dash-num">318</div>
+          <div class="dash-sub">≈ 79 min reclaimed</div>
+        </div>
+        <div class="card">
+          <div class="mono muted uppercase small">focus streak</div>
+          <div class="dash-num">12 <span class="dash-num-unit">days</span></div>
+          <div class="dash-sub">0 doomscroll relapses</div>
+        </div>
+      </div>
+
+      <div class="dash-cols">
+        <div class="card">
+          <div class="dash-card-head">
+            <h3 class="sm">Tokens earned · last 7 days</h3>
+            <span class="mono accent">▲ 18%</span>
+          </div>
+          <div class="bars">
+            <div class="bar-col"><div class="bar" style="height:46%"></div><span class="mono muted">Mo</span></div>
+            <div class="bar-col"><div class="bar" style="height:62%"></div><span class="mono muted">Tu</span></div>
+            <div class="bar-col"><div class="bar" style="height:38%"></div><span class="mono muted">We</span></div>
+            <div class="bar-col"><div class="bar" style="height:78%"></div><span class="mono muted">Th</span></div>
+            <div class="bar-col"><div class="bar" style="height:56%"></div><span class="mono muted">Fr</span></div>
+            <div class="bar-col"><div class="bar bar-peak" style="height:90%"></div><span class="mono accent">Sa</span></div>
+            <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Su</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="sm">Redeem tokens</h3>
+          <div class="redeem-list">
+            <div class="redeem-row"><div><div class="redeem-title">+500 Claude tokens</div><div class="mono muted small">costs 120 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+            <div class="redeem-row"><div><div class="redeem-title">Cursor Pro · 1 week</div><div class="mono muted small">costs 900 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+            <div class="redeem-row"><div><div class="redeem-title">+2,000 ChatGPT credits</div><div class="mono muted small">costs 400 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card activity-card">
+        <h3 class="sm">Recent waits</h3>
+        <div class="activity-header mono muted small">
+          <div>pitch</div><div>tool</div><div>duration</div><div>earned</div>
+        </div>
+        <div class="activity-row"><div>Nimbus — edge cron for agents</div><div class="muted">Claude</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+        <div class="activity-row"><div>Parsel — typed API mocks</div><div class="muted">Cursor</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+        <div class="activity-row activity-row-last"><div>Cadence — auto standups</div><div class="muted">Copilot</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+      </div>
+    </section>
+  </main>
 
   <!-- FOOTER -->
   <footer class="footer">
@@ -232,9 +439,7 @@
       <a href="https://www.instagram.com/whyl.ai/" target="_blank" rel="noopener" class="social-link">Instagram</a>
       <a href="https://www.tiktok.com/@whyl.ai" target="_blank" rel="noopener" class="social-link">TikTok</a>
     </div>
-    <p>whyl(ai.thinks) {</p>
-    <p class="footer-indent">built_with: "34,000 minutes of AI thinking";</p>
-    <p>}</p>
+    <p class="mono dim">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span> { built_with: "34,000 minutes of AI thinking"; }</p>
   </footer>
 
   <script src="script.js"></script>
