@@ -16,12 +16,17 @@
   <header class="nav">
     <div class="nav-inner">
       <div class="logo" data-nav="home">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
-      <nav class="nav-links">
+      <nav class="nav-links" id="navLinks">
         <button type="button" class="nav-link" data-nav="home">home</button>
         <button type="button" class="nav-link" data-nav="how">how_it_works</button>
         <button type="button" class="nav-link" data-nav="ads">showcase</button>
       </nav>
-      <button type="button" class="btn btn-primary btn-small" data-nav="waitlist">join waitlist →</button>
+      <div class="nav-right">
+        <button type="button" class="btn btn-primary btn-small" data-nav="waitlist">join waitlist →</button>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -107,93 +112,204 @@
 
   <!-- ============ HOW IT WORKS ============ -->
   <main class="page" id="page-how" hidden>
-
-    <!-- USER EXPERIENCE -->
     <section class="section">
-      <div class="section-head">
-        <div class="eyebrow">user experience</div>
+      <div class="experience-tabs" id="experienceTabs">
+        <button type="button" class="experience-tab active" data-experience="user">User Experience</button>
+        <button type="button" class="experience-tab" data-experience="advertiser">Advertiser Experience</button>
       </div>
 
-      <div class="dashboard-shell">
-        <div class="mock-titlebar">
-          <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
-          <span class="mock-url">app.whyl.ai/dashboard</span>
-          <div class="dash-status mono accent" style="margin-left:auto;"><span class="dot"></span>whyl active on 3 tools</div>
+      <!-- USER EXPERIENCE -->
+      <div class="experience-panel" id="experience-user">
+        <div class="how-component">
+          <div class="section-head">
+            <div class="eyebrow">the extension</div>
+            <h2 class="component-heading">Lives right where you're already looking</h2>
+            <p class="section-sub">A Chrome extension that sits beside Claude, Cursor, Copilot, or ChatGPT and quietly watches for the "thinking" state.</p>
+          </div>
+
+          <div class="mock-window">
+            <div class="mock-titlebar">
+              <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+              <span class="mock-url">claude.ai/new</span>
+              <span class="mock-status"><span class="dot"></span>whyl on</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-bubble">how much wood could a woodchuck chuck if a woodchuck could chuck wood</div>
+              <div class="mock-thinking">
+                <span class="thinking-dots"><span></span><span></span><span></span></span>
+                Claude is thinking… <span class="mono" id="mockClock2">00:00</span>
+              </div>
+
+              <div class="ad-card">
+                <div class="ad-card-top">
+                  <span class="ad-eyebrow">whyl · sponsored pitch</span>
+                </div>
+                <div class="ad-video-wrap">
+                  <video class="ad-video" id="adVideo2" autoplay muted loop playsinline>
+                    <source src="assets/whyl-pitch.mp4" type="video/mp4">
+                  </video>
+                  <button type="button" class="mute-toggle" id="adMuteToggle2" aria-label="Unmute pitch video">🔇</button>
+                </div>
+                <div class="ad-progress"><div class="ad-progress-bar" id="mockProgress2"></div></div>
+                <div class="ad-card-bottom">
+                  <span class="mono muted">watching pitch…</span>
+                  <span class="mono accent" id="mockTokens2">⚡ 0 tokens</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="dashboard-body">
-          <div class="dashboard-group">
-            <div class="dashboard-group-label mono muted uppercase small">wallet</div>
-            <div class="dash-stats">
-              <div class="card card-accent">
-                <div class="mono muted uppercase small">token balance</div>
-                <div class="dash-num accent">4,820</div>
-                <div class="dash-sub">+312 this week · redeemable across Claude, Cursor &amp; ChatGPT</div>
+        <div class="how-component">
+          <div class="section-head">
+            <div class="eyebrow">your dashboard</div>
+            <h2 class="component-heading">Your wallet, activity, and goals in one place</h2>
+          </div>
+
+          <div class="dashboard-shell">
+            <div class="mock-titlebar">
+              <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+              <span class="mock-url">app.whyl.ai/dashboard</span>
+              <div class="dash-status mono accent" style="margin-left:auto;"><span class="dot"></span>whyl active on 3 tools</div>
+            </div>
+
+            <div class="dashboard-tabs" id="dashboardTabs">
+              <button type="button" class="dashboard-tab active" data-dtab="overview">Overview</button>
+              <button type="button" class="dashboard-tab" data-dtab="goals">My Goals</button>
+            </div>
+
+            <div class="dashboard-body" data-dpanel="overview">
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">wallet</div>
+                <div class="dash-stats">
+                  <div class="card card-accent">
+                    <div class="mono muted uppercase small">token balance</div>
+                    <div class="dash-num accent">4,820</div>
+                    <div class="dash-sub">+312 this week · redeemable across Claude, Cursor &amp; ChatGPT</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">pitches watched</div>
+                    <div class="dash-num">318</div>
+                    <div class="dash-sub">≈ 79 min reclaimed</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">focus streak</div>
+                    <div class="dash-num">12 <span class="dash-num-unit">days</span></div>
+                    <div class="dash-sub">0 doomscroll relapses</div>
+                  </div>
+                </div>
               </div>
-              <div class="card">
-                <div class="mono muted uppercase small">pitches watched</div>
-                <div class="dash-num">318</div>
-                <div class="dash-sub">≈ 79 min reclaimed</div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">activity &amp; redemption</div>
+                <div class="dash-cols">
+                  <div class="card">
+                    <div class="dash-card-head">
+                      <h3 class="sm">Tokens earned · last 7 days</h3>
+                      <span class="mono accent">▲ 18%</span>
+                    </div>
+                    <div class="bars">
+                      <div class="bar-col"><div class="bar" style="height:46%"></div><span class="mono muted">Mo</span></div>
+                      <div class="bar-col"><div class="bar" style="height:62%"></div><span class="mono muted">Tu</span></div>
+                      <div class="bar-col"><div class="bar" style="height:38%"></div><span class="mono muted">We</span></div>
+                      <div class="bar-col"><div class="bar" style="height:78%"></div><span class="mono muted">Th</span></div>
+                      <div class="bar-col"><div class="bar" style="height:56%"></div><span class="mono muted">Fr</span></div>
+                      <div class="bar-col"><div class="bar bar-peak" style="height:90%"></div><span class="mono accent">Sa</span></div>
+                      <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Su</span></div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <h3 class="sm">Redeem tokens</h3>
+                    <div class="redeem-list">
+                      <div class="redeem-row"><div><div class="redeem-title">+500 Claude tokens</div><div class="mono muted small">costs 120 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+                      <div class="redeem-row"><div><div class="redeem-title">Cursor Pro · 1 week</div><div class="mono muted small">costs 900 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+                      <div class="redeem-row"><div><div class="redeem-title">+2,000 ChatGPT credits</div><div class="mono muted small">costs 400 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="card">
-                <div class="mono muted uppercase small">focus streak</div>
-                <div class="dash-num">12 <span class="dash-num-unit">days</span></div>
-                <div class="dash-sub">0 doomscroll relapses</div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">recent waits</div>
+                <div class="card activity-card">
+                  <div class="activity-header mono muted small">
+                    <div>pitch</div><div>tool</div><div>duration</div><div>earned</div>
+                  </div>
+                  <div class="activity-row"><div>Nimbus — edge cron for agents</div><div class="muted">Claude</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+                  <div class="activity-row"><div>Parsel — typed API mocks</div><div class="muted">Cursor</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+                  <div class="activity-row activity-row-last"><div>Cadence — auto standups</div><div class="muted">Copilot</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-body" data-dpanel="goals" hidden>
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">my goals</div>
+                <div class="card activity-card">
+                  <div class="dash-card-head">
+                    <h3 class="sm">Goals fed by your waits</h3>
+                    <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
+                  </div>
+                  <div class="goals-list goals-list-grid" id="goalsListHome"></div>
+                  <button type="button" class="btn btn-primary btn-block" id="logWaitBtn" style="margin-top:14px;">▶ simulate a 3-min wait</button>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          <div class="dashboard-group">
-            <div class="dashboard-group-label mono muted uppercase small">activity &amp; redemption</div>
-            <div class="dash-cols">
-              <div class="card">
-                <div class="dash-card-head">
-                  <h3 class="sm">Tokens earned · last 7 days</h3>
-                  <span class="mono accent">▲ 18%</span>
-                </div>
-                <div class="bars">
-                  <div class="bar-col"><div class="bar" style="height:46%"></div><span class="mono muted">Mo</span></div>
-                  <div class="bar-col"><div class="bar" style="height:62%"></div><span class="mono muted">Tu</span></div>
-                  <div class="bar-col"><div class="bar" style="height:38%"></div><span class="mono muted">We</span></div>
-                  <div class="bar-col"><div class="bar" style="height:78%"></div><span class="mono muted">Th</span></div>
-                  <div class="bar-col"><div class="bar" style="height:56%"></div><span class="mono muted">Fr</span></div>
-                  <div class="bar-col"><div class="bar bar-peak" style="height:90%"></div><span class="mono accent">Sa</span></div>
-                  <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Su</span></div>
-                </div>
-              </div>
-
-              <div class="card">
-                <h3 class="sm">Redeem tokens</h3>
-                <div class="redeem-list">
-                  <div class="redeem-row"><div><div class="redeem-title">+500 Claude tokens</div><div class="mono muted small">costs 120 ⚡</div></div><span class="redeem-btn">redeem</span></div>
-                  <div class="redeem-row"><div><div class="redeem-title">Cursor Pro · 1 week</div><div class="mono muted small">costs 900 ⚡</div></div><span class="redeem-btn">redeem</span></div>
-                  <div class="redeem-row"><div><div class="redeem-title">+2,000 ChatGPT credits</div><div class="mono muted small">costs 400 ⚡</div></div><span class="redeem-btn">redeem</span></div>
-                </div>
-              </div>
-            </div>
+      <!-- ADVERTISER EXPERIENCE -->
+      <div class="experience-panel" id="experience-advertiser" hidden>
+        <div class="how-component">
+          <div class="section-head">
+            <div class="eyebrow">your dashboard</div>
+            <h2 class="component-heading">Track every campaign in one place</h2>
+            <p class="section-sub">Advertisers get their own dashboard to watch spend, reach, and payouts to the builders who watched.</p>
           </div>
 
-          <div class="dashboard-group">
-            <div class="dashboard-group-label mono muted uppercase small">goals</div>
-            <div class="card activity-card">
-              <div class="dash-card-head">
-                <h3 class="sm">Goals fed by your waits</h3>
-                <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
-              </div>
-              <div class="goals-list goals-list-grid" id="goalsListHome"></div>
-              <button type="button" class="btn btn-primary btn-block" id="logWaitBtn" style="margin-top:14px;">▶ simulate a 3-min wait</button>
+          <div class="dashboard-shell">
+            <div class="mock-titlebar">
+              <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+              <span class="mock-url">app.whyl.ai/advertiser</span>
+              <div class="dash-status mono accent" style="margin-left:auto;"><span class="dot"></span>3 campaigns live</div>
             </div>
-          </div>
 
-          <div class="dashboard-group">
-            <div class="dashboard-group-label mono muted uppercase small">recent waits</div>
-            <div class="card activity-card">
-              <div class="activity-header mono muted small">
-                <div>pitch</div><div>tool</div><div>duration</div><div>earned</div>
+            <div class="dashboard-body">
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">campaign overview</div>
+                <div class="dash-stats">
+                  <div class="card card-accent">
+                    <div class="mono muted uppercase small">budget spent</div>
+                    <div class="dash-num accent">$1,240</div>
+                    <div class="dash-sub">across 3 active campaigns this week</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">pitches served</div>
+                    <div class="dash-num">18,400</div>
+                    <div class="dash-sub">≈ 92% completion rate</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">dev payout</div>
+                    <div class="dash-num">$620</div>
+                    <div class="dash-sub">50% of spend, sent as tokens</div>
+                  </div>
+                </div>
               </div>
-              <div class="activity-row"><div>Nimbus — edge cron for agents</div><div class="muted">Claude</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
-              <div class="activity-row"><div>Parsel — typed API mocks</div><div class="muted">Cursor</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
-              <div class="activity-row activity-row-last"><div>Cadence — auto standups</div><div class="muted">Copilot</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">and other things</div>
+                <div class="grid-3">
+                  <div class="card card-sm"><h3 class="sm">Pay per completed view</h3><p>Skips and half-watches are free. Your budget only burns on a full 15-second pitch.</p></div>
+                  <div class="card card-sm"><h3 class="sm">Re-bid anytime</h3><p>Losing the top slot? Raise your bid and jump the queue instantly. No contracts.</p></div>
+                  <div class="card card-sm"><h3 class="sm">Live order book</h3><p>See exactly who's bidding, at what price, and where your campaign ranks.</p></div>
+                </div>
+              </div>
+
+              <div class="dashboard-cta">
+                <button type="button" class="btn btn-primary" data-nav="ads">See the full marketplace →</button>
+              </div>
             </div>
           </div>
         </div>

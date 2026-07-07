@@ -26,6 +26,50 @@ window.addEventListener("hashchange", () => {
 
 navigate(window.location.hash.replace("#", "") || "home");
 
+// ---- Mobile nav toggle ----
+
+const navToggle = document.getElementById("navToggle");
+const navLinks = document.getElementById("navLinks");
+
+navToggle.addEventListener("click", () => {
+  const isOpen = navLinks.classList.toggle("open");
+  navToggle.setAttribute("aria-expanded", String(isOpen));
+});
+
+navLinks.querySelectorAll("[data-nav]").forEach((el) => {
+  el.addEventListener("click", () => {
+    navLinks.classList.remove("open");
+    navToggle.setAttribute("aria-expanded", "false");
+  });
+});
+
+// ---- How it works: experience tabs ----
+
+const experienceTabs = document.getElementById("experienceTabs");
+if (experienceTabs) {
+  experienceTabs.querySelectorAll(".experience-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      experienceTabs.querySelectorAll(".experience-tab").forEach((t) => t.classList.toggle("active", t === tab));
+      document.getElementById("experience-user").hidden = tab.dataset.experience !== "user";
+      document.getElementById("experience-advertiser").hidden = tab.dataset.experience !== "advertiser";
+    });
+  });
+}
+
+// ---- How it works: dashboard tabs (Overview / My Goals) ----
+
+const dashboardTabs = document.getElementById("dashboardTabs");
+if (dashboardTabs) {
+  dashboardTabs.querySelectorAll(".dashboard-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      dashboardTabs.querySelectorAll(".dashboard-tab").forEach((t) => t.classList.toggle("active", t === tab));
+      document.querySelectorAll(".dashboard-body[data-dpanel]").forEach((panel) => {
+        panel.hidden = panel.dataset.dpanel !== tab.dataset.dtab;
+      });
+    });
+  });
+}
+
 // ---- Hero typing animation ----
 
 const TYPE_WORDS = ["Cursor", "ChatGPT", "Grok", "Claude", "Copilot"];
@@ -63,50 +107,60 @@ function typeLoop() {
 
 typeLoop();
 
-// ---- Ad pitch video ----
+// ---- Ad pitch video (wired per-instance so it can appear more than once) ----
 
-const adVideo = document.getElementById("adVideo");
-const adMuteToggle = document.getElementById("adMuteToggle");
-const mockProgress = document.getElementById("mockProgress");
-const mockTokens = document.getElementById("mockTokens");
+function wireAdVideo(videoId, muteToggleId, progressId, tokensId) {
+  const video = document.getElementById(videoId);
+  const muteToggle = document.getElementById(muteToggleId);
+  const progress = document.getElementById(progressId);
+  const tokens = document.getElementById(tokensId);
+  if (!video) return;
 
-let mockTokenCount = 0;
-let lastVideoTime = 0;
+  let tokenCount = 0;
+  let lastTime = 0;
 
-adMuteToggle.addEventListener("click", () => {
-  adVideo.muted = !adVideo.muted;
-  adMuteToggle.textContent = adVideo.muted ? "🔇" : "🔊";
-});
+  muteToggle.addEventListener("click", () => {
+    video.muted = !video.muted;
+    muteToggle.textContent = video.muted ? "🔇" : "🔊";
+  });
 
-adVideo.addEventListener("timeupdate", () => {
-  if (!adVideo.duration) return;
+  video.addEventListener("timeupdate", () => {
+    if (!video.duration) return;
 
-  if (adVideo.currentTime < lastVideoTime) {
-    // looped back to the start — one full pitch watched
-    mockProgress.classList.add("no-transition");
-    mockTokenCount += 25;
-    mockTokens.textContent = `⚡ ${mockTokenCount} tokens`;
-    mockTokens.classList.add("token-bump");
-    setTimeout(() => mockTokens.classList.remove("token-bump"), 400);
-    requestAnimationFrame(() => mockProgress.classList.remove("no-transition"));
-  }
-  lastVideoTime = adVideo.currentTime;
+    if (video.currentTime < lastTime) {
+      // looped back to the start — one full pitch watched
+      progress.classList.add("no-transition");
+      tokenCount += 25;
+      tokens.textContent = `⚡ ${tokenCount} tokens`;
+      tokens.classList.add("token-bump");
+      setTimeout(() => tokens.classList.remove("token-bump"), 400);
+      requestAnimationFrame(() => progress.classList.remove("no-transition"));
+    }
+    lastTime = video.currentTime;
 
-  mockProgress.style.width = (adVideo.currentTime / adVideo.duration) * 100 + "%";
-});
+    progress.style.width = (video.currentTime / video.duration) * 100 + "%";
+  });
+}
 
-// ---- Animated extension mock ----
+wireAdVideo("adVideo", "adMuteToggle", "mockProgress", "mockTokens");
+wireAdVideo("adVideo2", "adMuteToggle2", "mockProgress2", "mockTokens2");
 
-const mockClock = document.getElementById("mockClock");
+// ---- Animated extension mock "thinking" clocks ----
 
-let mockElapsed = 0;
+function wireMockClock(clockId) {
+  const clock = document.getElementById(clockId);
+  if (!clock) return;
+  let elapsed = 0;
+  setInterval(() => {
+    elapsed += 1;
+    const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
+    const ss = String(elapsed % 60).padStart(2, "0");
+    clock.textContent = `${mm}:${ss}`;
+  }, 1000);
+}
 
-setInterval(() => {
-  mockElapsed += 1;
-  const mm = String(Math.floor(mockElapsed / 60)).padStart(2, "0");
-  const ss = String(mockElapsed % 60).padStart(2, "0");
-  mockClock.textContent = `${mm}:${ss}`;
-}, 1000);
+wireMockClock("mockClock");
+wireMockClock("mockClock2");
 
 // ---- Showcase marketplace ----
 
