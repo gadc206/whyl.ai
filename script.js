@@ -1,9 +1,18 @@
 // ---- Routing ----
 
 const PAGES = ["home", "ads", "waitlist"];
+let currentPage = "home";
+let appReady = false; // guards calls into waitlist-side logic defined later in this file
+let suppressNextHashChange = false; // navigate() sets the hash itself; ignore the hashchange it triggers
 
 function navigate(page) {
   if (!PAGES.includes(page)) page = "home";
+
+  // "download extension" / "get early access" are for the earn side only —
+  // arriving at the waitlist from the advertise side should preselect "Advertise"
+  if (appReady && page === "waitlist") {
+    setWaitlistSide(currentPage === "ads" ? "ad" : "earn");
+  }
 
   document.querySelectorAll(".page").forEach((el) => {
     el.hidden = el.id !== `page-${page}`;
@@ -12,7 +21,19 @@ function navigate(page) {
     el.classList.toggle("active", el.dataset.nav === page);
   });
 
-  window.location.hash = page;
+  const navCta = document.getElementById("navCta");
+  if (navCta) {
+    navCta.textContent = page === "ads" ? "start advertising →" : "download extension →";
+  }
+
+  currentPage = page;
+  // only flag suppression if this assignment will actually fire a hashchange event —
+  // an assignment to the already-current hash fires nothing, which would leave the
+  // flag stuck "on" and incorrectly swallow the next real hashchange (e.g. browser back)
+  if (window.location.hash !== `#${page}`) {
+    suppressNextHashChange = true;
+    window.location.hash = page;
+  }
   window.scrollTo(0, 0);
 }
 
@@ -21,6 +42,10 @@ document.querySelectorAll("[data-nav]").forEach((el) => {
 });
 
 window.addEventListener("hashchange", () => {
+  if (suppressNextHashChange) {
+    suppressNextHashChange = false;
+    return;
+  }
   navigate(window.location.hash.replace("#", ""));
 });
 
@@ -374,3 +399,5 @@ logWaitBtn.addEventListener("click", () => {
 });
 
 renderGoals();
+
+appReady = true;
