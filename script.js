@@ -262,3 +262,65 @@ waitlistForm.addEventListener("submit", async (e) => {
     waitlistSuccess.hidden = false;
   }
 });
+
+// ---- Goals ----
+
+let goals = [
+  { id: "lang", icon: "🌎", label: "Learn Spanish", detail: "420 words · 15 min/day", pct: 62, on: true },
+  { id: "book", icon: "📖", label: "Finish 'Dune'", detail: "p.412 of 528", pct: 78, on: true },
+  { id: "cs", icon: "💻", label: "CS assignment", detail: "2 of 5 problems", pct: 40, on: false },
+  { id: "streak", icon: "🧘", label: "Daily stretch", detail: "12-day streak", pct: 55, on: false },
+];
+let banked = 47;
+
+const goalsListHome = document.getElementById("goalsListHome");
+const goalsListDash = document.getElementById("goalsListDash");
+const bankedLabelHome = document.getElementById("bankedLabelHome");
+const bankedLabelDash = document.getElementById("bankedLabelDash");
+const logWaitBtn = document.getElementById("logWaitBtn");
+
+function bankedLabel() {
+  const h = Math.floor(banked / 60);
+  return h > 0 ? `${h}h ${banked % 60}m` : `${banked} min`;
+}
+
+function renderGoalsInto(container) {
+  container.innerHTML = "";
+  goals.forEach((g) => {
+    const item = document.createElement("div");
+    item.className = "goal-item" + (g.on ? " on" : "");
+    item.innerHTML = `
+      <div class="goal-item-top">
+        <span class="goal-icon">${g.icon}</span>
+        <div class="goal-copy">
+          <div class="goal-label">${g.label}</div>
+          <div class="goal-detail">${g.detail}</div>
+        </div>
+        <span class="goal-pct">${g.pct}%</span>
+      </div>
+      <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${g.pct}%"></div></div>
+    `;
+    item.addEventListener("click", () => {
+      g.on = !g.on;
+      renderGoals();
+    });
+    container.appendChild(item);
+  });
+}
+
+function renderGoals() {
+  renderGoalsInto(goalsListHome);
+  renderGoalsInto(goalsListDash);
+  bankedLabelHome.textContent = `${bankedLabel()} banked this week`;
+  bankedLabelDash.textContent = `${bankedLabel()} banked this week`;
+}
+
+logWaitBtn.addEventListener("click", () => {
+  const active = goals.filter((g) => g.on).length || 1;
+  const bump = Math.round(9 / active) + 3;
+  banked += 3;
+  goals = goals.map((g) => (g.on ? { ...g, pct: Math.min(100, g.pct + bump) } : g));
+  renderGoals();
+});
+
+renderGoals();
