@@ -109,7 +109,7 @@ typeLoop();
 
 // ---- Ad pitch video (wired per-instance so it can appear more than once) ----
 
-function wireAdVideo(videoId, muteToggleId, progressId, tokensId) {
+function wireAdVideo(videoId, muteToggleId, progressId, tokensId, tokenIcon) {
   const video = document.getElementById(videoId);
   const muteToggle = document.getElementById(muteToggleId);
   const progress = document.getElementById(progressId);
@@ -131,7 +131,7 @@ function wireAdVideo(videoId, muteToggleId, progressId, tokensId) {
       // looped back to the start — one full pitch watched
       progress.classList.add("no-transition");
       tokenCount += 25;
-      tokens.textContent = `⚡ ${tokenCount} tokens`;
+      tokens.textContent = `${tokenIcon} ${tokenCount} tokens`;
       tokens.classList.add("token-bump");
       setTimeout(() => tokens.classList.remove("token-bump"), 400);
       requestAnimationFrame(() => progress.classList.remove("no-transition"));
@@ -142,8 +142,8 @@ function wireAdVideo(videoId, muteToggleId, progressId, tokensId) {
   });
 }
 
-wireAdVideo("adVideo", "adMuteToggle", "mockProgress", "mockTokens");
-wireAdVideo("adVideo2", "adMuteToggle2", "mockProgress2", "mockTokens2");
+wireAdVideo("adVideo", "adMuteToggle", "mockProgress", "mockTokens", "+");
+wireAdVideo("adVideo2", "adMuteToggle2", "mockProgress2", "mockTokens2", "⚡");
 
 // ---- Animated extension mock "thinking" clocks ----
 
