@@ -131,7 +131,8 @@ function wireAdVideo(videoId, muteToggleId, progressId, tokensId, tokenIcon) {
   const tokens = document.getElementById(tokensId);
   if (!video) return;
 
-  let tokenCount = 0;
+  const TOKENS_PER_WATCH = 25;
+  let completedWatches = 0;
   let lastTime = 0;
 
   muteToggle.addEventListener("click", () => {
@@ -144,16 +145,20 @@ function wireAdVideo(videoId, muteToggleId, progressId, tokensId, tokenIcon) {
 
     if (video.currentTime < lastTime) {
       // looped back to the start — one full pitch watched
+      completedWatches += 1;
       progress.classList.add("no-transition");
-      tokenCount += 25;
-      tokens.textContent = `${tokenIcon} ${tokenCount} tokens`;
       tokens.classList.add("token-bump");
       setTimeout(() => tokens.classList.remove("token-bump"), 400);
       requestAnimationFrame(() => progress.classList.remove("no-transition"));
     }
     lastTime = video.currentTime;
 
-    progress.style.width = (video.currentTime / video.duration) * 100 + "%";
+    const watchFraction = video.currentTime / video.duration;
+    progress.style.width = watchFraction * 100 + "%";
+
+    // tokens climb in step with the progress bar instead of jumping at the end
+    const liveTokens = completedWatches * TOKENS_PER_WATCH + Math.floor(watchFraction * TOKENS_PER_WATCH);
+    tokens.textContent = `${tokenIcon} ${liveTokens} tokens`;
   });
 }
 
