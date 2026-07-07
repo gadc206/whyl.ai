@@ -135,7 +135,7 @@
               <span class="mock-status"><span class="dot"></span>whyl on</span>
             </div>
             <div class="mock-body">
-              <div class="mock-bubble" id="mockPrompt2">Can you refactor this auth middleware to support rate limiting?</div>
+              <div class="mock-bubble">She sells seashells by the seashore, and the shells she sells are surely seashells</div>
               <div class="mock-thinking">
                 <span class="thinking-dots"><span></span><span></span><span></span></span>
                 Claude is thinking… <span class="mono" id="mockClock2">00:00</span>
@@ -268,7 +268,6 @@
           <div class="section-head">
             <div class="eyebrow">your dashboard</div>
             <h2 class="component-heading">Track every campaign in one place</h2>
-            <p class="section-sub">Advertisers get their own dashboard to watch spend, reach, and payouts to the builders who watched.</p>
           </div>
 
           <div class="dashboard-shell">
@@ -285,18 +284,97 @@
                   <div class="card card-accent">
                     <div class="mono muted uppercase small">budget spent</div>
                     <div class="dash-num accent">$1,240</div>
-                    <div class="dash-sub">across 3 active campaigns this week</div>
+                    <div class="dash-sub">across 3 active campaigns · $2.75 avg bid/block</div>
                   </div>
                   <div class="card">
                     <div class="mono muted uppercase small">pitches served</div>
                     <div class="dash-num">18,400</div>
-                    <div class="dash-sub">≈ 92% completion rate</div>
+                    <div class="dash-sub">≈ 92% completion · 1,472 skipped</div>
                   </div>
                   <div class="card">
                     <div class="mono muted uppercase small">dev payout</div>
                     <div class="dash-num">$620</div>
-                    <div class="dash-sub">50% of spend, sent as tokens</div>
+                    <div class="dash-sub">50% of spend → 214 builders paid</div>
                   </div>
+                </div>
+              </div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">spend &amp; reach</div>
+                <div class="dash-cols">
+                  <div class="card">
+                    <div class="dash-card-head">
+                      <h3 class="sm">Spend · last 7 days</h3>
+                      <span class="mono accent">▲ 24%</span>
+                    </div>
+                    <div class="bars">
+                      <div class="bar-col"><div class="bar" style="height:40%"></div><span class="mono muted">Mo</span></div>
+                      <div class="bar-col"><div class="bar" style="height:55%"></div><span class="mono muted">Tu</span></div>
+                      <div class="bar-col"><div class="bar" style="height:35%"></div><span class="mono muted">We</span></div>
+                      <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Th</span></div>
+                      <div class="bar-col"><div class="bar" style="height:60%"></div><span class="mono muted">Fr</span></div>
+                      <div class="bar-col"><div class="bar bar-peak" style="height:95%"></div><span class="mono accent">Sa</span></div>
+                      <div class="bar-col"><div class="bar" style="height:80%"></div><span class="mono muted">Su</span></div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <h3 class="sm">Reach by tool</h3>
+                    <div class="goals-list">
+                      <div class="goal-item on">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">Claude</div>
+                            <div class="goal-detail">8,464 pitches served</div>
+                          </div>
+                          <div class="goal-pct">46%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:46%"></div></div>
+                      </div>
+                      <div class="goal-item">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">Cursor</div>
+                            <div class="goal-detail">5,152 pitches served</div>
+                          </div>
+                          <div class="goal-pct">28%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:28%"></div></div>
+                      </div>
+                      <div class="goal-item">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">ChatGPT</div>
+                            <div class="goal-detail">3,312 pitches served</div>
+                          </div>
+                          <div class="goal-pct">18%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:18%"></div></div>
+                      </div>
+                      <div class="goal-item">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">Copilot</div>
+                            <div class="goal-detail">1,472 pitches served</div>
+                          </div>
+                          <div class="goal-pct">8%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:8%"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">active campaigns</div>
+                <div class="card activity-card">
+                  <div class="activity-header mono muted small">
+                    <div>campaign</div><div>status</div><div>bid / block</div><div>spent</div>
+                  </div>
+                  <div class="activity-row"><div>Fall product launch</div><div class="mono accent">live</div><div class="mono muted">$4.20</div><div class="mono">$410</div></div>
+                  <div class="activity-row"><div>Enterprise beta invite</div><div class="mono accent">live</div><div class="mono muted">$3.10</div><div class="mono">$332</div></div>
+                  <div class="activity-row activity-row-last"><div>Dev tools newsletter push</div><div class="mono muted">paused</div><div class="mono muted">$1.85</div><div class="mono">$498</div></div>
                 </div>
               </div>
 

@@ -95,51 +95,32 @@ const PAUSE_MS = 380;
 
 const rotatingWordTextEl = document.getElementById("rotatingWordText");
 
-function startTypewriter(el, words, opts = {}) {
-  if (!el) return;
-  const { typeSpeed = TYPE_SPEED_MS, deleteSpeed = DELETE_SPEED_MS, holdMs = HOLD_MS, pauseMs = PAUSE_MS } = opts;
+function typeLoop() {
   let wordIndex = 0;
 
   function typeWord(word, charIndex) {
-    el.textContent = word.slice(0, charIndex);
+    rotatingWordTextEl.textContent = word.slice(0, charIndex);
     if (charIndex < word.length) {
-      setTimeout(() => typeWord(word, charIndex + 1), typeSpeed);
+      setTimeout(() => typeWord(word, charIndex + 1), TYPE_SPEED_MS);
     } else {
-      setTimeout(() => deleteWord(word, word.length), holdMs);
+      setTimeout(() => deleteWord(word, word.length), HOLD_MS);
     }
   }
 
   function deleteWord(word, charIndex) {
-    el.textContent = word.slice(0, charIndex);
+    rotatingWordTextEl.textContent = word.slice(0, charIndex);
     if (charIndex > 0) {
-      setTimeout(() => deleteWord(word, charIndex - 1), deleteSpeed);
+      setTimeout(() => deleteWord(word, charIndex - 1), DELETE_SPEED_MS);
     } else {
-      wordIndex = (wordIndex + 1) % words.length;
-      setTimeout(() => typeWord(words[wordIndex], 0), pauseMs);
+      wordIndex = (wordIndex + 1) % TYPE_WORDS.length;
+      setTimeout(() => typeWord(TYPE_WORDS[wordIndex], 0), PAUSE_MS);
     }
   }
 
-  typeWord(words[0], 0);
+  typeWord(TYPE_WORDS[wordIndex], 0);
 }
 
-startTypewriter(rotatingWordTextEl, TYPE_WORDS);
-
-// ---- Extension mock: rotating prompt bubble ----
-
-const MOCK_PROMPTS = [
-  "Can you refactor this auth middleware to support rate limiting?",
-  "Why is this useEffect firing twice in dev mode?",
-  "Write a migration to add a composite index on (user_id, created_at).",
-  "Help me figure out why this Cypress test is flaky in CI.",
-  "Convert this class component to hooks without breaking the tests.",
-];
-
-startTypewriter(document.getElementById("mockPrompt2"), MOCK_PROMPTS, {
-  typeSpeed: 20,
-  deleteSpeed: 10,
-  holdMs: 2000,
-  pauseMs: 400,
-});
+typeLoop();
 
 // ---- Ad pitch video (wired per-instance so it can appear more than once) ----
 
