@@ -21,10 +21,7 @@ function navigate(page) {
     el.classList.toggle("active", el.dataset.nav === page);
   });
 
-  const navCta = document.getElementById("navCta");
-  if (navCta) {
-    navCta.textContent = page === "ads" ? "start advertising →" : "download extension →";
-  }
+  updateNavCtaLabel(page);
 
   currentPage = page;
   // only flag suppression if this assignment will actually fire a hashchange event —
@@ -36,6 +33,20 @@ function navigate(page) {
   }
   window.scrollTo(0, 0);
 }
+
+// shortened on narrow screens so the pill button never wraps to multiple lines
+function updateNavCtaLabel(page) {
+  const navCta = document.getElementById("navCta");
+  if (!navCta) return;
+  const compact = window.innerWidth <= 480;
+  if (page === "ads") {
+    navCta.textContent = compact ? "advertise →" : "start advertising →";
+  } else {
+    navCta.textContent = compact ? "extension →" : "download extension →";
+  }
+}
+
+window.addEventListener("resize", () => updateNavCtaLabel(currentPage));
 
 document.querySelectorAll("[data-nav]").forEach((el) => {
   el.addEventListener("click", () => navigate(el.dataset.nav));

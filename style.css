@@ -661,9 +661,20 @@ p { margin: 0; }
 }
 
 @media (max-width: 560px) {
-  .section { padding: 56px 20px; }
-  .hero { padding: 48px 20px 24px; }
+  .section { padding: 48px 20px; }
+  .hero { padding: 40px 20px 24px; }
   .hero-title { font-size: 34px; }
   .orderbook-cols, .ob-row { grid-template-columns: 32px 1fr 110px; }
   .orderbook-cols > :nth-child(4), .ob-row > .ob-status { display: none; }
+
+  .grid-4 { grid-template-columns: 1fr; }
+
+  .nav-inner { padding: 0 16px; gap: 10px; }
+  .logo { font-size: 14px; }
+  .nav-right { gap: 8px; }
+  .nav-toggle { width: 30px; height: 30px; }
+  #navCta { padding: 8px 14px; font-size: 12px; white-space: nowrap; }
+
+  .card { padding: 20px; }
+  .card-num { margin-bottom: 24px; }
 }
