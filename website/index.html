@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whyl — AI Thinks, You Earn</title>
+  <meta name="description" content="Whyl turns AI wait times into AI tokens. Watch 15-second ads while Claude, Cursor, or ChatGPT thinks, then showcase your own startup back." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="logo" data-nav="home">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></div>
+      <nav class="nav-links" id="navLinks">
+        <button type="button" class="nav-link" data-nav="home">earn</button>
+        <button type="button" class="nav-link" data-nav="ads">advertise</button>
+      </nav>
+      <div class="nav-right">
+        <button type="button" class="btn btn-primary btn-small" data-nav="waitlist" id="navCta">download extension →</button>
+        <button type="button" class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+          <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ HOME ============ -->
+  <main class="page" id="page-home">
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge"><span class="dot"></span>the waiting platform · private beta</div>
+          <h1 class="hero-title">Whyl <span class="accent" id="rotatingWordText"></span><span class="hero-cursor"></span><br>thinks,<br>you earn.</h1>
+          <div class="hero-buttons">
+            <button type="button" class="btn btn-primary" data-nav="waitlist">Get early access</button>
+          </div>
+        </div>
+
+        <!-- ANIMATED EXTENSION MOCK -->
+        <div class="mock-window glow">
+          <div class="mock-titlebar">
+            <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+            <span class="mock-url">claude.ai/new</span>
+            <span class="mock-status"><span class="dot"></span>whyl on</span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-bubble">how much wood could a woodchuck chuck if a woodchuck could chuck wood</div>
+            <div class="mock-thinking">
+              <span class="thinking-dots"><span></span><span></span><span></span></span>
+              Claude is thinking… <span class="mono" id="mockClock">00:00</span>
+            </div>
+
+            <div class="ad-card">
+              <div class="ad-card-top">
+                <span class="ad-eyebrow">whyl · sponsored ad</span>
+              </div>
+              <div class="ad-video-wrap">
+                <video class="ad-video" id="adVideo" autoplay muted loop playsinline>
+                  <source src="assets/whyl-pitch.mp4" type="video/mp4">
+                </video>
+                <button type="button" class="mute-toggle" id="adMuteToggle" aria-label="Unmute ad video">🔇</button>
+              </div>
+              <div class="ad-progress"><div class="ad-progress-bar" id="mockProgress"></div></div>
+              <div class="ad-card-bottom">
+                <span class="mono muted">watching ad…</span>
+                <span class="mono accent" id="mockTokens">+ 0 tokens</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLYWHEEL -->
+    <section class="section">
+      <div class="section-head">
+        <div class="eyebrow">the flywheel</div>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-num">01</div>
+          <h3>Prompt</h3>
+          <p>Ask Claude, Cursor, Copilot, or ChatGPT to do something — and start waiting.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">02</div>
+          <h3>Watch an ad</h3>
+          <p>While it thinks, watch a short ad from a fellow dev instead of drifting off.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">03</div>
+          <h3>Earn tokens</h3>
+          <p>Each ad watched = AI compute. Redeem for more prompts, longer agent runs, fewer walls.</p>
+        </div>
+        <div class="card">
+          <div class="card-num">04</div>
+          <h3>Repeat</h3>
+          <p>Every wait becomes another chance to earn. The more you build, the more you earn.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <main class="page" id="page-how" hidden>
+    <section class="section">
+      <div class="experience-tabs" id="experienceTabs">
+        <button type="button" class="experience-tab active" data-experience="user">User Experience</button>
+        <button type="button" class="experience-tab" data-experience="advertiser">Advertiser Experience</button>
+      </div>
+
+      <!-- USER EXPERIENCE -->
+      <div class="experience-panel" id="experience-user">
+      <div class="experience-columns">
+        <div class="how-component">
+          <div class="section-head">
+            <div class="eyebrow">the extension</div>
+            <h2 class="component-heading">Lives right where you're already looking</h2>
+          </div>
+
+          <div class="mock-window">
+            <div class="mock-titlebar">
+              <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+              <span class="mock-url">claude.ai/new</span>
+              <span class="mock-status"><span class="dot"></span>whyl on</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-bubble">She sells seashells by the seashore, and the shells she sells are surely seashells</div>
+              <div class="mock-thinking">
+                <span class="thinking-dots"><span></span><span></span><span></span></span>
+                Claude is thinking… <span class="mono" id="mockClock2">00:00</span>
+              </div>
+
+              <div class="ad-card">
+                <div class="ad-card-top">
+                  <span class="ad-eyebrow">whyl · sponsored ad</span>
+                </div>
+                <div class="ad-video-wrap">
+                  <video class="ad-video" id="adVideo2" autoplay muted loop playsinline>
+                    <source src="assets/extension-pitch.mp4" type="video/mp4">
+                  </video>
+                  <button type="button" class="mute-toggle" id="adMuteToggle2" aria-label="Unmute ad video">🔇</button>
+                </div>
+                <div class="ad-progress"><div class="ad-progress-bar" id="mockProgress2"></div></div>
+                <div class="ad-card-bottom">
+                  <span class="mono muted">watching ad…</span>
+                  <span class="mono accent" id="mockTokens2">+ 0 tokens</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="how-component">
+          <div class="section-head">
+            <div class="eyebrow">your dashboard</div>
+            <h2 class="component-heading">Your wallet, activity, and goals in one place</h2>
+          </div>
+
+          <div class="dashboard-shell">
+            <div class="mock-titlebar">
+              <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+              <span class="mock-url">app.whyl.ai/dashboard</span>
+              <div class="dash-status mono accent" style="margin-left:auto;"><span class="dot"></span>whyl active on 3 tools</div>
+            </div>
+
+            <div class="dashboard-tabs" id="dashboardTabs">
+              <button type="button" class="dashboard-tab active" data-dtab="overview">Overview</button>
+              <button type="button" class="dashboard-tab" data-dtab="goals">My Goals</button>
+            </div>
+
+            <div class="dashboard-body" data-dpanel="overview">
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">wallet</div>
+                <div class="dash-stats">
+                  <div class="card card-accent">
+                    <div class="mono muted uppercase small">token balance</div>
+                    <div class="dash-num accent">4,820</div>
+                    <div class="dash-sub">+312 this week · redeemable across Claude, Cursor &amp; ChatGPT</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">ads watched</div>
+                    <div class="dash-num">318</div>
+                    <div class="dash-sub">≈ 79 min reclaimed</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">focus streak</div>
+                    <div class="dash-num">12 <span class="dash-num-unit">days</span></div>
+                    <div class="dash-sub">0 doomscroll relapses</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">activity &amp; redemption</div>
+                <div class="dash-cols">
+                  <div class="card">
+                    <div class="dash-card-head">
+                      <h3 class="sm">Tokens earned · last 7 days</h3>
+                      <span class="mono accent">▲ 18%</span>
+                    </div>
+                    <div class="bars">
+                      <div class="bar-col"><div class="bar" style="height:46%"></div><span class="mono muted">Mo</span></div>
+                      <div class="bar-col"><div class="bar" style="height:62%"></div><span class="mono muted">Tu</span></div>
+                      <div class="bar-col"><div class="bar" style="height:38%"></div><span class="mono muted">We</span></div>
+                      <div class="bar-col"><div class="bar" style="height:78%"></div><span class="mono muted">Th</span></div>
+                      <div class="bar-col"><div class="bar" style="height:56%"></div><span class="mono muted">Fr</span></div>
+                      <div class="bar-col"><div class="bar bar-peak" style="height:90%"></div><span class="mono accent">Sa</span></div>
+                      <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Su</span></div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <h3 class="sm">Redeem tokens</h3>
+                    <div class="redeem-list">
+                      <div class="redeem-row"><div><div class="redeem-title">+500 Claude tokens</div><div class="mono muted small">costs 120 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+                      <div class="redeem-row"><div><div class="redeem-title">Cursor Pro · 1 week</div><div class="mono muted small">costs 900 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+                      <div class="redeem-row"><div><div class="redeem-title">+2,000 ChatGPT credits</div><div class="mono muted small">costs 400 ⚡</div></div><span class="redeem-btn">redeem</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">recent waits</div>
+                <div class="card activity-card">
+                  <div class="activity-header mono muted small">
+                    <div>ad</div><div>tool</div><div>duration</div><div>earned</div>
+                  </div>
+                  <div class="activity-row"><div>Nimbus — edge cron for agents</div><div class="muted">Claude</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+                  <div class="activity-row"><div>Parsel — typed API mocks</div><div class="muted">Cursor</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+                  <div class="activity-row activity-row-last"><div>Cadence — auto standups</div><div class="muted">Copilot</div><div class="mono muted">15s</div><div class="mono accent">+25 ⚡</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-body" data-dpanel="goals" hidden>
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">my goals</div>
+                <div class="card activity-card">
+                  <div class="dash-card-head">
+                    <h3 class="sm">Goals fed by your waits</h3>
+                    <div class="mono muted small" id="bankedLabelHome">0 min banked this week</div>
+                  </div>
+                  <div class="goals-list goals-list-grid" id="goalsListHome"></div>
+                  <button type="button" class="btn btn-primary btn-block" id="logWaitBtn" style="margin-top:14px;">▶ simulate a 3-min wait</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <!-- ADVERTISER EXPERIENCE -->
+      <div class="experience-panel" id="experience-advertiser" hidden>
+        <div class="how-component">
+          <div class="section-head">
+            <div class="eyebrow">your dashboard</div>
+            <h2 class="component-heading">Track every campaign in one place</h2>
+          </div>
+
+          <div class="dashboard-shell">
+            <div class="mock-titlebar">
+              <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+              <span class="mock-url">app.whyl.ai/advertiser</span>
+              <div class="dash-status mono accent" style="margin-left:auto;"><span class="dot"></span>3 campaigns live</div>
+            </div>
+
+            <div class="dashboard-body">
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">campaign overview</div>
+                <div class="dash-stats">
+                  <div class="card card-accent">
+                    <div class="mono muted uppercase small">budget spent</div>
+                    <div class="dash-num accent">$1,240</div>
+                    <div class="dash-sub">across 3 active campaigns · $2.75 avg bid/block</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">ads served</div>
+                    <div class="dash-num">18,400</div>
+                    <div class="dash-sub">≈ 92% completion · 1,472 skipped</div>
+                  </div>
+                  <div class="card">
+                    <div class="mono muted uppercase small">dev payout</div>
+                    <div class="dash-num">$620</div>
+                    <div class="dash-sub">50% of spend → 214 devs paid</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">spend &amp; reach</div>
+                <div class="dash-cols">
+                  <div class="card">
+                    <div class="dash-card-head">
+                      <h3 class="sm">Spend · last 7 days</h3>
+                      <span class="mono accent">▲ 24%</span>
+                    </div>
+                    <div class="bars">
+                      <div class="bar-col"><div class="bar" style="height:40%"></div><span class="mono muted">Mo</span></div>
+                      <div class="bar-col"><div class="bar" style="height:55%"></div><span class="mono muted">Tu</span></div>
+                      <div class="bar-col"><div class="bar" style="height:35%"></div><span class="mono muted">We</span></div>
+                      <div class="bar-col"><div class="bar" style="height:70%"></div><span class="mono muted">Th</span></div>
+                      <div class="bar-col"><div class="bar" style="height:60%"></div><span class="mono muted">Fr</span></div>
+                      <div class="bar-col"><div class="bar bar-peak" style="height:95%"></div><span class="mono accent">Sa</span></div>
+                      <div class="bar-col"><div class="bar" style="height:80%"></div><span class="mono muted">Su</span></div>
+                    </div>
+                  </div>
+
+                  <div class="card">
+                    <h3 class="sm">Reach by tool</h3>
+                    <div class="goals-list">
+                      <div class="goal-item on">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">Claude</div>
+                            <div class="goal-detail">8,464 ads served</div>
+                          </div>
+                          <div class="goal-pct">46%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:46%"></div></div>
+                      </div>
+                      <div class="goal-item">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">Cursor</div>
+                            <div class="goal-detail">5,152 ads served</div>
+                          </div>
+                          <div class="goal-pct">28%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:28%"></div></div>
+                      </div>
+                      <div class="goal-item">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">ChatGPT</div>
+                            <div class="goal-detail">3,312 ads served</div>
+                          </div>
+                          <div class="goal-pct">18%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:18%"></div></div>
+                      </div>
+                      <div class="goal-item">
+                        <div class="goal-item-top">
+                          <div class="goal-copy">
+                            <div class="goal-label">Copilot</div>
+                            <div class="goal-detail">1,472 ads served</div>
+                          </div>
+                          <div class="goal-pct">8%</div>
+                        </div>
+                        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:8%"></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashboard-group">
+                <div class="dashboard-group-label mono muted uppercase small">active campaigns</div>
+                <div class="card activity-card">
+                  <div class="activity-header mono muted small">
+                    <div>campaign</div><div>status</div><div>bid / block</div><div>spent</div>
+                  </div>
+                  <div class="activity-row"><div>Fall product launch</div><div class="mono accent">live</div><div class="mono muted">$4.20</div><div class="mono">$410</div></div>
+                  <div class="activity-row"><div>Enterprise beta invite</div><div class="mono accent">live</div><div class="mono muted">$3.10</div><div class="mono">$332</div></div>
+                  <div class="activity-row activity-row-last"><div>Dev tools newsletter push</div><div class="mono muted">paused</div><div class="mono muted">$1.85</div><div class="mono">$498</div></div>
+                </div>
+              </div>
+
+              <div class="dashboard-cta">
+                <button type="button" class="btn btn-primary" data-nav="ads">See the full marketplace →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ SHOWCASE / ADVERTISERS ============ -->
+  <main class="page" id="page-ads" hidden>
+    <section class="section narrow">
+      <div class="eyebrow center-text">the ad marketplace</div>
+      <div class="marketplace">
+        <!-- LIVE ORDER BOOK -->
+        <div class="orderbook">
+          <div class="orderbook-head">
+            <div class="orderbook-title">Live order book</div>
+            <div class="mono accent live-indicator"><span class="dot"></span><span id="liveBidders">6</span> advertisers bidding</div>
+          </div>
+          <div class="orderbook-cols mono muted">
+            <div>#</div><div>advertiser</div><div class="right">bid / 1K views</div><div class="right">status</div>
+          </div>
+          <div id="orderbookRows"></div>
+        </div>
+
+        <!-- BID PANEL -->
+        <div class="bid-panel">
+          <div class="bid-panel-title">Place your bid</div>
+
+          <div class="bid-row">
+            <label class="mono muted">bid per 1K views</label>
+            <span class="bid-value accent" id="bidValue">$2.75</span>
+          </div>
+          <input type="range" min="0.5" max="6" step="0.05" value="2.75" id="bidRange" class="range">
+
+          <div class="bid-row">
+            <label class="mono muted">1K-view packs</label>
+            <span class="bid-value" id="blocksValue">20</span>
+          </div>
+          <input type="range" min="1" max="120" step="1" value="20" id="blocksRange" class="range">
+
+          <div class="bid-summary">
+            <div class="bid-summary-top">
+              <span class="mono muted">you'd serve</span>
+              <span class="bid-rank accent" id="rankPhrase">#1 — top slot</span>
+            </div>
+            <div class="bid-summary-divider"></div>
+            <div class="bid-summary-row"><span>total budget</span><span class="mono" id="totalCost">$55</span></div>
+            <div class="bid-summary-row"><span>≈ views reached</span><span class="mono" id="reach">20,000</span></div>
+            <div class="bid-summary-row"><span>to fellow devs (50%)</span><span class="mono accent" id="devPayout">$27</span></div>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" data-nav="waitlist">Fund this campaign →</button>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:36px;">
+        <div class="card card-sm"><h3 class="sm">Pay per completed view</h3><p>Skips and half-watches are free. Your budget only burns on a full 15-second ad.</p></div>
+        <div class="card card-sm"><h3 class="sm">Re-bid anytime</h3><p>Losing the top slot? Raise your bid and jump the queue instantly. No contracts.</p></div>
+        <div class="card card-sm"><h3 class="sm">50% goes back to users</h3><p>50% of every completed view becomes AI tokens for the person who watched. That's the flywheel.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ WAITLIST ============ -->
+  <main class="page" id="page-waitlist" hidden>
+    <section class="section narrow waitlist-grid">
+      <div>
+        <div class="eyebrow">join the waitlist</div>
+        <h1 class="page-title">Pick a side.<br>We'll email you at launch.</h1>
+      </div>
+
+      <div class="waitlist-card">
+        <div class="mono muted label">I want to…</div>
+        <div class="side-picker">
+          <button type="button" class="side-option active" id="pickEarn" data-side="earn">
+            <div class="side-title">Earn tokens</div>
+            <div class="side-sub">I'm building with AI</div>
+          </button>
+          <button type="button" class="side-option" id="pickAd" data-side="ad">
+            <div class="side-title">Advertise</div>
+            <div class="side-sub">I have a startup</div>
+          </button>
+        </div>
+
+        <form id="waitlistForm">
+          <label class="mono muted label" for="emailInput">email</label>
+          <input type="email" id="emailInput" class="input" placeholder="you@company.dev" required>
+
+          <label class="mono muted label" id="secondaryLabel" for="secondaryInput">which tools? (optional)</label>
+          <input type="text" id="secondaryInput" class="input" placeholder="Claude, Cursor, Copilot…">
+
+          <button type="submit" class="btn btn-primary btn-block" id="waitlistSubmit">Join the waitlist →</button>
+        </form>
+        <div class="waitlist-success" id="waitlistSuccess" hidden>✓ you're on the list — check your inbox</div>
+        <p class="mono dim center-text small built-with">built_with: 34,000 minutes of AI thinking</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="social-links">
+      <a href="https://www.instagram.com/whyl.ai/" target="_blank" rel="noopener" class="social-link">Instagram</a>
+      <a href="https://www.tiktok.com/@whyl.ai" target="_blank" rel="noopener" class="social-link">TikTok</a>
+    </div>
+    <p class="mono dim">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span> { built_with: "34,000 minutes of AI thinking"; }</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

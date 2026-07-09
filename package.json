@@ -1,0 +1,22 @@
+{
+  "name": "whyl",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "workspaces": [
+    "packages/api",
+    "packages/dashboard"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w packages/api\" \"npm run dev -w packages/dashboard\"",
+    "dev:api": "npm run dev -w packages/api",
+    "dev:dashboard": "npm run dev -w packages/dashboard",
+    "dev:website": "npx --yes serve website -l 3000",
+    "build": "npm run build -w packages/api && npm run build -w packages/dashboard",
+    "build:extension": "node scripts/build-extension.js",
+    "generate-icons": "node scripts/generate-icons.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
