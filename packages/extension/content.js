@@ -102,26 +102,35 @@
     'Searching the web',
   ];
 
-  // Bundled Launch Gallery creatives — multiple cut lengths so we can fit the
-  // remaining predicted wait (short prompts → short clips, long waits → longer).
-  const LAUNCH_CREATIVE_FILES = [
-    { id: 'lg-factory-2s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Quick cut.', file: 'media/factory-2s.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 2, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-factory-3s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Quick cut.', file: 'media/factory-3s.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 3, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-4s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Short cut.', file: 'media/lightwork-4s.mp4', contentType: 'video', creditsPerView: 6, durationSeconds: 4, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-factory-5s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Short cut.', file: 'media/factory-5s.mp4', contentType: 'video', creditsPerView: 7, durationSeconds: 5, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-6s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Short cut.', file: 'media/lightwork-6s.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 6, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-crowdreply-7s', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers', description: 'Short cut.', file: 'media/crowdreply-7s.mp4', contentType: 'video', creditsPerView: 9, durationSeconds: 7, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
-    { id: 'lg-factory-8s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Medium cut.', file: 'media/factory-8s.mp4', contentType: 'video', creditsPerView: 10, durationSeconds: 8, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-10s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Medium cut.', file: 'media/lightwork-10s.mp4', contentType: 'video', creditsPerView: 11, durationSeconds: 10, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-boardy-12s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen', description: 'Medium cut.', file: 'media/boardy-12s.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 12, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
-    { id: 'lg-factory-15s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Long cut.', file: 'media/factory-15s.mp4', contentType: 'video', creditsPerView: 13, durationSeconds: 15, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-20s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Long cut.', file: 'media/lightwork-20s.mp4', contentType: 'video', creditsPerView: 14, durationSeconds: 20, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-boardy-25s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen', description: 'Long cut.', file: 'media/boardy-25s.mp4', contentType: 'video', creditsPerView: 15, durationSeconds: 25, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
-    { id: 'lg-factory', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Full launch cut.', file: 'media/factory.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 30, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Full launch cut.', file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 39, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-crowdreply', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers', description: 'Full launch cut.', file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 47, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
-    { id: 'lg-boardy', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen', description: 'Full launch cut.', file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 90, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
+  // Native-length creatives only — each file is a full published short clip
+  // (Mixkit / SampleLib), NOT a trim of a longer launch video. One option per
+  // wait-depth bucket so remaining TTFT+TPS wait maps to a real file length.
+  const AD_BRANDS = [
+    { advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents' },
+    { advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Work that moves itself' },
+    { advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen' },
+    { advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers' },
   ];
+
+  // Seconds buckets we ship as standalone native files (probed on disk).
+  const NATIVE_AD_SECONDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30];
+
+  const LAUNCH_CREATIVE_FILES = NATIVE_AD_SECONDS.map((seconds, index) => {
+    const brand = AD_BRANDS[index % AD_BRANDS.length];
+    return {
+      id: `native-${brand.advertiserName.toLowerCase()}-${seconds}s`,
+      advertiserName: brand.advertiserName,
+      advertiserUrl: brand.advertiserUrl,
+      title: brand.title,
+      slogan: brand.slogan,
+      description: `Native ${seconds}s bumper.`,
+      file: `media/native-${seconds}s.mp4`,
+      contentType: 'video',
+      creditsPerView: Math.max(3, Math.min(18, seconds)),
+      durationSeconds: seconds,
+      source: 'native-short-stock',
+    };
+  });
 
   function sloganForAd(ad) {
     if (!ad) return '';
@@ -1394,7 +1403,6 @@
               autoplay
               playsinline
               webkit-playsinline
-              loop
               preload="auto"
             ></video>
             <button class="whyl-mute-badge" type="button" aria-label="Mute video" data-muted="0">MUTE</button>
