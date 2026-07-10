@@ -102,35 +102,24 @@
     'Searching the web',
   ];
 
-  // Native-length creatives only — each file is a full published short clip
-  // (Mixkit / SampleLib), NOT a trim of a longer launch video. One option per
-  // wait-depth bucket so remaining TTFT+TPS wait maps to a real file length.
-  const AD_BRANDS = [
-    { advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents' },
-    { advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Work that moves itself' },
-    { advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen' },
-    { advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers' },
+  // Duration ladder of complete short ads (bumper spots), NOT trims of long videos.
+  // Each file is authored to that exact length so wait-fit picks a real spot.
+  const LAUNCH_CREATIVE_FILES = [
+    { id: 'bumper-3s', advertiserName: 'Pulse', advertiserUrl: 'https://pulse.demo', title: 'Pulse', slogan: 'Ship faster. Think clearer.', description: '3s bumper.', file: 'media/bumper-3s.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 3 },
+    { id: 'bumper-4s', advertiserName: 'Orbit', advertiserUrl: 'https://orbit.demo', title: 'Orbit', slogan: 'Your stack, in sync.', description: '4s bumper.', file: 'media/bumper-4s.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 4 },
+    { id: 'bumper-5s', advertiserName: 'Nova', advertiserUrl: 'https://nova.demo', title: 'Nova', slogan: 'Launch with confidence.', description: '5s bumper.', file: 'media/bumper-5s.mp4', contentType: 'video', creditsPerView: 6, durationSeconds: 5 },
+    { id: 'bumper-6s', advertiserName: 'Stack', advertiserUrl: 'https://stack.demo', title: 'Stack', slogan: 'Build once. Scale forever.', description: '6s bumper.', file: 'media/bumper-6s.mp4', contentType: 'video', creditsPerView: 7, durationSeconds: 6 },
+    { id: 'bumper-7s', advertiserName: 'Relay', advertiserUrl: 'https://relay.demo', title: 'Relay', slogan: 'Messages that move work.', description: '7s bumper.', file: 'media/bumper-7s.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 7 },
+    { id: 'bumper-8s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents.', description: '8s bumper.', file: 'media/bumper-8s.mp4', contentType: 'video', creditsPerView: 9, durationSeconds: 8 },
+    { id: 'bumper-9s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Lightwork', slogan: 'Work that moves itself.', description: '9s bumper.', file: 'media/bumper-9s.mp4', contentType: 'video', creditsPerView: 10, durationSeconds: 9 },
+    { id: 'bumper-10s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen.', description: '10s bumper.', file: 'media/bumper-10s.mp4', contentType: 'video', creditsPerView: 11, durationSeconds: 10 },
+    { id: 'bumper-12s', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers.', description: '12s bumper.', file: 'media/bumper-12s.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 12 },
+    { id: 'bumper-15s', advertiserName: 'Pulse', advertiserUrl: 'https://pulse.demo', title: 'Pulse Pro', slogan: 'Clarity in every sprint.', description: '15s bumper.', file: 'media/bumper-15s.mp4', contentType: 'video', creditsPerView: 13, durationSeconds: 15 },
+    { id: 'lg-crowdreply', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers.', description: 'Full launch.', file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 14, durationSeconds: 25 },
+    { id: 'lg-lightwork', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Work that moves itself.', description: 'Full launch.', file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 15, durationSeconds: 28 },
+    { id: 'lg-factory', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents.', description: 'Full launch.', file: 'media/factory.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 30 },
+    { id: 'lg-boardy', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen.', description: 'Full launch.', file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 32 },
   ];
-
-  // Seconds buckets we ship as standalone native files (probed on disk).
-  const NATIVE_AD_SECONDS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30];
-
-  const LAUNCH_CREATIVE_FILES = NATIVE_AD_SECONDS.map((seconds, index) => {
-    const brand = AD_BRANDS[index % AD_BRANDS.length];
-    return {
-      id: `native-${brand.advertiserName.toLowerCase()}-${seconds}s`,
-      advertiserName: brand.advertiserName,
-      advertiserUrl: brand.advertiserUrl,
-      title: brand.title,
-      slogan: brand.slogan,
-      description: `Native ${seconds}s bumper.`,
-      file: `media/native-${seconds}s.mp4`,
-      contentType: 'video',
-      creditsPerView: Math.max(3, Math.min(18, seconds)),
-      durationSeconds: seconds,
-      source: 'native-short-stock',
-    };
-  });
 
   function sloganForAd(ad) {
     if (!ad) return '';
@@ -220,10 +209,10 @@
   const PREDICTION_END_BUFFER_MS = 400;
   const HARD_SESSION_CAP_MS = 180000;
   // Only show an ad when remaining predicted wait can fit a real creative.
-  const MIN_AD_MS = 2000;
+  const MIN_AD_MS = 3000; // shortest bumper is 3s
   // Under-estimate remaining wait so the chosen clip finishes before the answer.
   // Ads should fit inside the wait — never overrun it.
-  const AD_FIT_SAFETY = 0.72;
+  const AD_FIT_SAFETY = 0.78;
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
 
   // Soft cues for expected output size (affect estimate only — never force skip/show).
@@ -1403,6 +1392,7 @@
               autoplay
               playsinline
               webkit-playsinline
+              loop
               preload="auto"
             ></video>
             <button class="whyl-mute-badge" type="button" aria-label="Mute video" data-muted="0">MUTE</button>
