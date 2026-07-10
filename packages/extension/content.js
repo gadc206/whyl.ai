@@ -153,7 +153,7 @@
   const DEMO_AD = LAUNCH_CREATIVES[0];
   const SHORTEST_CREATIVE_SEC = Math.min(...LAUNCH_CREATIVE_FILES.map((e) => e.durationSeconds));
 
-  // Pick the longest creative that still fits the remaining wait window.
+  // Pick the creative whose real file length equals the fitted seconds.
   function pickLaunchCreative(preferredSeconds = 15) {
     const target = Math.max(0, preferredSeconds || 0);
     if (target < SHORTEST_CREATIVE_SEC) return null;
@@ -164,11 +164,12 @@
 
     if (!fitting.length) return null;
 
-    // Prefer exact/near match; among same length, randomize brand.
-    const bestLen = fitting[0].durationSeconds;
-    const sameLen = fitting.filter((e) => e.durationSeconds === bestLen);
-    const pick = sameLen[Math.floor(Math.random() * sameLen.length)] || fitting[0];
-    return resolveCreative(pick, target);
+    // Prefer exact match to the fitted wait; else longest that still fits.
+    const exact = fitting.filter((e) => e.durationSeconds === target);
+    const pool = exact.length ? exact : fitting.filter((e) => e.durationSeconds === fitting[0].durationSeconds);
+    const pick = pool[Math.floor(Math.random() * pool.length)] || fitting[0];
+    // durationSeconds stays the FILE length — never stretch a short clip.
+    return resolveCreative(pick, pick.durationSeconds);
   }
 
   // Always prefer bundled local MP4s so the player never depends on flaky CDNs.
@@ -179,14 +180,16 @@
     const local = typeof ad.videoUrl === 'string' && ad.videoUrl.startsWith('chrome-extension://');
     // If server ad has no local file, use the duration-matched local creative.
     if (!local) return fallback;
+    const fileSeconds = fallback.durationSeconds;
     return {
       ...fallback,
       ...ad,
-      videoUrl: ad.videoUrl,
+      videoUrl: ad.videoUrl || fallback.videoUrl,
       thumbnailUrl: ad.thumbnailUrl || '',
       contentType: 'video',
       slogan: ad.slogan || fallback.slogan || sloganForAd(ad),
-      durationSeconds: Math.min(preferredSeconds, fallback.durationSeconds),
+      // Clip length = real file length that was fitted to remaining wait.
+      durationSeconds: fileSeconds,
     };
   }
 
@@ -205,10 +208,13 @@
   };
 
   const DONE_HIDE_GRACE_MS = 0; // hide the instant stop disappears
-  const PREDICTION_END_BUFFER_MS = 250;
+  const PREDICTION_END_BUFFER_MS = 400;
   const HARD_SESSION_CAP_MS = 180000;
   // Only show an ad when remaining predicted wait can fit a real creative.
   const MIN_AD_MS = 2000;
+  // Under-estimate remaining wait so the chosen clip finishes before the answer.
+  // Ads should fit inside the wait — never overrun it.
+  const AD_FIT_SAFETY = 0.72;
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
 
   // Soft cues for expected output size (affect estimate only — never force skip/show).
@@ -674,17 +680,20 @@
     };
   }
 
-  // Ad length = remaining predicted wait. 0 means "not enough depth yet" — keep waiting,
-  // don't show a blip. Live mode (deep research) can grow the estimate on the next check.
+  // Ad length = remaining predicted wait, with a safety haircut so the clip
+  // finishes before the answer. Pick the longest creative that still fits.
+  // 0 = not enough depth — keep waiting / skip (no blip).
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs, promptText = '') {
     const estimate = estimateResponseTiming(platform, promptTokens, promptText);
-    const remainingMs = Math.max(
+    const rawRemainingMs = Math.max(
       0,
       (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS,
     );
-    if (remainingMs < MIN_AD_MS) return 0;
+    // Conservative fit window — never pick a clip longer than safe remaining wait.
+    const safeRemainingMs = Math.floor(rawRemainingMs * AD_FIT_SAFETY);
+    if (safeRemainingMs < MIN_AD_MS) return 0;
 
-    const remainingSec = Math.floor(remainingMs / 1000);
+    const remainingSec = Math.floor(safeRemainingMs / 1000);
     const available = LAUNCH_CREATIVE_FILES
       .map((e) => e.durationSeconds)
       .filter((sec) => sec <= remainingSec)
@@ -975,15 +984,27 @@
       this.sloganEl.setAttribute('aria-live', 'polite');
       this.sloganEl.style.cssText = [
         'display:none',
-        'flex-direction:column',
         'align-items:center',
-        'gap:5px',
-        'text-align:center',
-        'padding:0 10px',
+        'justify-content:center',
+        'gap:8px',
+        'max-width:min(92vw, 520px)',
+        'padding:7px 14px',
+        'border-radius:999px',
+        'border:1px solid rgba(214,255,63,0.18)',
+        'background:linear-gradient(90deg, rgba(8,12,8,0.08) 0%, rgba(10,16,10,0.88) 18%, rgba(12,18,10,0.92) 50%, rgba(10,16,10,0.88) 82%, rgba(8,12,8,0.08) 100%)',
+        'box-shadow:0 8px 28px rgba(0,0,0,0.28), 0 0 24px rgba(214,255,63,0.08)',
+        'backdrop-filter:blur(10px)',
         'opacity:0',
         'transform:translateY(-4px)',
         'transition:opacity 420ms ease, transform 420ms ease',
-        'max-width:100%',
+        'white-space:nowrap',
+        'overflow:hidden',
+        'text-overflow:ellipsis',
+        'font:600 11px/1.2 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace',
+        'letter-spacing:0.08em',
+        'text-transform:uppercase',
+        'color:#e8ff8a',
+        'text-shadow:0 0 8px rgba(214,255,63,0.85), 0 0 16px rgba(214,255,63,0.4)',
       ].join(';');
 
       this.badgeStack.appendChild(this.badge);
@@ -1009,16 +1030,11 @@
       const slogan = sloganForAd(ad);
       const company = companyForAd(ad);
       if (!slogan && !company) return '';
-      const sloganHtml = slogan
-        ? `<div style="font:600 12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:0.14em;text-transform:uppercase;color:#e8ff8a;text-shadow:0 0 8px rgba(214,255,63,0.95), 0 0 18px rgba(214,255,63,0.55), 0 0 34px rgba(190,255,42,0.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${escapeHtml(slogan)}</div>`
-        : '';
-      const companyHtml = company
-        ? `<div style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;border:1px solid rgba(214,255,63,0.28);background:rgba(9,12,8,0.72);box-shadow:0 0 14px rgba(214,255,63,0.18);">
-            <span style="width:6px;height:6px;border-radius:999px;background:#d6ff3f;box-shadow:0 0 10px rgba(214,255,63,0.95);display:block;"></span>
-            <span style="font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:0.16em;text-transform:uppercase;color:#d6ff3f;text-shadow:0 0 10px rgba(214,255,63,0.7);">${escapeHtml(company)}</span>
-          </div>`
-        : '';
-      return `${sloganHtml}${companyHtml}`;
+      // One line: COMPANY · slogan
+      if (company && slogan) {
+        return `<span style="font-weight:900;color:#d6ff3f;letter-spacing:0.14em;text-shadow:0 0 10px rgba(214,255,63,0.9);">${escapeHtml(company)}</span><span style="opacity:0.45;font-weight:700;">·</span><span style="font-weight:600;letter-spacing:0.1em;">${escapeHtml(slogan)}</span>`;
+      }
+      return `<span style="font-weight:900;color:#d6ff3f;letter-spacing:0.14em;">${escapeHtml(company || slogan)}</span>`;
     }
 
     // Illuminated afterglow under the pill — stays until the next question.
@@ -1028,7 +1044,7 @@
       if (!markup || !this.sloganEl) return;
       this.afterglowAd = ad;
       this.sloganEl.innerHTML = markup;
-      this.sloganEl.style.display = 'flex';
+      this.sloganEl.style.display = 'inline-flex';
       // Retrigger illuminate animation.
       this.sloganEl.style.opacity = '0';
       this.sloganEl.style.transform = 'translateY(-4px)';
@@ -2084,14 +2100,14 @@
     startAdTimer() {
       this.stopAdTimer();
       this.adStartedAt = Date.now();
-      const fittedMs = Math.max(MIN_AD_MS, (this.currentAd?.durationSeconds || 2) * 1000);
-      const remainingMs = Math.max(
-        MIN_AD_MS,
-        (this.predictedEndAt || (Date.now() + fittedMs)) - Date.now(),
-      );
-      // Never run longer than remaining predicted wait or the chosen short-ad length.
-      const durationMs = Math.min(fittedMs, remainingMs);
-      if (this.currentAd) this.currentAd.durationSeconds = Math.max(1, Math.round(durationMs / 1000));
+      // Timer = the creative's real file length. Hide early if the answer finishes.
+      // Never inflate past remaining wait, and never invent a longer runtime than the file.
+      const fileMs = Math.max(1000, (this.currentAd?.durationSeconds || 2) * 1000);
+      const remainingMs = Math.max(0, (this.predictedEndAt || 0) - Date.now());
+      const durationMs = remainingMs > 0 ? Math.min(fileMs, remainingMs) : fileMs;
+      if (this.currentAd) {
+        this.currentAd.durationSeconds = Math.max(1, Math.round(durationMs / 1000));
+      }
 
       this.adTimer = setInterval(() => {
         const now = Date.now();
