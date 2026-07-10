@@ -660,10 +660,12 @@
     }
     // Hard ceilings by prompt size so short chats never get long ads.
     const bucket = estimate.bucket || promptSizeBucket(promptTokens);
-    if (bucket === 'xs') chosen = Math.min(chosen || 2, 4);
-    else if (bucket === 'sm') chosen = Math.min(chosen || 3, 7);
-    else if (bucket === 'md') chosen = Math.min(chosen || 5, 12);
-    return chosen || Math.max(2, Math.round(remainingMs / 1000) || 2);
+    const remainingSec = Math.max(1, Math.ceil(remainingMs / 1000));
+    if (bucket === 'xs') chosen = Math.min(chosen || remainingSec, 3, remainingSec);
+    else if (bucket === 'sm') chosen = Math.min(chosen || remainingSec, 6, remainingSec);
+    else if (bucket === 'md') chosen = Math.min(chosen || remainingSec, 12, remainingSec);
+    else chosen = chosen || remainingSec;
+    return Math.max(1, chosen);
   }
 
   // Absolute predicted end time for this prompt (from candidate start).
