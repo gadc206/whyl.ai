@@ -100,18 +100,32 @@
   position: absolute;
   right: 8px;
   bottom: 8px;
+  z-index: 2;
   display: grid;
   place-items: center;
-  min-width: 34px;
-  height: 22px;
-  padding: 0 8px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  min-width: 44px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 999px;
-  background: rgba(8, 10, 8, 0.68);
-  color: rgba(247, 247, 239, 0.78);
+  background: rgba(8, 10, 8, 0.78);
+  color: rgba(247, 247, 239, 0.92);
   font-size: 9px;
   font-weight: 900;
   letter-spacing: 0.08em;
+  cursor: pointer;
+  pointer-events: auto;
+  font-family: inherit;
+}
+.whyl-mute-badge:hover {
+  background: rgba(199, 240, 61, 0.22);
+  border-color: rgba(199, 240, 61, 0.55);
+  color: #F4F7EF;
+}
+.whyl-mute-badge[data-muted="0"] {
+  background: rgba(199, 240, 61, 0.28);
+  color: #0A0B0A;
+  border-color: rgba(199, 240, 61, 0.7);
 }
 
 .whyl-progress {

@@ -46,6 +46,19 @@
     return recent >= 3;
   }
 
+  // Fresh streaming only — used for hide decisions so short answers don't
+  // keep the ad up for the full STALE_OPEN_STREAM_MS window.
+  function netWorkingFresh(windowMs = 1800) {
+    const now = Date.now();
+    if (netOpenStreams > 0 && now - netLastActivityAt < windowMs) return true;
+    let recent = 0;
+    for (let i = netChunkTimes.length - 1; i >= 0; i--) {
+      if (now - netChunkTimes[i] < windowMs) recent++;
+      else break;
+    }
+    return recent >= 2;
+  }
+
   // Answer is finished only when these appear without an active working signal.
   const DONE_STATUS_RE = /\b(finished|complete|completed|done|stopped|cancelled|canceled|response is ready)\b/i;
 
@@ -187,10 +200,10 @@
     default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
   };
 
-  const DONE_HIDE_GRACE_MS = 500;
+  const DONE_HIDE_GRACE_MS = 120;
   const PREDICTION_END_BUFFER_MS = 400;
   const HARD_SESSION_CAP_MS = 90000; // never keep an ad longer than this from candidate start
-  const POST_PREDICTION_MAX_MS = 12000; // if still "working" after prediction, hard stop soon
+  const POST_PREDICTION_MAX_MS = 8000; // if still "working" after prediction, hard stop soon
   const REACTIVATE_COOLDOWN_MS = 20000; // after hide, block auto re-show (stops flash loop)
 
   const PLATFORM_ADAPTERS = [
@@ -607,7 +620,7 @@
   }
 
   // Pick an ad length that fits the remaining predicted wait for this prompt.
-  const AD_DURATION_BUCKETS_SEC = [6, 8, 10, 12, 15, 20, 30];
+  const AD_DURATION_BUCKETS_SEC = [4, 6, 8, 10, 12, 15, 20, 30];
 
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
     const estimate = estimateResponseTiming(platform, promptTokens);
@@ -620,7 +633,11 @@
     if (findDeepResearchPlan() && remainingMs >= 18000) {
       chosen = Math.max(chosen, 15);
     }
-    return chosen || 6;
+    // Short prompts: never force a long ad — 4s floor is enough.
+    if ((promptTokens || 0) < 40 && remainingMs < 10000) {
+      chosen = Math.min(chosen || 4, 6);
+    }
+    return chosen || 4;
   }
 
   // Absolute predicted end time for this prompt (from candidate start).
@@ -664,21 +681,33 @@
   }
 
   function hasStopControlVisible() {
+    if (findVisible([
+      'button[data-testid="stop-button"]',
+      'button[data-testid*="stop-button"]',
+      'button[aria-label*="Stop generating"]',
+      'button[aria-label*="Stop streaming"]',
+      'button[aria-label*="Stop response"]',
+    ])) return true;
     return !!findVisibleControlText(['Stop generating', 'Stop streaming', 'Stop response', 'Stop research']);
   }
 
-  // Strict "still working" for HIDE decisions — only strong live signals.
-  // Broad generation scans are intentionally NOT used here (they false-positive forever on ChatGPT).
+  // Hide decisions: prefer stop-button lifecycle over stale network sockets.
+  // Short prompts finish fast; a lingering open stream must NOT keep the ad up.
   function isAiStillWorking(adapterInstance) {
-    if (hasStopControlVisible()) return true;
-    if (netWorking()) return true;
-    if (findDeepResearchPlan()) return true;
-    if (findGlobalLiveStatusText()) return true;
-    // Platform-specific streaming markers only (e.g. Claude data-is-streaming).
+    const stopVisible = hasStopControlVisible();
+    if (stopVisible) return true;
+
+    // Claude streaming attribute is a strong live signal.
     if (adapterInstance?.id === 'claude') {
       const streaming = document.querySelector('[data-is-streaming="true"]');
       if (streaming && isVisible(streaming)) return true;
     }
+
+    if (findDeepResearchPlan()) return true;
+    // Only very fresh network activity counts for keep-alive after stop is gone.
+    if (netWorkingFresh(1600)) return true;
+    // Live status only if short and dedicated — ignore leftover busy chrome.
+    if (findGlobalLiveStatusText()) return true;
     return false;
   }
 
@@ -1217,22 +1246,55 @@
               loop
               preload="auto"
             ></video>
-            <span class="whyl-mute-badge" aria-label="Video muted">MUTE</span>
+            <button class="whyl-mute-badge" type="button" aria-label="Unmute video" data-muted="1">MUTE</button>
           </div>
         `;
       }
       return `<div class="whyl-video-placeholder" aria-label="Sponsored video placeholder"></div>`;
     }
 
+    bindMuteToggle() {
+      const btn = this.root?.querySelector('.whyl-mute-badge');
+      const video = this.root?.querySelector('video');
+      if (!btn || !video || btn.dataset.bound === '1') return;
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const currentlyMuted = video.muted || video.volume === 0;
+        if (currentlyMuted) {
+          video.muted = false;
+          video.volume = 1;
+          video.removeAttribute('muted');
+          video.dataset.userUnmuted = '1';
+          btn.dataset.muted = '0';
+          btn.textContent = 'SOUND';
+          btn.setAttribute('aria-label', 'Mute video');
+          video.play()?.catch?.(() => {});
+        } else {
+          video.muted = true;
+          video.setAttribute('muted', '');
+          video.dataset.userUnmuted = '0';
+          btn.dataset.muted = '1';
+          btn.textContent = 'MUTE';
+          btn.setAttribute('aria-label', 'Unmute video');
+        }
+      });
+    }
+
     ensureVideoPlaying() {
       const video = this.root?.querySelector('video');
       if (!video) return;
-      video.muted = true;
-      video.defaultMuted = true;
+      this.bindMuteToggle();
+      // Start muted for autoplay policy; user can unmute via SOUND button.
+      if (video.dataset.userUnmuted !== '1') {
+        video.muted = true;
+        video.defaultMuted = true;
+        video.setAttribute('muted', '');
+      }
       video.playsInline = true;
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
-      video.setAttribute('muted', '');
 
       const play = () => {
         const result = video.play();
@@ -1257,7 +1319,6 @@
             play();
           })
           .catch(() => {
-            // Fall back to direct extension URL.
             video.addEventListener('loadeddata', play, { once: true });
             play();
           });
@@ -1657,10 +1718,10 @@
           if (!this.overlay.dragging) this.overlay.position();
 
           const now = Date.now();
-          const pastPrediction = this.predictedEndAt && now >= this.predictedEndAt;
           const stillWorking = isAiStillWorking(this.adapter);
           const sessionAge = now - (this.candidateStartedAt || now);
           const hardCapHit = sessionAge >= HARD_SESSION_CAP_MS;
+          const pastPrediction = this.predictedEndAt && now >= this.predictedEndAt;
 
           // Hard stop: never leave an ad up forever.
           if (hardCapHit) {
@@ -1668,7 +1729,8 @@
             return;
           }
 
-          // Hide as soon as strong working signals are gone.
+          // Fast path: stop button gone + no fresh streaming → hide almost immediately.
+          // This is what short prompts need (don't wait out a long predicted duration).
           if (!stillWorking) {
             if (!this.doneSinceAt) this.doneSinceAt = now;
             if (now - this.doneSinceAt >= DONE_HIDE_GRACE_MS) {
@@ -1680,7 +1742,7 @@
 
           this.doneSinceAt = 0;
 
-          // Past prediction while still working: allow a short extension, then hard stop.
+          // Past prediction while still working: short extension only, then hard stop.
           if (pastPrediction) {
             if (!this.postPredictionSinceAt) this.postPredictionSinceAt = now;
             if (now - this.postPredictionSinceAt >= POST_PREDICTION_MAX_MS) {
@@ -1812,11 +1874,11 @@
       this.adStartedAt = Date.now();
       // Ad length is the remaining predicted wait for this prompt.
       const remainingMs = Math.max(
-        6000,
-        (this.predictedEndAt || (Date.now() + 15000)) - Date.now(),
+        4000,
+        (this.predictedEndAt || (Date.now() + 12000)) - Date.now(),
       );
       const durationMs = Math.min(
-        Math.max((this.currentAd?.durationSeconds || 15) * 1000, 6000),
+        Math.max((this.currentAd?.durationSeconds || 8) * 1000, 4000),
         remainingMs,
       );
       if (this.currentAd) this.currentAd.durationSeconds = Math.round(durationMs / 1000);
@@ -1829,6 +1891,13 @@
           sessionCredits: this.sessionCredits,
           progressRatio,
         });
+
+        // Answer finished mid-ad → hide immediately (don't wait for progress bar).
+        if (!isAiStillWorking(this.adapter)) {
+          this.stopAdTimer();
+          this.endSession();
+          return;
+        }
 
         // Hard stop at predicted answer time when generation is done.
         if (this.predictedEndAt && now >= this.predictedEndAt && !isAiStillWorking(this.adapter)) {
@@ -1859,7 +1928,7 @@
             this.endSession();
           }
         }
-      }, 250);
+      }, 200);
     }
 
     stopAdTimer() {
