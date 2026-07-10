@@ -20,6 +20,7 @@ export default function Layout() {
             </>
           )}
           <NavLink to="/advertiser">Marketplace</NavLink>
+          {isAdvertiser && <NavLink to="/campaigns">Campaigns</NavLink>}
         </nav>
         {!isAdvertiser && (
           <p className="note sidebar-note">

@@ -23,23 +23,9 @@ interface OrderRow {
   status: string;
 }
 
-interface CampaignStat {
-  id: string;
-  title: string;
-  advertiserName: string;
-  budget: number;
-  viewsTarget: number;
-  viewsDelivered: number;
-  bidPer1k?: number;
-  viewPacks?: number;
-  status?: string;
-  active: boolean;
-}
-
 export default function AdvertiserPage() {
   const { user, refreshUser } = useAuth();
   const [orderbook, setOrderbook] = useState<OrderRow[]>([]);
-  const [campaigns, setCampaigns] = useState<CampaignStat[]>([]);
   const [liveBidders, setLiveBidders] = useState(0);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -77,8 +63,7 @@ export default function AdvertiserPage() {
 
   async function load() {
     try {
-      const [data, mine] = await Promise.all([api.marketplace(), api.campaigns()]);
-      setCampaigns(mine);
+      const data = await api.marketplace();
       if (data.orderbook.length) {
         setOrderbook(data.orderbook.map((row) => ({
           id: row.id,
@@ -118,11 +103,6 @@ export default function AdvertiserPage() {
         status: index < 2 ? 'serving' : 'queued',
       })));
       setLiveBidders(DEMO_BOOK.length);
-      try {
-        setCampaigns(await api.campaigns());
-      } catch {
-        setCampaigns([]);
-      }
     }
   }
 
@@ -168,44 +148,20 @@ export default function AdvertiserPage() {
         </p>
       )}
 
-      {error && <p className="error center-text">{error}</p>}
-      {message && <p className="notice center-text">{message}</p>}
+      {user?.role === 'advertiser' && (
+        <p className="note center-text">
+          Track live and past performance on{' '}
+          <Link to="/campaigns">Campaigns</Link>.
+        </p>
+      )}
 
-      <section className="campaigns-section">
-        <div className="campaigns-head">
-          <h2>Campaigns</h2>
-          <span className="mono muted small">{campaigns.length} total</span>
-        </div>
-        <div className="campaigns-table">
-          <div className="campaigns-cols mono muted small uppercase">
-            <div>campaign</div>
-            <div>status</div>
-            <div className="right">bid / 1K</div>
-            <div className="right">views</div>
-            <div className="right">spent</div>
-          </div>
-          {campaigns.length ? campaigns.map((campaign) => {
-            const delivered = Number(campaign.viewsDelivered) || 0;
-            const target = Math.max(1, Number(campaign.viewsTarget) || 1);
-            const spent = Math.round((delivered / target) * Number(campaign.budget || 0));
-            const status = campaign.status || (campaign.active ? 'live' : 'paused');
-            return (
-              <div className="campaigns-row" key={campaign.id}>
-                <div>
-                  <strong>{campaign.title}</strong>
-                  <span className="mono muted small">{campaign.advertiserName}</span>
-                </div>
-                <div className={`campaign-status ${status}`}>{status}</div>
-                <div className="right mono">${Number(campaign.bidPer1k || 0).toFixed(2)}</div>
-                <div className="right mono">{delivered.toLocaleString()}/{Number(campaign.viewsTarget || 0).toLocaleString()}</div>
-                <div className="right mono">${spent.toLocaleString()}</div>
-              </div>
-            );
-          }) : (
-            <p className="muted campaigns-empty">No campaigns yet. Fund one below to see live stats here.</p>
-          )}
-        </div>
-      </section>
+      {error && <p className="error center-text">{error}</p>}
+      {message && (
+        <p className="notice center-text">
+          {message}{' '}
+          <Link to="/campaigns">View campaigns →</Link>
+        </p>
+      )}
 
       <div className="marketplace">
         <div className="orderbook">

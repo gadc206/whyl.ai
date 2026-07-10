@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import { api, clearToken, setToken, type AccountRole, type User } from './api';
 import Layout from './components/Layout';
 import AdvertiserPage from './pages/AdvertiserPage';
+import CampaignsPage from './pages/CampaignsPage';
 import DashboardPage from './pages/DashboardPage';
 import EarningsPage from './pages/EarningsPage';
 import HistoryPage from './pages/HistoryPage';
@@ -125,6 +126,7 @@ export default function App() {
             <Route path="/referrals" element={<ReferralsPage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/advertiser" element={<AdvertiserPage />} />
+            <Route path="/campaigns" element={<CampaignsPage />} />
           </Route>
         </Route>
         <Route path="*" element={<RedirectHome />} />
