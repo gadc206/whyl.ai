@@ -89,30 +89,83 @@
     'Searching the web',
   ];
 
-  const DEMO_AD = {
-    id: 'demo',
-    advertiserName: 'WHYL',
-    advertiserUrl: 'https://whyl.ai',
-    title: 'While AI thinks, you earn',
-    description: 'This is demo sponsored content. Sign in to earn real credits.',
-    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=640',
-    contentType: 'video',
-    creditsPerView: 12,
-    durationSeconds: 15,
+  // Public cinematic sample creatives (Google sample bucket) used as launch-style demos.
+  const LAUNCH_CREATIVES = [
+    {
+      id: 'demo-blazes',
+      advertiserName: 'Nova',
+      advertiserUrl: 'https://whyl.ai',
+      title: 'Ship the launch cut',
+      description: 'Cinematic product launch energy while you wait.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=640',
+      contentType: 'video',
+      creditsPerView: 14,
+      durationSeconds: 15,
+    },
+    {
+      id: 'demo-joyrides',
+      advertiserName: 'Orbit',
+      advertiserUrl: 'https://whyl.ai',
+      title: 'Motion that converts',
+      description: 'High-energy launch motion for AI wait inventory.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=640',
+      contentType: 'video',
+      creditsPerView: 12,
+      durationSeconds: 15,
+    },
+    {
+      id: 'demo-escapes',
+      advertiserName: 'Pulse',
+      advertiserUrl: 'https://whyl.ai',
+      title: 'Make the wait worth it',
+      description: 'Premium launch creative for deep-work waits.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=640',
+      contentType: 'video',
+      creditsPerView: 12,
+      durationSeconds: 15,
+    },
+    {
+      id: 'demo-meltdowns',
+      advertiserName: 'Spark',
+      advertiserUrl: 'https://whyl.ai',
+      title: 'Drop day energy',
+      description: 'Bold launch visuals timed to AI thinking windows.',
+      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=640',
+      contentType: 'video',
+      creditsPerView: 10,
+      durationSeconds: 12,
+    },
+  ];
+
+  const DEMO_AD = LAUNCH_CREATIVES[0];
+
+  function pickLaunchCreative(preferredSeconds = 15) {
+    const ranked = [...LAUNCH_CREATIVES].sort(
+      (a, b) => Math.abs((a.durationSeconds || 15) - preferredSeconds) - Math.abs((b.durationSeconds || 15) - preferredSeconds),
+    );
+    const pick = ranked[Math.floor(Math.random() * Math.min(3, ranked.length))] || DEMO_AD;
+    return { ...pick, durationSeconds: preferredSeconds };
+  }
+
+  // Industry-standard wait model: TTFT (prefill) + decode (output / TPS).
+  // Sources: TTFT scales with prompt tokens; TPS is platform decode speed.
+  const PLATFORM_WAIT_DEFAULTS = {
+    chatgpt: { ttftMs: 700, msPerInputToken: 0.22, tokensPerSecond: 58, baseOutput: 280, promptFactor: 0.55, toolPenaltyMs: 0 },
+    claude: { ttftMs: 900, msPerInputToken: 0.24, tokensPerSecond: 52, baseOutput: 340, promptFactor: 0.6, toolPenaltyMs: 0 },
+    gemini: { ttftMs: 650, msPerInputToken: 0.18, tokensPerSecond: 68, baseOutput: 260, promptFactor: 0.5, toolPenaltyMs: 0 },
+    cursor: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 32, baseOutput: 700, promptFactor: 0.9, toolPenaltyMs: 8000 },
+    replit: { ttftMs: 1300, msPerInputToken: 0.28, tokensPerSecond: 30, baseOutput: 650, promptFactor: 0.85, toolPenaltyMs: 7000 },
+    grok: { ttftMs: 750, msPerInputToken: 0.2, tokensPerSecond: 62, baseOutput: 280, promptFactor: 0.5, toolPenaltyMs: 0 },
+    manus: { ttftMs: 1800, msPerInputToken: 0.32, tokensPerSecond: 20, baseOutput: 1100, promptFactor: 1.1, toolPenaltyMs: 20000 },
+    lovable: { ttftMs: 1400, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 800, promptFactor: 0.95, toolPenaltyMs: 10000 },
+    default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
   };
 
-  const PLATFORM_WAIT_DEFAULTS = {
-    chatgpt: { ttftMs: 1200, tokensPerSecond: 60, outputTokens: 320 },
-    claude: { ttftMs: 1500, tokensPerSecond: 55, outputTokens: 420 },
-    gemini: { ttftMs: 1100, tokensPerSecond: 70, outputTokens: 300 },
-    cursor: { ttftMs: 1800, tokensPerSecond: 35, outputTokens: 900 },
-    replit: { ttftMs: 1800, tokensPerSecond: 35, outputTokens: 900 },
-    grok: { ttftMs: 1200, tokensPerSecond: 65, outputTokens: 320 },
-    manus: { ttftMs: 2200, tokensPerSecond: 25, outputTokens: 1200 },
-    lovable: { ttftMs: 1800, tokensPerSecond: 35, outputTokens: 900 },
-    default: { ttftMs: 1500, tokensPerSecond: 45, outputTokens: 420 },
-  };
+  const DONE_HIDE_GRACE_MS = 700;
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -485,66 +538,117 @@
 
   function estimateResponseTiming(platform, promptTokens) {
     const defaults = PLATFORM_WAIT_DEFAULTS[platform] || PLATFORM_WAIT_DEFAULTS.default;
-    const outputTokens = clamp(defaults.outputTokens + Math.round((promptTokens || 0) * 0.6), 180, 2200);
-    let formulaMs = defaults.ttftMs + (outputTokens / defaults.tokensPerSecond) * 1000;
+    const inputTokens = Math.max(0, promptTokens || 0);
 
-    // Long-running modes (deep research / web search / agent) need much longer windows.
+    // Exact industry formula used in serving systems:
+    // total ≈ TTFT(prefill) + (expected_output_tokens / TPS)
+    const ttftMs = defaults.ttftMs + (inputTokens * defaults.msPerInputToken);
+    const expectedOutput = clamp(
+      defaults.baseOutput + Math.round(inputTokens * defaults.promptFactor),
+      120,
+      2800,
+    );
+    let decodeMs = (expectedOutput / Math.max(defaults.tokensPerSecond, 1)) * 1000;
+    let toolPenaltyMs = defaults.toolPenaltyMs || 0;
+
+    // Mode multipliers when the UI shows long-running work.
     if (findDeepResearchPlan()) {
-      formulaMs = Math.max(formulaMs, platform === 'chatgpt' || platform === 'claude' ? 90000 : 60000);
+      toolPenaltyMs = Math.max(toolPenaltyMs, platform === 'chatgpt' || platform === 'claude' ? 75000 : 50000);
+      decodeMs *= 1.35;
     } else if (hasVisibleStatusText({
       liveText: ['Researching', 'Searching', 'Browsing', 'Deep research', 'Calibrating', 'Using tools'],
       useGlobalLiveStatus: true,
     })) {
-      formulaMs = Math.max(formulaMs, 45000);
+      toolPenaltyMs = Math.max(toolPenaltyMs, 25000);
     }
 
+    let formulaMs = ttftMs + decodeMs + toolPenaltyMs;
     const observed = loadWaitStats()[platform];
 
     if (observed?.count >= 3 && observed.avgTotalMs > 0) {
       const observedWeight = observed.count >= 8 ? 0.7 : 0.45;
+      formulaMs = formulaMs * (1 - observedWeight) + observed.avgTotalMs * observedWeight;
       return {
-        totalMs: formulaMs * (1 - observedWeight) + observed.avgTotalMs * observedWeight,
+        totalMs: formulaMs,
+        ttftMs,
+        decodeMs,
+        expectedOutput,
         source: 'observed',
       };
     }
 
-    return { totalMs: formulaMs, source: 'default' };
+    return {
+      totalMs: formulaMs,
+      ttftMs,
+      decodeMs,
+      expectedOutput,
+      source: 'ttft+tps',
+    };
   }
 
   // Pick an ad length that fits the remaining predicted wait for this platform.
-  // Activation itself still follows the friend's thinking-signal rules.
-  const AD_DURATION_BUCKETS_SEC = [8, 10, 12, 15, 20, 30];
+  const AD_DURATION_BUCKETS_SEC = [6, 8, 10, 12, 15, 20, 30];
 
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - 1500);
-    let chosen = 8;
+    // Keep a safety buffer so the ad ends before the answer lands.
+    const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - 2500);
+    let chosen = 0;
     for (const seconds of AD_DURATION_BUCKETS_SEC) {
       if (seconds * 1000 <= remainingMs) chosen = seconds;
     }
-    // Deep research / long agent waits can take the longest creatives.
-    if (findDeepResearchPlan() && remainingMs >= 20000) {
-      chosen = Math.max(chosen, 20);
+    if (findDeepResearchPlan() && remainingMs >= 18000) {
+      chosen = Math.max(chosen, 15);
     }
-    return chosen;
+    return chosen || 6;
   }
 
   function findDeepResearchPlan() {
-    // ChatGPT deep research shows a multi-step plan before/while running.
-    // That is still "not answered yet" — treat as a working anchor.
+    // Only treat deep research as "working" while it is actively running —
+    // not when a finished plan card is still sitting in the transcript.
     const candidates = document.querySelectorAll('button, [role="button"], div, section, article');
     for (const el of candidates) {
       if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
       const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-      if (!text || text.length > 400) continue;
-      const looksLikePlan =
-        /\bdeep research\b/i.test(text) &&
-        (/\bstart\b/i.test(text) || /\b(collect|extract|synthesize|identify)\b/i.test(text));
+      if (!text || text.length > 420) continue;
       const looksLikeRunningResearch =
-        /\b(researching|searching sources|reading sources|collecting sources)\b/i.test(text);
-      if (looksLikePlan || looksLikeRunningResearch) return el;
+        /\b(researching|searching sources|reading sources|collecting sources|deep researching)\b/i.test(text);
+      const looksLikeActivePlan =
+        /\bdeep research\b/i.test(text) &&
+        /\b(start|in progress|running|working)\b/i.test(text) &&
+        !/\b(finished|complete|completed|done|report ready)\b/i.test(text);
+      if (looksLikeRunningResearch || looksLikeActivePlan) return el;
     }
     return null;
+  }
+
+  function findLastUserMessage() {
+    const selectors = [
+      '[data-message-author-role="user"]',
+      '[data-testid*="user"]',
+      '[data-testid*="human"]',
+      'div[class*="user"]',
+    ];
+    for (const selector of selectors) {
+      const matches = [...document.querySelectorAll(selector)].filter(isVisible);
+      if (matches.length) return matches[matches.length - 1];
+    }
+    const composer = adapter.getComposer?.();
+    return composer || null;
+  }
+
+  function hasStopControlVisible() {
+    return !!findVisibleControlText(['Stop', 'Stop generating', 'Stop streaming', 'Stop response', 'Stop research', 'Cancel']);
+  }
+
+  function isAnswerFinished() {
+    // Answer is done when generation controls/status are gone.
+    if (hasStopControlVisible()) return false;
+    if (netWorking()) return false;
+    if (findDeepResearchPlan()) return false;
+    if (findVisibleLiveText(WORKING_STATUS_WORDS, true, true)) return false;
+    if (findActiveProgressBar()) return false;
+    return true;
   }
 
   function findVisibleLiveText(labels, includeGlobalFallback = true, excludeAssistantContent = false) {
@@ -797,31 +901,40 @@
         return true;
       }
 
+      // Prefer sitting directly under the user's question on the main thread.
+      const question = findLastUserMessage();
       const thinkingAnchor = this.adapter.getThinkingAnchor();
-      const thinkingRect = thinkingAnchor?.getBoundingClientRect();
-      if (!thinkingAnchor || !thinkingRect || !isInViewport(thinkingAnchor)) {
+      const anchor = (question && isInViewport(question) ? question : null) || thinkingAnchor;
+      const anchorRect = anchor?.getBoundingClientRect();
+      if (!anchor || !anchorRect) {
         this.host.style.display = 'none';
         return false;
       }
 
-      const viewportPadding = window.innerWidth < 640 ? 12 : 30;
-      const contentRect = this.getContentRect(thinkingAnchor);
-      const maxWidth = Math.min(928, window.innerWidth - viewportPadding * 2);
+      const viewportPadding = window.innerWidth < 640 ? 12 : 20;
+      const contentRect = this.getContentRect(anchor);
+      // Compact square-ish card, not a giant takeover.
+      const maxWidth = Math.min(360, window.innerWidth - viewportPadding * 2);
       const contentWidth = Math.max(0, contentRect.right - contentRect.left);
-      const width = Math.max(320, Math.min(maxWidth, contentWidth || maxWidth));
+      const width = Math.max(260, Math.min(maxWidth, contentWidth || maxWidth));
       const left = Math.max(
         viewportPadding,
         Math.min(contentRect.left, window.innerWidth - width - viewportPadding),
       );
-      const top = Math.max(70, thinkingRect.bottom + 12);
-      const availableHeight = Math.max(248, window.innerHeight - top - 24);
-      const idealHeight = width >= 640 ? Math.round(width * 0.72) : Math.round(width * 0.94);
-      const cardHeight = Math.max(248, Math.min(idealHeight, availableHeight, 680));
+      const top = Math.max(64, anchorRect.bottom + 10);
+      const cardHeight = Math.min(220, Math.max(168, Math.round(width * 0.62)));
+
+      // If user previously dragged, keep that position until reset.
+      if (this.customPos) {
+        this.host.style.left = `${this.customPos.left}px`;
+        this.host.style.top = `${this.customPos.top}px`;
+      } else {
+        this.host.style.left = `${left}px`;
+        this.host.style.top = `${top}px`;
+      }
 
       this.host.style.setProperty('--whyl-card-height', `${cardHeight}px`);
-      this.host.style.setProperty('--whyl-media-height', `${Math.max(118, cardHeight - 144)}px`);
-      this.host.style.left = `${left}px`;
-      this.host.style.top = `${top}px`;
+      this.host.style.setProperty('--whyl-media-height', `${Math.max(88, cardHeight - 78)}px`);
       this.host.style.right = 'auto';
       this.host.style.bottom = 'auto';
       this.host.style.width = `${width}px`;
@@ -933,26 +1046,29 @@
 
       this.root.innerHTML = `
         <div class="whyl-card">
-          <div class="whyl-card-header">
+          <div class="whyl-card-header whyl-drag-handle" title="Drag">
             <span>WHYL</span>
             <span>·</span>
             <span>${escapeHtml(ad.advertiserName || 'WHYL')}</span>
+            <span class="whyl-drag-hint">⠿</span>
           </div>
           <div class="whyl-media">${this.renderMedia(ad)}</div>
           <div class="whyl-progress">
             <span style="width:${progress}%"></span>
           </div>
           <div class="whyl-footer">
-            <span>watching ad...</span>
-            <strong>+ ${projectedSession} tokens</strong>
+            <span>watching…</span>
+            <strong>+${projectedSession}</strong>
           </div>
         </div>
       `;
+      this.bindDrag();
     }
 
     bindDrag() {
       const handle = this.root.querySelector('.whyl-drag-handle');
-      if (!handle) return;
+      if (!handle || handle.dataset.bound === '1') return;
+      handle.dataset.bound = '1';
 
       handle.addEventListener('mousedown', (event) => {
         if (event.button !== 0 || this.minimized) return;
@@ -981,7 +1097,7 @@
 
         const onUp = () => {
           this.dragging = false;
-          this.host.style.transition = 'top 240ms cubic-bezier(.2,.8,.2,1), right 240ms cubic-bezier(.2,.8,.2,1), width 240ms cubic-bezier(.2,.8,.2,1), opacity 160ms ease';
+          this.host.style.transition = 'top 240ms cubic-bezier(.2,.8,.2,1), left 240ms cubic-bezier(.2,.8,.2,1), width 240ms cubic-bezier(.2,.8,.2,1), opacity 160ms ease';
           this.saveCustomPos();
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup', onUp);
@@ -1144,7 +1260,9 @@
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
       );
-      let ad = { ...DEMO_AD, durationSeconds: fittedSeconds };
+      // Fresh session: re-anchor under the question (drag still works after show).
+      this.overlay.customPos = null;
+      let ad = pickLaunchCreative(fittedSeconds);
       let balance = 0;
 
       if (loggedIn) {
@@ -1278,7 +1396,8 @@
 
       const auth = await sendMessage('getAuth');
       const loggedIn = !!auth.token;
-      let ad = this.currentAd || DEMO_AD;
+      const fittedSeconds = chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0);
+      let ad = this.currentAd || pickLaunchCreative(fittedSeconds);
       let balance = this.balance;
 
       if (loggedIn) {
@@ -1324,18 +1443,15 @@
       this.keepAliveUntil = Date.now() + RESTORE_KEEPALIVE_MS;
       await this.completeCurrentView(true);
 
-      let ad = {
-        ...DEMO_AD,
-        durationSeconds: chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0),
-      };
+      const fittedSeconds = chooseAdDurationSeconds(
+        this.adapter.id,
+        this.promptTokens,
+        Date.now() - this.candidateStartedAt,
+      );
+      let ad = pickLaunchCreative(fittedSeconds);
       if (this.serverSessionId) {
         const nextAd = await sendMessage('getNextAd');
         if (!nextAd.error) {
-          const fittedSeconds = chooseAdDurationSeconds(
-            this.adapter.id,
-            this.promptTokens,
-            Date.now() - this.candidateStartedAt,
-          );
           ad = {
             ...nextAd,
             durationSeconds: Math.min(Number(nextAd.durationSeconds) || fittedSeconds, fittedSeconds),
@@ -1411,10 +1527,19 @@
 
         if (this.state === 'active') {
           this.overlay.position();
-          if (this.hasActiveVisibleWorkOrGrace()) {
+
+          // Hide as soon as the AI answer is done (stop control gone + no working status).
+          if (isAnswerFinished()) {
+            if (!this.doneSinceAt) this.doneSinceAt = Date.now();
+            if (Date.now() - this.doneSinceAt >= DONE_HIDE_GRACE_MS) {
+              this.endSession();
+              return;
+            }
+          } else if (this.hasActiveVisibleWorkOrGrace()) {
             this.doneSinceAt = 0;
           } else {
-            this.finishToMini();
+            // Fallback: no visible work signal — end instead of leaving a stuck ad.
+            this.endSession();
             return;
           }
         }
@@ -1436,12 +1561,19 @@
     }
 
     hasActiveVisibleWorkOrGrace() {
-      if (this.adapter.hasVisibleThinkingIndicator()) {
+      if (!isAnswerFinished() && (
+        this.adapter.hasVisibleThinkingIndicator() ||
+        this.adapter.hasGenerationSignal() ||
+        hasStopControlVisible() ||
+        findDeepResearchPlan()
+      )) {
         this.sawVisibleSignalDuringActive = true;
         this.markWorkActivity();
         this.activeSignalGraceUntil = 0;
         return true;
       }
+      // Tiny grace only while we just lost the signal, to avoid flicker.
+      if (this.activeSignalGraceUntil && Date.now() < this.activeSignalGraceUntil) return true;
       return false;
     }
 

@@ -15,18 +15,18 @@
 .whyl-card {
   display: flex;
   flex-direction: column;
-  gap: clamp(9px, 1.25vw, 14px);
-  min-height: var(--whyl-card-height, 302px);
-  max-height: var(--whyl-card-height, 302px);
-  padding: clamp(11px, 2vw, 28px);
+  gap: 8px;
+  min-height: var(--whyl-card-height, 188px);
+  max-height: var(--whyl-card-height, 188px);
+  padding: 10px;
   overflow: hidden;
   border: 1px solid rgba(190, 255, 42, 0.35);
-  border-radius: clamp(18px, 2vw, 30px);
+  border-radius: 16px;
   background:
-    radial-gradient(circle at 80% 0%, rgba(190, 255, 42, 0.1), transparent 13rem),
+    radial-gradient(circle at 80% 0%, rgba(190, 255, 42, 0.1), transparent 8rem),
     linear-gradient(180deg, rgba(10, 16, 10, 0.98), rgba(8, 12, 8, 0.98));
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.36),
+    0 16px 40px rgba(0, 0, 0, 0.36),
     inset 0 0 0 1px rgba(190, 255, 42, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(16px);
@@ -35,11 +35,11 @@
 .whyl-card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: #d6ff3f;
-  font-size: clamp(11px, 1.45vw, 18px);
+  font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -56,14 +56,14 @@
 .whyl-drag-hint {
   margin-left: auto;
   color: rgba(214, 255, 63, 0.55);
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: 0;
 }
 
 .whyl-media {
-  min-height: var(--whyl-media-height, 158px);
+  min-height: var(--whyl-media-height, 96px);
   overflow: hidden;
-  border-radius: clamp(14px, 1.8vw, 24px);
+  border-radius: 12px;
   background: #10130d;
   box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
@@ -73,42 +73,41 @@
 .whyl-media img,
 .whyl-video-placeholder {
   width: 100%;
-  height: var(--whyl-media-height, 158px);
+  height: var(--whyl-media-height, 96px);
   border: 0;
   display: block;
   object-fit: cover;
   background:
-    radial-gradient(circle at 50% 45%, rgba(214, 255, 63, 0.12), transparent 10rem),
+    radial-gradient(circle at 50% 45%, rgba(214, 255, 63, 0.12), transparent 6rem),
     #10130d;
 }
 
 .whyl-video-wrap {
   position: relative;
   width: 100%;
-  height: var(--whyl-media-height, 158px);
+  height: var(--whyl-media-height, 96px);
 }
 
 .whyl-mute-badge {
   position: absolute;
-  right: clamp(12px, 1.6vw, 20px);
-  bottom: clamp(12px, 1.6vw, 20px);
+  right: 8px;
+  bottom: 8px;
   display: grid;
   place-items: center;
-  min-width: clamp(36px, 4.6vw, 54px);
-  height: clamp(30px, 4vw, 46px);
-  padding: 0 10px;
+  min-width: 34px;
+  height: 22px;
+  padding: 0 8px;
   border: 1px solid rgba(255, 255, 255, 0.22);
   border-radius: 999px;
   background: rgba(8, 10, 8, 0.68);
   color: rgba(247, 247, 239, 0.78);
-  font-size: clamp(8px, 1vw, 11px);
+  font-size: 9px;
   font-weight: 900;
   letter-spacing: 0.08em;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
 }
 
 .whyl-progress {
-  height: clamp(6px, 0.85vw, 10px);
+  height: 5px;
   overflow: hidden;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
@@ -127,74 +126,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: clamp(12px, 2vw, 24px);
+  gap: 10px;
   color: rgba(216, 224, 208, 0.74);
-  font-size: clamp(13px, 1.8vw, 22px);
+  font-size: 11px;
   letter-spacing: 0.02em;
 }
 
 .whyl-footer strong {
   color: #d6ff3f;
-  font-size: clamp(18px, 2.6vw, 31px);
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-}
-
-.whyl-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 17px;
-}
-
-.whyl-sponsored {
-  margin: 0 0 6px;
-  color: #d6ff3f;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.whyl-body h3 {
-  margin: 0 0 6px;
-  color: #ffffff;
-  font-size: 17px;
-  line-height: 1.16;
-}
-
-.whyl-body a {
-  color: #b7b7aa;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-.whyl-stats {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 8px;
-}
-
-.whyl-stats div {
-  padding: 9px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.whyl-stats span {
-  display: block;
-  margin-bottom: 4px;
-  color: #a7a79a;
-  font-size: 11px;
-}
-
-.whyl-stats strong {
-  display: block;
-  color: #d6ff3f;
   font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
 .whyl-mini {
@@ -241,28 +184,5 @@
   to {
     opacity: 1;
     transform: translate(0, 0) scale(1);
-  }
-}
-
-@media (max-width: 520px) {
-  .whyl-card {
-    min-height: 278px;
-    max-height: 278px;
-    padding: 10px;
-  }
-
-  .whyl-media,
-  .whyl-media iframe,
-  .whyl-video-placeholder {
-    height: 138px;
-    min-height: 138px;
-  }
-
-  .whyl-footer {
-    font-size: 12px;
-  }
-
-  .whyl-footer strong {
-    font-size: 16px;
   }
 }
