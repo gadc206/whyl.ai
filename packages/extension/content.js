@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  // Prevent double-boot when background re-injects into an already-running tab.
+  if (window.__whylContentBooted) return;
+  window.__whylContentBooted = true;
+
   const INITIAL_ACTIVATION_CHECK_MS = 500;
   const ACTIVATION_RETRY_MS = 1000;
   const SIGNALLESS_ACTIVATION_MS = 4000;
@@ -900,9 +904,21 @@
 
   function sendMessage(type, data = {}) {
     return new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type, ...data }, (response) => {
-        resolve(chrome.runtime.lastError ? { error: chrome.runtime.lastError.message } : response || {});
-      });
+      try {
+        if (!chrome?.runtime?.id) {
+          resolve({ error: 'extension_context_invalidated' });
+          return;
+        }
+        chrome.runtime.sendMessage({ type, ...data }, (response) => {
+          if (chrome.runtime.lastError) {
+            resolve({ error: chrome.runtime.lastError.message });
+            return;
+          }
+          resolve(response || {});
+        });
+      } catch (err) {
+        resolve({ error: err?.message || String(err) });
+      }
     });
   }
 
@@ -1694,8 +1710,14 @@
       this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens, this.promptText);
       this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens, this.promptText);
 
-      const auth = await sendMessage('getAuth');
-      const loggedIn = !!auth.token;
+      // Local creatives always work even if the API is cold / offline.
+      let auth = {};
+      try {
+        auth = await sendMessage('getAuth');
+      } catch {
+        auth = {};
+      }
+      const loggedIn = !!auth.token && !auth.error;
       const fittedSeconds = chooseAdDurationSeconds(
         this.adapter.id,
         this.promptTokens,
@@ -2289,89 +2311,130 @@
     }
     controller.recordNetworkActivity(detail.kind);
   };
-  const observer = new MutationObserver(() => {
-    if (controller.state === 'idle') return;
-    // Instant hide when stop button flips off — don't wait for the poll tick.
-    if (controller.hideIfAnswerFinished()) return;
-    if (!adapter.hasGenerationSignal()) return;
-    controller.markWorkActivity();
-  });
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    characterData: true,
-    attributes: true,
-    attributeFilter: ['data-testid', 'aria-label', 'disabled', 'hidden', 'class', 'style'],
-  });
 
-  // Dedicated stop-button edge watcher — fires as soon as the control leaves the DOM.
-  let lastStopVisible = hasStopControlVisible();
-  const stopEdgeObserver = new MutationObserver(() => {
-    const stopVisible = hasStopControlVisible();
-    if (stopVisible) {
-      controller.sawStopDuringWait = true;
-      lastStopVisible = true;
-      return;
+  function observeWhenReady(targetDoc, callback) {
+    const start = () => {
+      const root = targetDoc.body || targetDoc.documentElement;
+      if (!root) {
+        setTimeout(start, 50);
+        return;
+      }
+      callback(root);
+    };
+    if (targetDoc.readyState === 'loading') {
+      targetDoc.addEventListener('DOMContentLoaded', start, { once: true });
+      // Fallback if DOMContentLoaded already fired in a weird SPA state.
+      setTimeout(start, 0);
+    } else {
+      start();
     }
-    if (lastStopVisible || controller.sawStopDuringWait) {
-      lastStopVisible = false;
-      controller.hideIfAnswerFinished();
-      return;
-    }
-    lastStopVisible = false;
-  });
-  stopEdgeObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['data-testid', 'aria-label', 'hidden', 'class', 'style', 'disabled'],
-  });
+  }
 
-  document.addEventListener('click', (event) => {
-    if (isNewChatAction(event.target)) {
-      lastGenerationIntentAt = 0;
-      pendingPromptTokens = 0;
-      pendingPromptText = '';
-      overlay.clearAfterglowSlogan();
-      controller.closeWaitSession();
-      if (controller.state === 'candidate' || controller.state === 'active') controller.endSession();
-      return;
+  function bootUi() {
+    // Show the pill immediately so the investor knows WHYL is alive on first load.
+    try {
+      overlay.ensureBadge();
+      overlay.setBadge('WHYL on');
+    } catch {
+      /* ignore */
     }
 
-    if (adapter.isSendTarget(event.target) || isLikelyWaitAction(event.target)) {
-      markGenerationIntent();
+    // Wake API early (Render cold start) so the first prompt is not the first network hit.
+    sendMessage('ping').catch(() => {});
+
+    const observer = new MutationObserver(() => {
+      if (controller.state === 'idle') return;
+      // Instant hide when stop button flips off — don't wait for the poll tick.
+      if (controller.hideIfAnswerFinished()) return;
+      if (!adapter.hasGenerationSignal()) return;
       controller.markWorkActivity();
-      const prompt = rememberPromptEstimate();
-      // New send always opens a fresh wait session (can show multiple ads while waiting).
-      setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
-    }
-  }, { passive: true });
+    });
 
-  document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
-    if (adapter.isComposerTarget(event.target)) {
-      markGenerationIntent();
-      const prompt = rememberPromptEstimate();
-      setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
-    }
-  }, { passive: true });
+    // Dedicated stop-button edge watcher — fires as soon as the control leaves the DOM.
+    let lastStopVisible = hasStopControlVisible();
+    const stopEdgeObserver = new MutationObserver(() => {
+      const stopVisible = hasStopControlVisible();
+      if (stopVisible) {
+        controller.sawStopDuringWait = true;
+        lastStopVisible = true;
+        return;
+      }
+      if (lastStopVisible || controller.sawStopDuringWait) {
+        lastStopVisible = false;
+        controller.hideIfAnswerFinished();
+        return;
+      }
+      lastStopVisible = false;
+    });
 
-  // Auto assist only while a wait session is open — never after close (flicker fix).
-  setInterval(() => {
-    if (controller.waitClosed || !controller.waitSessionId) return;
-    if (controller.state !== 'idle' && controller.state !== 'paused') return;
-    if (!hasRecentGenerationIntent()) return;
-    if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens, pendingPromptText);
-  }, 500);
+    observeWhenReady(document, (root) => {
+      try {
+        observer.observe(root, {
+          childList: true,
+          subtree: true,
+          characterData: true,
+          attributes: true,
+          attributeFilter: ['data-testid', 'aria-label', 'disabled', 'hidden', 'class', 'style'],
+        });
+        stopEdgeObserver.observe(root, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['data-testid', 'aria-label', 'hidden', 'class', 'style', 'disabled'],
+        });
+      } catch {
+        /* observe failed — polling still covers hide */
+      }
+    });
 
-  window.addEventListener('scroll', () => {
-    if (overlay.dragging) return;
-    if (!overlay.currentAd) return;
-    overlay.position();
-  }, { passive: true });
-  window.addEventListener('resize', () => {
-    if (overlay.dragging) return;
-    if (!overlay.currentAd) return;
-    overlay.position();
-  }, { passive: true });
+    document.addEventListener('click', (event) => {
+      if (isNewChatAction(event.target)) {
+        lastGenerationIntentAt = 0;
+        pendingPromptTokens = 0;
+        pendingPromptText = '';
+        overlay.clearAfterglowSlogan();
+        controller.closeWaitSession();
+        if (controller.state === 'candidate' || controller.state === 'active') controller.endSession();
+        return;
+      }
+
+      if (adapter.isSendTarget(event.target) || isLikelyWaitAction(event.target)) {
+        markGenerationIntent();
+        controller.markWorkActivity();
+        const prompt = rememberPromptEstimate();
+        // New send always opens a fresh wait session (can show multiple ads while waiting).
+        setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
+      }
+    }, { passive: true });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
+      if (adapter.isComposerTarget(event.target)) {
+        markGenerationIntent();
+        const prompt = rememberPromptEstimate();
+        setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
+      }
+    }, { passive: true });
+
+    // Auto assist only while a wait session is open — never after close (flicker fix).
+    setInterval(() => {
+      if (controller.waitClosed || !controller.waitSessionId) return;
+      if (controller.state !== 'idle' && controller.state !== 'paused') return;
+      if (!hasRecentGenerationIntent()) return;
+      if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens, pendingPromptText);
+    }, 500);
+
+    window.addEventListener('scroll', () => {
+      if (overlay.dragging) return;
+      if (!overlay.currentAd) return;
+      overlay.position();
+    }, { passive: true });
+    window.addEventListener('resize', () => {
+      if (overlay.dragging) return;
+      if (!overlay.currentAd) return;
+      overlay.position();
+    }, { passive: true });
+  }
+
+  bootUi();
 })();

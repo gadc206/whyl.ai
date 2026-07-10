@@ -73,7 +73,10 @@ cp /tmp/whyl-extension-beta.zip website/
 3. Open Chrome → `chrome://extensions`
 4. Turn on **Developer mode**
 5. Click **Load unpacked** → select the unzipped `whyl-extension` folder
-6. Open [chatgpt.com](https://chatgpt.com), send a prompt, and watch for the ad during the wait
+6. Open [chatgpt.com](https://chatgpt.com). You should see a green **whyl on** pill at the top.
+7. Send a prompt — the ad appears while ChatGPT thinks.
+
+If ChatGPT was already open before you loaded the extension, refresh that tab once (or open a new tab). The extension now also auto-injects into open AI tabs on install, but a fresh tab is the safest demo path.
 
 Do **not** point Load unpacked at `Projects/whyl.ai/packages/extension/dist` on your machine — use the unzipped folder from the zip.
 
