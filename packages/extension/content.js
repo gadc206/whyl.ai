@@ -8,7 +8,7 @@
   const USER_SIGNAL_GAP_CANCEL_MS = 60000;
   const WAIT_STATS_KEY = 'whyl_wait_stats_v1';
   const STALE_OPEN_STREAM_MS = 15000;
-  const POLL_MS = 300;
+  const POLL_MS = 100; // backup poll; stop-button observer hides faster
   const RESTORE_KEEPALIVE_MS = 30000;
   const INTERACTION_WINDOW_MS = 5 * 60 * 1000;
   const INTENT_TO_NETWORK_WINDOW_MS = 15000;
@@ -200,11 +200,11 @@
     default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
   };
 
-  const DONE_HIDE_GRACE_MS = 80;
-  const PREDICTION_END_BUFFER_MS = 800;
+  const DONE_HIDE_GRACE_MS = 0; // hide the instant stop disappears
+  const PREDICTION_END_BUFFER_MS = 400;
   const HARD_SESSION_CAP_MS = 120000;
+  const MIN_AD_MS = 1500; // skip ads when remaining predicted wait is under ~1.5s
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
-  // This stops flicker without limiting to one ad per question.
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -619,34 +619,44 @@
     };
   }
 
-  // Pick an ad length that fits the remaining predicted wait for this prompt.
-  // Multiple ads can chain while the wait session is still open.
-  const AD_DURATION_BUCKETS_SEC = [3, 4, 5, 6, 8, 10, 12, 15, 20];
+  // Ad length = remaining predicted wait from TTFT + decode(output/TPS).
+  // Short predicted waits → only short ads (or none). Never longer than remaining wait.
+  const AD_DURATION_BUCKETS_SEC = [2, 3, 4, 5, 6, 8, 10, 12, 15];
 
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS);
+    const remainingMs = Math.max(
+      0,
+      (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS,
+    );
+    if (remainingMs < MIN_AD_MS) return 0; // too short — don't show / don't chain
+
+    // Largest bucket that still fits entirely in remaining wait.
     let chosen = 0;
     for (const seconds of AD_DURATION_BUCKETS_SEC) {
       if (seconds * 1000 <= remainingMs) chosen = seconds;
     }
+    if (!chosen) chosen = Math.max(2, Math.floor(remainingMs / 1000));
+
+    // Short remaining wait → hard-cap to short creatives only.
+    if (remainingMs <= 4000) chosen = Math.min(chosen, 2);
+    else if (remainingMs <= 7000) chosen = Math.min(chosen, 4);
+    else if (remainingMs <= 12000) chosen = Math.min(chosen, 6);
+    else if (remainingMs <= 20000) chosen = Math.min(chosen, 10);
+
+    // Deep research can use longer clips, still capped by remaining math.
     if (findDeepResearchPlan() && remainingMs >= 18000) {
-      chosen = Math.max(chosen, 12);
+      chosen = Math.min(Math.max(chosen, 8), Math.floor(remainingMs / 1000), 15);
     }
-    // Short prompts: keep creatives short so hide-on-done feels snappy.
-    if ((promptTokens || 0) < 50) {
-      chosen = Math.min(chosen || 3, 5);
-    } else if ((promptTokens || 0) < 120) {
-      chosen = Math.min(chosen || 4, 8);
-    }
-    return chosen || 3;
+
+    return chosen;
   }
 
   // Absolute predicted end time for this prompt (from candidate start).
   function predictedAnswerAt(candidateStartedAt, platform, promptTokens) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    // Don't force a 6s floor — short prompts can be ~2–4s.
-    const total = Math.max(estimate.totalMs || 0, (promptTokens || 0) < 40 ? 2500 : 4000);
+    // Use the formula as-is — no artificial long floor for short prompts.
+    const total = Math.max(estimate.totalMs || 0, MIN_AD_MS);
     return (candidateStartedAt || Date.now()) + total;
   }
 
@@ -695,10 +705,9 @@
     return !!findVisibleControlText(['Stop generating', 'Stop streaming', 'Stop response', 'Stop research']);
   }
 
-  // Hide decisions: stop-button edge detection is the strongest "answer finished" signal.
+  // Hide decisions: stop-button edge is authoritative. Do not let stale network delay hide.
   function isAiStillWorking(adapterInstance) {
-    const stopVisible = hasStopControlVisible();
-    if (stopVisible) return true;
+    if (hasStopControlVisible()) return true;
 
     if (adapterInstance?.id === 'claude') {
       const streaming = document.querySelector('[data-is-streaming="true"]');
@@ -706,8 +715,8 @@
     }
 
     if (findDeepResearchPlan()) return true;
-    // Only very fresh network activity — stale sockets must not keep ads alive.
-    if (netWorkingFresh(1200)) return true;
+    // Fresh chunks only — never the long stale-open-stream window.
+    if (netWorkingFresh(800)) return true;
     return false;
   }
 
@@ -1233,24 +1242,43 @@
     }
 
     renderMedia(ad) {
-      // Direct <video> from bundled extension media (web_accessible). No iframe, no CDN.
+      // Direct <video> from bundled extension media. Default SOUND ON; user can mute.
       if (ad.videoUrl) {
         return `
           <div class="whyl-video-wrap">
             <video
               src="${escapeAttr(ad.videoUrl)}"
               autoplay
-              muted
               playsinline
               webkit-playsinline
               loop
               preload="auto"
             ></video>
-            <button class="whyl-mute-badge" type="button" aria-label="Unmute video" data-muted="1">MUTE</button>
+            <button class="whyl-mute-badge" type="button" aria-label="Mute video" data-muted="0">MUTE</button>
           </div>
         `;
       }
       return `<div class="whyl-video-placeholder" aria-label="Sponsored video placeholder"></div>`;
+    }
+
+    setMuteUi(muted) {
+      const btn = this.root?.querySelector('.whyl-mute-badge');
+      const video = this.root?.querySelector('video');
+      if (!btn || !video) return;
+      if (muted) {
+        video.muted = true;
+        video.setAttribute('muted', '');
+        btn.dataset.muted = '1';
+        btn.textContent = 'SOUND';
+        btn.setAttribute('aria-label', 'Unmute video');
+      } else {
+        video.muted = false;
+        video.volume = 1;
+        video.removeAttribute('muted');
+        btn.dataset.muted = '0';
+        btn.textContent = 'MUTE';
+        btn.setAttribute('aria-label', 'Mute video');
+      }
     }
 
     bindMuteToggle() {
@@ -1263,21 +1291,12 @@
         event.stopPropagation();
         const currentlyMuted = video.muted || video.volume === 0;
         if (currentlyMuted) {
-          video.muted = false;
-          video.volume = 1;
-          video.removeAttribute('muted');
-          video.dataset.userUnmuted = '1';
-          btn.dataset.muted = '0';
-          btn.textContent = 'SOUND';
-          btn.setAttribute('aria-label', 'Mute video');
+          this.setMuteUi(false);
+          video.dataset.preferMuted = '0';
           video.play()?.catch?.(() => {});
         } else {
-          video.muted = true;
-          video.setAttribute('muted', '');
-          video.dataset.userUnmuted = '0';
-          btn.dataset.muted = '1';
-          btn.textContent = 'MUTE';
-          btn.setAttribute('aria-label', 'Unmute video');
+          this.setMuteUi(true);
+          video.dataset.preferMuted = '1';
         }
       });
     }
@@ -1286,21 +1305,29 @@
       const video = this.root?.querySelector('video');
       if (!video) return;
       this.bindMuteToggle();
-      // Start muted for autoplay policy; user can unmute via SOUND button.
-      if (video.dataset.userUnmuted !== '1') {
-        video.muted = true;
-        video.defaultMuted = true;
-        video.setAttribute('muted', '');
-      }
       video.playsInline = true;
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
 
-      const play = () => {
+      // Default: sound ON. If autoplay-with-sound is blocked, fall back to muted
+      // then show SOUND so one click restores audio.
+      const preferMuted = video.dataset.preferMuted === '1';
+      this.setMuteUi(preferMuted);
+
+      const playWithSoundPreference = () => {
+        if (preferMuted) {
+          video.muted = true;
+          video.play()?.catch?.(() => {});
+          return;
+        }
+        video.muted = false;
+        video.volume = 1;
         const result = video.play();
         if (result?.catch) {
           result.catch(() => {
-            setTimeout(() => { video.play()?.catch?.(() => {}); }, 80);
+            // Browser blocked unmuted autoplay — start muted; button says SOUND.
+            this.setMuteUi(true);
+            video.play()?.catch?.(() => {});
           });
         }
       };
@@ -1315,20 +1342,20 @@
             const blobUrl = URL.createObjectURL(blob);
             video.src = blobUrl;
             video.load();
-            video.addEventListener('loadeddata', play, { once: true });
-            play();
+            video.addEventListener('loadeddata', playWithSoundPreference, { once: true });
+            playWithSoundPreference();
           })
           .catch(() => {
-            video.addEventListener('loadeddata', play, { once: true });
-            play();
+            video.addEventListener('loadeddata', playWithSoundPreference, { once: true });
+            playWithSoundPreference();
           });
         return;
       }
 
-      if (video.readyState >= 2) play();
+      if (video.readyState >= 2) playWithSoundPreference();
       else {
-        video.addEventListener('loadeddata', play, { once: true });
-        video.addEventListener('canplay', play, { once: true });
+        video.addEventListener('loadeddata', playWithSoundPreference, { once: true });
+        video.addEventListener('canplay', playWithSoundPreference, { once: true });
       }
     }
 
@@ -1486,6 +1513,12 @@
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
       );
+      // Remaining predicted wait too short for even a short ad — skip entirely.
+      if (!fittedSeconds) {
+        this.closeWaitSession();
+        this.reset();
+        return;
+      }
       this.overlay.customPos = null;
       let ad = pickLaunchCreative(fittedSeconds);
       let balance = 0;
@@ -1616,7 +1649,7 @@
       }
 
       const remainingMs = (this.predictedEndAt || 0) - Date.now();
-      if (remainingMs < 2500) {
+      if (remainingMs < MIN_AD_MS) {
         await this.endSession();
         return;
       }
@@ -1629,7 +1662,7 @@
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
       );
-      if (fittedSeconds < 3) {
+      if (!fittedSeconds) {
         await this.endSession();
         return;
       }
@@ -1721,40 +1754,38 @@
             return;
           }
 
+          if (this.shouldHideForFinishedAnswer()) {
+            this.endSession();
+            return;
+          }
+
           const now = Date.now();
-          const stopVisible = hasStopControlVisible();
-          if (stopVisible) this.sawStopDuringWait = true;
-
-          // Strongest finish signal: stop was visible, then disappeared.
-          if (this.sawStopDuringWait && !stopVisible && !netWorkingFresh(900)) {
+          if (now - (this.candidateStartedAt || now) >= HARD_SESSION_CAP_MS) {
             this.endSession();
-            return;
           }
-
-          const stillWorking = isAiStillWorking(this.adapter);
-          const sessionAge = now - (this.candidateStartedAt || now);
-
-          if (sessionAge >= HARD_SESSION_CAP_MS) {
-            this.endSession();
-            return;
-          }
-
-          // Fast hide when generation is clearly done.
-          if (!stillWorking) {
-            if (!this.doneSinceAt) this.doneSinceAt = now;
-            if (now - this.doneSinceAt >= DONE_HIDE_GRACE_MS) {
-              this.endSession();
-              return;
-            }
-            return;
-          }
-
-          this.doneSinceAt = 0;
-
-          // Past predicted end while still working: keep going (deep research),
-          // but don't invent infinite extensions — hard cap still applies.
         }
       }, POLL_MS);
+    }
+
+    // Instant hide path used by stop-button MutationObserver + timers.
+    shouldHideForFinishedAnswer() {
+      const stopVisible = hasStopControlVisible();
+      if (stopVisible) {
+        this.sawStopDuringWait = true;
+        this.doneSinceAt = 0;
+        return false;
+      }
+      // Strongest finish signal: stop was visible, then disappeared.
+      if (this.sawStopDuringWait && !netWorkingFresh(500)) return true;
+      return !isAiStillWorking(this.adapter);
+    }
+
+    hideIfAnswerFinished() {
+      if (this.waitClosed) return false;
+      if (this.state !== 'active' && this.state !== 'candidate') return false;
+      if (!this.shouldHideForFinishedAnswer()) return false;
+      this.endSession();
+      return true;
     }
 
     markWorkActivity() {
@@ -1868,15 +1899,14 @@
     startAdTimer() {
       this.stopAdTimer();
       this.adStartedAt = Date.now();
+      const fittedMs = Math.max(MIN_AD_MS, (this.currentAd?.durationSeconds || 2) * 1000);
       const remainingMs = Math.max(
-        3000,
-        (this.predictedEndAt || (Date.now() + 10000)) - Date.now(),
+        MIN_AD_MS,
+        (this.predictedEndAt || (Date.now() + fittedMs)) - Date.now(),
       );
-      const durationMs = Math.min(
-        Math.max((this.currentAd?.durationSeconds || 5) * 1000, 3000),
-        remainingMs,
-      );
-      if (this.currentAd) this.currentAd.durationSeconds = Math.round(durationMs / 1000);
+      // Never run longer than remaining predicted wait or the chosen short-ad length.
+      const durationMs = Math.min(fittedMs, remainingMs);
+      if (this.currentAd) this.currentAd.durationSeconds = Math.max(1, Math.round(durationMs / 1000));
 
       this.adTimer = setInterval(() => {
         const now = Date.now();
@@ -1887,16 +1917,7 @@
           progressRatio,
         });
 
-        const stopVisible = hasStopControlVisible();
-        if (stopVisible) this.sawStopDuringWait = true;
-        if (this.sawStopDuringWait && !stopVisible && !netWorkingFresh(900)) {
-          this.stopAdTimer();
-          this.endSession();
-          return;
-        }
-
-        // Answer finished mid-ad → hide immediately.
-        if (!isAiStillWorking(this.adapter)) {
+        if (this.shouldHideForFinishedAnswer()) {
           this.stopAdTimer();
           this.endSession();
           return;
@@ -1910,19 +1931,24 @@
 
         if (progressRatio >= 1) {
           this.stopAdTimer();
-          // Chain another ad in the same wait session if still waiting.
+          // Chain another ad in the same wait session if still waiting and math allows.
+          const chainSeconds = chooseAdDurationSeconds(
+            this.adapter.id,
+            this.promptTokens,
+            now - this.candidateStartedAt,
+          );
           if (
             !this.waitClosed &&
             this.waitSessionId &&
             isAiStillWorking(this.adapter) &&
-            (this.predictedEndAt || 0) - now >= 2500
+            chainSeconds > 0
           ) {
             this.continueEarning();
           } else {
             this.endSession();
           }
         }
-      }, 150);
+      }, 80);
     }
 
     stopAdTimer() {
@@ -2022,10 +2048,41 @@
   };
   const observer = new MutationObserver(() => {
     if (controller.state === 'idle') return;
+    // Instant hide when stop button flips off — don't wait for the poll tick.
+    if (controller.hideIfAnswerFinished()) return;
     if (!adapter.hasGenerationSignal()) return;
     controller.markWorkActivity();
   });
-  observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: ['data-testid', 'aria-label', 'disabled', 'hidden', 'class', 'style'],
+  });
+
+  // Dedicated stop-button edge watcher — fires as soon as the control leaves the DOM.
+  let lastStopVisible = hasStopControlVisible();
+  const stopEdgeObserver = new MutationObserver(() => {
+    const stopVisible = hasStopControlVisible();
+    if (stopVisible) {
+      controller.sawStopDuringWait = true;
+      lastStopVisible = true;
+      return;
+    }
+    if (lastStopVisible || controller.sawStopDuringWait) {
+      lastStopVisible = false;
+      controller.hideIfAnswerFinished();
+      return;
+    }
+    lastStopVisible = false;
+  });
+  stopEdgeObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['data-testid', 'aria-label', 'hidden', 'class', 'style', 'disabled'],
+  });
 
   document.addEventListener('click', (event) => {
     if (isNewChatAction(event.target)) {
