@@ -4,17 +4,50 @@
   <meta charset="UTF-8" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #ffffff; }
-    video { display: none; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #10130d;
+    }
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #10130d;
+    }
   </style>
 </head>
 <body>
-  <video id="video" autoplay muted playsinline loop></video>
+  <video id="video" autoplay muted playsinline webkit-playsinline loop preload="auto"></video>
   <script>
-    const url = new URLSearchParams(location.search).get('url');
-    if (url) {
-      // Placeholder only for now. Real advertiser video can be re-enabled later.
+    const FALLBACK = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+    const params = new URLSearchParams(location.search);
+    const primary = params.get('url') || FALLBACK;
+    const video = document.getElementById('video');
+    let usedFallback = false;
+
+    function load(src) {
+      video.src = src;
+      video.muted = true;
+      video.playsInline = true;
+      video.load();
+      const tryPlay = () => {
+        const result = video.play();
+        if (result && result.catch) result.catch(() => {});
+      };
+      video.addEventListener('canplay', tryPlay, { once: true });
+      tryPlay();
     }
+
+    video.addEventListener('error', () => {
+      if (usedFallback) return;
+      usedFallback = true;
+      load(FALLBACK);
+    });
+
+    load(primary);
   </script>
 </body>
 </html>

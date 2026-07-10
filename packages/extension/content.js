@@ -89,70 +89,116 @@
     'Searching the web',
   ];
 
-  // Public cinematic sample creatives (Google sample bucket) used as launch-style demos.
+  // Real launch creatives from launchgallery.video (X/Twitter amplify MP4s).
   const LAUNCH_CREATIVES = [
     {
-      id: 'demo-blazes',
-      advertiserName: 'Nova',
-      advertiserUrl: 'https://whyl.ai',
-      title: 'Ship the launch cut',
-      description: 'Cinematic product launch energy while you wait.',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=640',
+      id: 'lg-factory',
+      advertiserName: 'Factory',
+      advertiserUrl: 'https://factory.ai',
+      title: 'Factory 2.0',
+      description: 'From coding agents to software factories.',
+      videoUrl: 'https://video.twimg.com/amplify_video/2066587985991413760/vid/avc1/1280x720/VmTP9cSkwe6DWJUd.mp4?tag=14',
+      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066587985991413760/img/RP0TnMdwXdgbWgHK.jpg',
       contentType: 'video',
       creditsPerView: 14,
-      durationSeconds: 15,
+      durationSeconds: 30,
+      source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/',
     },
     {
-      id: 'demo-joyrides',
-      advertiserName: 'Orbit',
-      advertiserUrl: 'https://whyl.ai',
-      title: 'Motion that converts',
-      description: 'High-energy launch motion for AI wait inventory.',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=640',
+      id: 'lg-lightwork',
+      advertiserName: 'Lightwork',
+      advertiserUrl: 'https://lightwork.ai',
+      title: 'Introducing Lightwork',
+      description: 'Launch Gallery startup launch cut.',
+      videoUrl: 'https://video.twimg.com/amplify_video/2066581137703481344/vid/avc1/1280x720/cx_oabsQzIx4PSWI.mp4?tag=28',
+      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066581137703481344/img/CQafKQxRCH6LIXB2.jpg',
       contentType: 'video',
       creditsPerView: 12,
-      durationSeconds: 15,
+      durationSeconds: 30,
+      source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/',
     },
     {
-      id: 'demo-escapes',
-      advertiserName: 'Pulse',
-      advertiserUrl: 'https://whyl.ai',
-      title: 'Make the wait worth it',
-      description: 'Premium launch creative for deep-work waits.',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=640',
+      id: 'lg-boardy',
+      advertiserName: 'Boardy',
+      advertiserUrl: 'https://boardy.ai',
+      title: 'Boardy Pro',
+      description: 'AI that makes deals happen.',
+      videoUrl: 'https://video.twimg.com/amplify_video/2066537570910003200/vid/avc1/1280x720/mVpAMbmVYV70U3wM.mp4?tag=28',
+      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066537570910003200/img/wTU48rtG4ijBspXb.jpg',
       contentType: 'video',
       creditsPerView: 12,
-      durationSeconds: 15,
+      durationSeconds: 30,
+      source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/',
     },
     {
-      id: 'demo-meltdowns',
-      advertiserName: 'Spark',
-      advertiserUrl: 'https://whyl.ai',
-      title: 'Drop day energy',
-      description: 'Bold launch visuals timed to AI thinking windows.',
-      videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=640',
+      id: 'lg-eden-1',
+      advertiserName: 'Eden-1',
+      advertiserUrl: 'https://eden-1.com',
+      title: 'Meet Eden-1',
+      description: 'YC-style launch energy.',
+      videoUrl: 'https://video.twimg.com/amplify_video/2059649655382933504/vid/avc1/1280x720/EWZ9rrfJUkRlILCV.mp4?tag=27',
+      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2059649655382933504/img/Wx2pw07MZa5xsXkK.jpg',
       contentType: 'video',
-      creditsPerView: 10,
-      durationSeconds: 12,
+      creditsPerView: 12,
+      durationSeconds: 30,
+      source: 'https://launchgallery.video/video/eden-1-meet-eden-1-the-era-of-human-labour-is-coming-to-a-magnificent-end/',
+    },
+    {
+      id: 'lg-sync-labs',
+      advertiserName: 'Sync Labs',
+      advertiserUrl: 'https://synclabs.so',
+      title: 'Lipsync in production',
+      description: 'Launch Gallery research launch.',
+      videoUrl: 'https://video.twimg.com/amplify_video/2066588292225884160/vid/avc1/1280x720/FO4zeaJwHIxGKVIt.mp4?tag=28',
+      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066588292225884160/img/sD_7IN4AcjeRQ_Q6.jpg',
+      contentType: 'video',
+      creditsPerView: 12,
+      durationSeconds: 30,
+      source: 'https://launchgallery.video/video/sync-labs-lipsync-technology-now-in-production-to-unlock-stories/',
+    },
+    {
+      id: 'lg-crowdreply',
+      advertiserName: 'CrowdReply',
+      advertiserUrl: 'https://crowdreply.io',
+      title: 'Searchmaxxing',
+      description: 'Visibility in AI answers.',
+      videoUrl: 'https://video.twimg.com/amplify_video/2064363313048477696/vid/avc1/1280x720/raWVzgDsqohLBuGs.mp4?tag=27',
+      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2064363313048477696/img/gTTUduvQKGwwB5ZX.jpg',
+      contentType: 'video',
+      creditsPerView: 12,
+      durationSeconds: 30,
+      source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/',
     },
   ];
 
   const DEMO_AD = LAUNCH_CREATIVES[0];
+  const FALLBACK_MP4 = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
 
   function pickLaunchCreative(preferredSeconds = 15) {
     const ranked = [...LAUNCH_CREATIVES].sort(
       (a, b) => Math.abs((a.durationSeconds || 15) - preferredSeconds) - Math.abs((b.durationSeconds || 15) - preferredSeconds),
     );
-    const pick = ranked[Math.floor(Math.random() * Math.min(3, ranked.length))] || DEMO_AD;
+    const pick = ranked[Math.floor(Math.random() * Math.min(4, ranked.length))] || DEMO_AD;
     return { ...pick, durationSeconds: preferredSeconds };
   }
 
-  // Industry-standard wait model: TTFT (prefill) + decode (output / TPS).
-  // Sources: TTFT scales with prompt tokens; TPS is platform decode speed.
+  // Always return a playable MP4. Prefer Launch Gallery creatives over broken API URLs.
+  function ensurePlayableAd(ad, preferredSeconds = 15) {
+    const fallback = pickLaunchCreative(preferredSeconds);
+    if (!ad || ad.error) return fallback;
+    const looksPlayable = typeof ad.videoUrl === 'string' && /\.mp4(\?|$)/i.test(ad.videoUrl);
+    return {
+      ...fallback,
+      ...ad,
+      videoUrl: looksPlayable ? ad.videoUrl : fallback.videoUrl,
+      thumbnailUrl: ad.thumbnailUrl || fallback.thumbnailUrl,
+      contentType: 'video',
+      durationSeconds: preferredSeconds,
+    };
+  }
+
+  // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + mode penalty,
+  // blended with local observed averages. This clock drives ad length AND hide time.
   const PLATFORM_WAIT_DEFAULTS = {
     chatgpt: { ttftMs: 700, msPerInputToken: 0.22, tokensPerSecond: 58, baseOutput: 280, promptFactor: 0.55, toolPenaltyMs: 0 },
     claude: { ttftMs: 900, msPerInputToken: 0.24, tokensPerSecond: 52, baseOutput: 340, promptFactor: 0.6, toolPenaltyMs: 0 },
@@ -165,7 +211,8 @@
     default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
   };
 
-  const DONE_HIDE_GRACE_MS = 700;
+  const DONE_HIDE_GRACE_MS = 500;
+  const PREDICTION_END_BUFFER_MS = 400;
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -199,6 +246,10 @@
         '[data-testid*="progress"]',
       ],
       thinkingIndicatorSelectors: [
+        'button[data-testid="stop-button"]',
+        'button[aria-label*="Stop"]',
+        '[data-testid*="stop"]',
+        '[aria-busy="true"]',
         '[data-testid*="research"]',
         '[data-testid*="progress"]',
         '[data-testid*="deep-research"]',
@@ -214,6 +265,7 @@
       skipActivationAfterFirstToken: true,
       requireStatusTextForActivation: true,
       useNetworkSignal: false,
+      allowGenerationElementAsThinkingAnchor: true,
       // ChatGPT deep research / searching often uses status copy that is not "Thinking".
       useGlobalLiveStatus: true,
       useGenericProgress: true,
@@ -586,13 +638,13 @@
     };
   }
 
-  // Pick an ad length that fits the remaining predicted wait for this platform.
+  // Pick an ad length that fits the remaining predicted wait for this prompt.
   const AD_DURATION_BUCKETS_SEC = [6, 8, 10, 12, 15, 20, 30];
 
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    // Keep a safety buffer so the ad ends before the answer lands.
-    const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - 2500);
+    // Keep a small buffer so the ad ends just before predicted answer time.
+    const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS);
     let chosen = 0;
     for (const seconds of AD_DURATION_BUCKETS_SEC) {
       if (seconds * 1000 <= remainingMs) chosen = seconds;
@@ -601,6 +653,12 @@
       chosen = Math.max(chosen, 15);
     }
     return chosen || 6;
+  }
+
+  // Absolute predicted end time for this prompt (from candidate start).
+  function predictedAnswerAt(candidateStartedAt, platform, promptTokens) {
+    const estimate = estimateResponseTiming(platform, promptTokens);
+    return (candidateStartedAt || Date.now()) + Math.max(estimate.totalMs || 0, 6000);
   }
 
   function findDeepResearchPlan() {
@@ -641,24 +699,36 @@
     return !!findVisibleControlText(['Stop', 'Stop generating', 'Stop streaming', 'Stop response', 'Stop research', 'Cancel']);
   }
 
-  function isAnswerFinished() {
-    // Answer is done when generation controls/status are gone.
-    if (hasStopControlVisible()) return false;
-    if (netWorking()) return false;
-    if (findDeepResearchPlan()) return false;
-    if (findVisibleLiveText(WORKING_STATUS_WORDS, true, true)) return false;
-    if (findActiveProgressBar()) return false;
-    return true;
+  // Single coherent "AI is still working" signal used for keep + hide.
+  function isAiStillWorking(adapterInstance) {
+    if (hasStopControlVisible()) return true;
+    if (netWorking()) return true;
+    if (findDeepResearchPlan()) return true;
+    if (findActiveProgressBar()) return true;
+    if (findGlobalLiveStatusText()) return true;
+    if (adapterInstance?.hasVisibleThinkingIndicator?.()) return true;
+    if (adapterInstance?.hasVisibleGenerationSignal?.()) return true;
+    return false;
   }
 
-  function findVisibleLiveText(labels, includeGlobalFallback = true, excludeAssistantContent = false) {
+  function isAnswerFinished(adapterInstance) {
+    return !isAiStillWorking(adapterInstance);
+  }
+
+  function isInsideAssistantMessage(el) {
+    return !!el?.closest?.(
+      '[data-message-author-role="assistant"], [data-testid*="assistant"], [data-testid*="message"], message-content, .assistant-message, [class*="AssistantMessage"]',
+    );
+  }
+
+  function findVisibleLiveText(labels, includeGlobalFallback = true, excludeAssistantContent = true) {
     if (!labels.length) return includeGlobalFallback ? findGlobalLiveStatusText() : null;
     const roots = [document.querySelector('main'), document.body].filter(Boolean);
     for (const root of roots) {
       const nodes = root.querySelectorAll('p, span, div, li, button, [role="status"], [aria-live], [role="progressbar"] + *');
       for (const el of nodes) {
         if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
-        if (excludeAssistantContent && el.closest('[data-message-author-role="assistant"], [data-testid*="message"], message-content')) continue;
+        if (excludeAssistantContent && isInsideAssistantMessage(el)) continue;
         const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
         if (!text || text.length > 160 || DONE_STATUS_RE.test(text)) continue;
         if (labels.some((label) => new RegExp(`\\b${escapeRegExp(label)}\\b`, 'i').test(text))) return el;
@@ -670,15 +740,15 @@
   const GLOBAL_LIVE_STATUS_RE = /(thinking|reasoning|searching|researching|deep research|calibrating|generating|loading|processing|analyzing|reading|browsing|working|planning|drafting|compiling|running|waiting|queued|in progress|summarizing|synthesizing|collecting|gathering|exploring|investigating|reviewing|writing|building|executing|using tools|web search)/i;
 
   function findGlobalLiveStatusText() {
-    const roots = [document.querySelector('main'), document.body].filter(Boolean);
-    for (const root of roots) {
-      const nodes = root.querySelectorAll('[role="status"], [aria-live], p, span, div');
-      for (const el of nodes) {
-        if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
-        const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-        if (!text || text.length > 80 || DONE_STATUS_RE.test(text)) continue;
-        if (GLOBAL_LIVE_STATUS_RE.test(text)) return el;
-      }
+    // Only dedicated live-status nodes — never scan finished answer prose
+    // (assistant replies often contain "working", "reading", "writing", etc.).
+    const nodes = document.querySelectorAll('[role="status"], [aria-live="polite"], [aria-live="assertive"], [aria-busy="true"]');
+    for (const el of nodes) {
+      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+      if (isInsideAssistantMessage(el)) continue;
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text || text.length > 120 || DONE_STATUS_RE.test(text)) continue;
+      if (GLOBAL_LIVE_STATUS_RE.test(text)) return el;
     }
     return null;
   }
@@ -686,9 +756,11 @@
   function findActiveProgressBar() {
     for (const el of document.querySelectorAll('[role="progressbar"], progress')) {
       if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+      // Ignore indeterminate bars with no numeric value — those often linger after done.
       const max = Number(el.getAttribute('aria-valuemax') || el.max || 100);
-      const value = Number(el.getAttribute('aria-valuenow') ?? el.value);
-      if (!Number.isFinite(value)) return el;
+      const raw = el.getAttribute('aria-valuenow') ?? el.value;
+      const value = Number(raw);
+      if (!Number.isFinite(value)) continue;
       if (value < max) return el;
     }
     return null;
@@ -867,7 +939,7 @@
       this.onRestore = options.onRestore || (() => {});
       this.render();
       const positioned = this.position();
-      this.host.style.display = positioned ? 'block' : 'none';
+      this.host.style.display = positioned || this.dragging ? 'block' : 'none';
       this.host.style.pointerEvents = 'auto';
       this.setBadge('WHYL earning', '#4ade80');
     }
@@ -879,9 +951,21 @@
       this.balance = options.balance ?? this.balance;
       this.progressRatio = options.progressRatio ?? this.progressRatio;
       this.continueVisible = options.continueVisible ?? this.continueVisible;
-      this.render();
-      const positioned = this.position();
-      this.host.style.display = positioned ? 'block' : 'none';
+      // Never full re-render on progress ticks — that destroys <video> and leaves a poster image.
+      this.updateProgressOnly();
+      if (!this.dragging) this.position();
+    }
+
+    updateProgressOnly() {
+      if (!this.root || !this.currentAd) return;
+      const ad = this.currentAd;
+      const pending = Math.floor((ad.creditsPerView || 0) * this.progressRatio);
+      const projectedSession = this.sessionCredits + pending;
+      const progress = Math.max(0, Math.min(this.progressRatio * 100, 100));
+      const bar = this.root.querySelector('.whyl-progress span');
+      const tokens = this.root.querySelector('.whyl-footer strong');
+      if (bar) bar.style.width = `${progress}%`;
+      if (tokens) tokens.textContent = `+${projectedSession}`;
     }
 
     hide() {
@@ -895,7 +979,12 @@
     }
 
     position() {
-      if (!this.host || this.dragging) return false;
+      if (!this.host) return false;
+      // While dragging, keep the card visible at the dragged coordinates.
+      if (this.dragging) {
+        this.host.style.display = 'block';
+        return true;
+      }
       if (this.minimized) {
         this.positionMini();
         return true;
@@ -906,7 +995,20 @@
       const thinkingAnchor = this.adapter.getThinkingAnchor();
       const anchor = (question && isInViewport(question) ? question : null) || thinkingAnchor;
       const anchorRect = anchor?.getBoundingClientRect();
+
+      // If user dragged the card, keep that spot — don't hide when anchors move.
+      if (this.customPos) {
+        this.host.style.left = `${this.customPos.left}px`;
+        this.host.style.top = `${this.customPos.top}px`;
+        this.host.style.right = 'auto';
+        this.host.style.bottom = 'auto';
+        this.host.style.display = 'block';
+        return true;
+      }
+
       if (!anchor || !anchorRect) {
+        // Keep last known on-screen position instead of blinking away.
+        if (this.host.style.display === 'block') return true;
         this.host.style.display = 'none';
         return false;
       }
@@ -924,15 +1026,8 @@
       const top = Math.max(64, anchorRect.bottom + 10);
       const cardHeight = Math.min(220, Math.max(168, Math.round(width * 0.62)));
 
-      // If user previously dragged, keep that position until reset.
-      if (this.customPos) {
-        this.host.style.left = `${this.customPos.left}px`;
-        this.host.style.top = `${this.customPos.top}px`;
-      } else {
-        this.host.style.left = `${left}px`;
-        this.host.style.top = `${top}px`;
-      }
-
+      this.host.style.left = `${left}px`;
+      this.host.style.top = `${top}px`;
       this.host.style.setProperty('--whyl-card-height', `${cardHeight}px`);
       this.host.style.setProperty('--whyl-media-height', `${Math.max(88, cardHeight - 78)}px`);
       this.host.style.right = 'auto';
@@ -1063,6 +1158,7 @@
         </div>
       `;
       this.bindDrag();
+      this.ensureVideoPlaying();
     }
 
     bindDrag() {
@@ -1076,7 +1172,10 @@
 
         this.ensure();
         this.dragging = true;
+        this.host.style.display = 'block';
         this.host.style.transition = 'none';
+        this.host.style.opacity = '1';
+        this.host.style.pointerEvents = 'auto';
 
         const rect = this.host.getBoundingClientRect();
         this.dragOffsetX = event.clientX - rect.left;
@@ -1086,6 +1185,8 @@
         const height = rect.height;
 
         const onMove = (moveEvent) => {
+          if (!this.dragging) return;
+          this.host.style.display = 'block';
           const left = Math.max(8, Math.min(moveEvent.clientX - this.dragOffsetX, window.innerWidth - width - 8));
           const top = Math.max(8, Math.min(moveEvent.clientY - this.dragOffsetY, window.innerHeight - height - 8));
           this.host.style.left = `${left}px`;
@@ -1097,10 +1198,13 @@
 
         const onUp = () => {
           this.dragging = false;
+          this.host.style.display = 'block';
           this.host.style.transition = 'top 240ms cubic-bezier(.2,.8,.2,1), left 240ms cubic-bezier(.2,.8,.2,1), width 240ms cubic-bezier(.2,.8,.2,1), opacity 160ms ease';
           this.saveCustomPos();
           document.removeEventListener('mousemove', onMove);
           document.removeEventListener('mouseup', onUp);
+          // Re-assert position without hiding.
+          this.position();
         };
 
         document.addEventListener('mousemove', onMove);
@@ -1120,11 +1224,18 @@
     }
 
     renderMedia(ad) {
-      const poster = ad.thumbnailUrl ? ` poster="${escapeAttr(ad.thumbnailUrl)}"` : '';
+      // Play video inside extension iframe so host-page CSP cannot block media.
       if (ad.videoUrl) {
+        const playerUrl = chrome.runtime.getURL(`ad-player.html?url=${encodeURIComponent(ad.videoUrl)}`);
         return `
           <div class="whyl-video-wrap">
-            <video src="${escapeAttr(ad.videoUrl)}"${poster} autoplay muted playsinline loop></video>
+            <iframe
+              class="whyl-video-frame"
+              src="${escapeAttr(playerUrl)}"
+              title="${escapeAttr(ad.title || 'Sponsored video')}"
+              allow="autoplay; muted"
+              loading="eager"
+            ></iframe>
             <span class="whyl-mute-badge" aria-label="Video muted">MUTE</span>
           </div>
         `;
@@ -1133,6 +1244,22 @@
         return `<img src="${escapeAttr(ad.thumbnailUrl)}" alt="${escapeAttr(ad.title || 'Sponsored ad')}" loading="lazy" />`;
       }
       return `<div class="whyl-video-placeholder" aria-label="Sponsored video placeholder"></div>`;
+    }
+
+    ensureVideoPlaying() {
+      // Iframe player handles autoplay; keep a no-op hook for direct <video> fallbacks.
+      const video = this.root?.querySelector('video');
+      if (!video) return;
+      video.muted = true;
+      video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      const play = () => {
+        const result = video.play();
+        if (result?.catch) result.catch(() => {});
+      };
+      if (video.readyState >= 2) play();
+      else video.addEventListener('canplay', play, { once: true });
     }
 
     stopMediaPlayback() {
@@ -1182,6 +1309,7 @@
       this.userInitiatedWait = false;
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
+      this.predictedEndAt = 0;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1210,6 +1338,7 @@
       this.userInitiatedWait = allowWithoutSignal;
       this.promptTokens = Math.max(0, promptTokens || 0);
       this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
+      this.predictedEndAt = predictedAnswerAt(Date.now(), this.adapter.id, this.promptTokens);
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1248,11 +1377,10 @@
 
       this.state = 'active';
       this.activeSignalGraceUntil = decision.keepAlive ? Date.now() + RESTORE_KEEPALIVE_MS : 0;
-      if (!this.adapter.hasVisibleThinkingIndicator()) {
-        this.overlay.hide();
-        this.reset();
-        return;
-      }
+      // Refresh prediction at activation with elapsed time already spent waiting.
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens);
+
       const auth = await sendMessage('getAuth');
       const loggedIn = !!auth.token;
       const fittedSeconds = chooseAdDurationSeconds(
@@ -1260,7 +1388,6 @@
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
       );
-      // Fresh session: re-anchor under the question (drag still works after show).
       this.overlay.customPos = null;
       let ad = pickLaunchCreative(fittedSeconds);
       let balance = 0;
@@ -1278,12 +1405,7 @@
         if (!session.error) {
           this.serverSessionId = session.sessionId;
           const nextAd = await sendMessage('getNextAd');
-          if (!nextAd.error) {
-            ad = {
-              ...nextAd,
-              durationSeconds: Math.min(Number(nextAd.durationSeconds) || fittedSeconds, fittedSeconds),
-            };
-          }
+          if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds);
           const view = await sendMessage('startView', {
             sessionId: this.serverSessionId,
             campaignId: ad.id,
@@ -1293,7 +1415,10 @@
         }
       }
 
-      if (!this.adapter.hasVisibleThinkingIndicator()) {
+      ad = ensurePlayableAd(ad, fittedSeconds);
+
+      // If the answer already finished while we were fetching, don't flash an ad.
+      if (isAnswerFinished(this.adapter) && Date.now() >= this.predictedEndAt) {
         if (this.currentViewId) await this.completeCurrentView(false);
         if (this.serverSessionId) await sendMessage('endSession', { sessionId: this.serverSessionId });
         this.overlay.hide();
@@ -1385,6 +1510,7 @@
       this.candidateStartedAt = Date.now();
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, 0);
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1413,7 +1539,7 @@
         if (!session.error) {
           this.serverSessionId = session.sessionId;
           const nextAd = await sendMessage('getNextAd');
-          if (!nextAd.error) ad = nextAd;
+          if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds);
           const view = await sendMessage('startView', {
             sessionId: this.serverSessionId,
             campaignId: ad.id,
@@ -1423,6 +1549,7 @@
         }
       }
 
+      ad = ensurePlayableAd(ad, fittedSeconds);
       this.currentAd = ad;
       this.balance = balance;
       this.viewStartedAt = Date.now();
@@ -1451,12 +1578,7 @@
       let ad = pickLaunchCreative(fittedSeconds);
       if (this.serverSessionId) {
         const nextAd = await sendMessage('getNextAd');
-        if (!nextAd.error) {
-          ad = {
-            ...nextAd,
-            durationSeconds: Math.min(Number(nextAd.durationSeconds) || fittedSeconds, fittedSeconds),
-          };
-        }
+        if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds);
         const view = await sendMessage('startView', {
           sessionId: this.serverSessionId,
           campaignId: ad.id,
@@ -1465,6 +1587,7 @@
         if (!view.error) this.currentViewId = view.viewId;
       }
 
+      ad = ensurePlayableAd(ad, fittedSeconds);
       this.currentAd = ad;
       this.viewStartedAt = Date.now();
       this.overlay.show(ad, {
@@ -1526,21 +1649,27 @@
         }
 
         if (this.state === 'active') {
-          this.overlay.position();
+          if (!this.overlay.dragging) this.overlay.position();
 
-          // Hide as soon as the AI answer is done (stop control gone + no working status).
-          if (isAnswerFinished()) {
-            if (!this.doneSinceAt) this.doneSinceAt = Date.now();
-            if (Date.now() - this.doneSinceAt >= DONE_HIDE_GRACE_MS) {
+          const now = Date.now();
+          const pastPrediction = this.predictedEndAt && now >= this.predictedEndAt;
+          const stillWorking = isAiStillWorking(this.adapter);
+
+          // Primary clock: per-prompt prediction. Hide when predicted answer time hits
+          // unless the AI is still clearly working (extend), or hide early if finished.
+          if (!stillWorking) {
+            if (!this.doneSinceAt) this.doneSinceAt = now;
+            if (now - this.doneSinceAt >= DONE_HIDE_GRACE_MS || pastPrediction) {
               this.endSession();
               return;
             }
-          } else if (this.hasActiveVisibleWorkOrGrace()) {
-            this.doneSinceAt = 0;
-          } else {
-            // Fallback: no visible work signal — end instead of leaving a stuck ad.
-            this.endSession();
             return;
+          }
+
+          this.doneSinceAt = 0;
+          if (pastPrediction) {
+            // Still working past prediction — extend the clock and keep the ad.
+            this.predictedEndAt = now + 8000;
           }
         }
       }, POLL_MS);
@@ -1561,12 +1690,7 @@
     }
 
     hasActiveVisibleWorkOrGrace() {
-      if (!isAnswerFinished() && (
-        this.adapter.hasVisibleThinkingIndicator() ||
-        this.adapter.hasGenerationSignal() ||
-        hasStopControlVisible() ||
-        findDeepResearchPlan()
-      )) {
+      if (isAiStillWorking(this.adapter)) {
         this.sawVisibleSignalDuringActive = true;
         this.markWorkActivity();
         this.activeSignalGraceUntil = 0;
@@ -1581,8 +1705,10 @@
       const elapsedMs = Date.now() - this.candidateStartedAt;
       if (elapsedMs < INITIAL_ACTIVATION_CHECK_MS) return { activate: false, wait: true };
 
-      const hasThinkingIndicator = this.adapter.hasVisibleThinkingIndicator();
-      if (hasThinkingIndicator) return { activate: true };
+      // Friend's core: activate when thinking is visible.
+      // Also allow stop/streaming generation signals so ChatGPT doesn't miss the window.
+      if (this.adapter.hasVisibleThinkingIndicator()) return { activate: true };
+      if (this.adapter.hasVisibleGenerationSignal()) return { activate: true, keepAlive: true };
 
       const hasVisibleSignal = this.adapter.hasVisibleGenerationSignal();
       const hasVisibleStatusText = this.adapter.hasVisibleStatusText();
@@ -1595,6 +1721,12 @@
         return { activate: false, wait: false };
       }
       if (!hasSignal && elapsedMs < SIGNALLESS_ACTIVATION_MS) {
+        return { activate: false, wait: true };
+      }
+
+      // Prediction-backed activation: if we still expect wait remaining, keep waiting to activate.
+      const remainingMs = (this.predictedEndAt || 0) - Date.now();
+      if (remainingMs > 2500 && (hasSignal || this.userInitiatedWait)) {
         return { activate: false, wait: true };
       }
 
@@ -1640,6 +1772,7 @@
       this.keepAliveUntil = 0;
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
+      this.predictedEndAt = 0;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1656,8 +1789,18 @@
     startAdTimer() {
       this.stopAdTimer();
       this.adStartedAt = Date.now();
+      // Ad length is the remaining predicted wait for this prompt.
+      const remainingMs = Math.max(
+        6000,
+        (this.predictedEndAt || (Date.now() + 15000)) - Date.now(),
+      );
+      const durationMs = Math.min(
+        Math.max((this.currentAd?.durationSeconds || 15) * 1000, 6000),
+        remainingMs,
+      );
+      if (this.currentAd) this.currentAd.durationSeconds = Math.round(durationMs / 1000);
+
       this.adTimer = setInterval(() => {
-        const durationMs = Math.max((this.currentAd?.durationSeconds || 15) * 1000, 1000);
         const progressRatio = Math.min((Date.now() - this.adStartedAt) / durationMs, 1);
         this.overlay.update({
           balance: this.balance,
@@ -1665,12 +1808,19 @@
           progressRatio,
         });
 
+        // Hard stop at predicted answer time even mid-ad.
+        if (this.predictedEndAt && Date.now() >= this.predictedEndAt && !isAiStillWorking(this.adapter)) {
+          this.stopAdTimer();
+          this.endSession();
+          return;
+        }
+
         if (progressRatio >= 1) {
           this.stopAdTimer();
-          if (this.hasActiveVisibleWorkOrGrace()) {
+          if (isAiStillWorking(this.adapter) && Date.now() < (this.predictedEndAt || 0) + 5000) {
             this.continueEarning();
           } else {
-            this.finishToMini();
+            this.endSession();
           }
         }
       }, 250);
@@ -1701,6 +1851,7 @@
       this.userInitiatedWait = false;
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
+      this.predictedEndAt = 0;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1790,6 +1941,10 @@
     if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens);
   }, 500);
 
-  window.addEventListener('scroll', () => overlay.position(), { passive: true });
-  window.addEventListener('resize', () => overlay.position(), { passive: true });
+  window.addEventListener('scroll', () => {
+    if (!overlay.dragging) overlay.position();
+  }, { passive: true });
+  window.addEventListener('resize', () => {
+    if (!overlay.dragging) overlay.position();
+  }, { passive: true });
 })();
