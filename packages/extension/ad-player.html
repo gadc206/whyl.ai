@@ -26,10 +26,10 @@
     const primary = params.get('url');
     // Bundled fallbacks — never depend on external CDNs from the player.
     const FALLBACKS = [
+      'media/3jane.mp4',
       'media/factory.mp4',
-      'media/lightwork.mp4',
-      'media/boardy.mp4',
-      'media/crowdreply.mp4',
+      'media/switchlabs.mp4',
+      'media/collective.mp4',
     ].map((file) => {
       try { return chrome.runtime.getURL(file); } catch { return file; }
     });

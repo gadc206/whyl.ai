@@ -1,0 +1,234 @@
+[
+  {
+    "file": "factory-3s.mp4",
+    "durationSeconds": 3,
+    "advertiserName": "Factory",
+    "advertiserUrl": "https://factory.ai",
+    "title": "Factory 2.0",
+    "slogan": "From coding agents to software factories."
+  },
+  {
+    "file": "lightwork-4s.mp4",
+    "durationSeconds": 4,
+    "advertiserName": "Lightwork",
+    "advertiserUrl": "https://lightwork.ai",
+    "title": "Introducing Lightwork",
+    "slogan": "Work that moves itself."
+  },
+  {
+    "file": "3jane-5s.mp4",
+    "durationSeconds": 5,
+    "advertiserName": "3Jane",
+    "advertiserUrl": "https://3jane.xyz",
+    "title": "3Jane is now open to the public",
+    "slogan": "Open to the public."
+  },
+  {
+    "file": "pear-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Pear",
+    "advertiserUrl": "https://pear.trade",
+    "title": "One account. Every market.",
+    "slogan": "One account. Every market."
+  },
+  {
+    "file": "switchlabs-7s.mp4",
+    "durationSeconds": 7,
+    "advertiserName": "TheSwitchLabs",
+    "advertiserUrl": "https://theswitchlabs.com",
+    "title": "You Do The Building. We Handle The Distribution.",
+    "slogan": "You build. We distribute."
+  },
+  {
+    "file": "collective-8s.mp4",
+    "durationSeconds": 8,
+    "advertiserName": "The Collective",
+    "advertiserUrl": "https://launchgallery.video/video/the-collective-launching-the-collective-platform-for-young-founders-builders/",
+    "title": "Launching The Collective",
+    "slogan": "Platform for young founders & builders."
+  },
+  {
+    "file": "stitch-9s.mp4",
+    "durationSeconds": 9,
+    "advertiserName": "Stitch",
+    "advertiserUrl": "https://launchgallery.video/video/stitch-stitch-pressure-free-mini-vlog-app-for-shy-introverts/",
+    "title": "Stitch",
+    "slogan": "Pressure-free mini-vlogs for shy introverts."
+  },
+  {
+    "file": "crowdreply-10s.mp4",
+    "durationSeconds": 10,
+    "advertiserName": "CrowdReply",
+    "advertiserUrl": "https://crowdreply.io",
+    "title": "Searchmaxxing",
+    "slogan": "Be visible in AI answers."
+  },
+  {
+    "file": "kaito-12s.mp4",
+    "durationSeconds": 12,
+    "advertiserName": "Kaito AI",
+    "advertiserUrl": "https://kaito.ai",
+    "title": "Influence mapping to 1M users",
+    "slogan": "Expanding influence mapping to 1M users."
+  },
+  {
+    "file": "synclabs-15s.mp4",
+    "durationSeconds": 15,
+    "advertiserName": "Sync Labs",
+    "advertiserUrl": "https://synclabs.so",
+    "title": "Lipsync Technology Now in Production",
+    "slogan": "Lipsync in production to unlock stories."
+  },
+  {
+    "file": "folk-20s.mp4",
+    "durationSeconds": 20,
+    "advertiserName": "Folk",
+    "advertiserUrl": "https://folk.app",
+    "title": "Introducing Geolocation for Folk",
+    "slogan": "Geolocation for Folk."
+  },
+  {
+    "file": "shift-25s.mp4",
+    "durationSeconds": 25,
+    "advertiserName": "Shift",
+    "advertiserUrl": "https://joinshift.com",
+    "title": "Free NYC Apartment Cleaning",
+    "slogan": "Robotics training data from real homes."
+  },
+  {
+    "file": "3jane.mp4",
+    "durationSeconds": 28,
+    "advertiserName": "3Jane",
+    "advertiserUrl": "https://3jane.xyz",
+    "title": "3Jane is now open to the public",
+    "slogan": "Open to the public."
+  },
+  {
+    "file": "factory.mp4",
+    "durationSeconds": 30,
+    "advertiserName": "Factory",
+    "advertiserUrl": "https://factory.ai",
+    "title": "Factory 2.0",
+    "slogan": "From coding agents to software factories."
+  },
+  {
+    "file": "switchlabs.mp4",
+    "durationSeconds": 37,
+    "advertiserName": "TheSwitchLabs",
+    "advertiserUrl": "https://theswitchlabs.com",
+    "title": "You Do The Building. We Handle The Distribution.",
+    "slogan": "You build. We distribute."
+  },
+  {
+    "file": "collective.mp4",
+    "durationSeconds": 38,
+    "advertiserName": "The Collective",
+    "advertiserUrl": "https://launchgallery.video/video/the-collective-launching-the-collective-platform-for-young-founders-builders/",
+    "title": "Launching The Collective",
+    "slogan": "Platform for young founders & builders."
+  },
+  {
+    "file": "lightwork.mp4",
+    "durationSeconds": 39,
+    "advertiserName": "Lightwork",
+    "advertiserUrl": "https://lightwork.ai",
+    "title": "Introducing Lightwork",
+    "slogan": "Work that moves itself."
+  },
+  {
+    "file": "pear.mp4",
+    "durationSeconds": 39,
+    "advertiserName": "Pear",
+    "advertiserUrl": "https://pear.trade",
+    "title": "One account. Every market.",
+    "slogan": "One account. Every market."
+  },
+  {
+    "file": "crowdreply.mp4",
+    "durationSeconds": 47,
+    "advertiserName": "CrowdReply",
+    "advertiserUrl": "https://crowdreply.io",
+    "title": "Searchmaxxing",
+    "slogan": "Be visible in AI answers."
+  },
+  {
+    "file": "stitch.mp4",
+    "durationSeconds": 47,
+    "advertiserName": "Stitch",
+    "advertiserUrl": "https://launchgallery.video/video/stitch-stitch-pressure-free-mini-vlog-app-for-shy-introverts/",
+    "title": "Stitch",
+    "slogan": "Pressure-free mini-vlogs for shy introverts."
+  },
+  {
+    "file": "kaito.mp4",
+    "durationSeconds": 50,
+    "advertiserName": "Kaito AI",
+    "advertiserUrl": "https://kaito.ai",
+    "title": "Influence mapping to 1M users",
+    "slogan": "Expanding influence mapping to 1M users."
+  },
+  {
+    "file": "result.mp4",
+    "durationSeconds": 55,
+    "advertiserName": "Result",
+    "advertiserUrl": "https://result.computer",
+    "title": "Result: OS for Starting a Business",
+    "slogan": "OS for starting a business."
+  },
+  {
+    "file": "synclabs.mp4",
+    "durationSeconds": 60,
+    "advertiserName": "Sync Labs",
+    "advertiserUrl": "https://synclabs.so",
+    "title": "Lipsync Technology Now in Production",
+    "slogan": "Lipsync in production to unlock stories."
+  },
+  {
+    "file": "folk.mp4",
+    "durationSeconds": 62,
+    "advertiserName": "Folk",
+    "advertiserUrl": "https://folk.app",
+    "title": "Introducing Geolocation for Folk",
+    "slogan": "Geolocation for Folk."
+  },
+  {
+    "file": "shift.mp4",
+    "durationSeconds": 63,
+    "advertiserName": "Shift",
+    "advertiserUrl": "https://joinshift.com",
+    "title": "Free NYC Apartment Cleaning",
+    "slogan": "Robotics training data from real homes."
+  },
+  {
+    "file": "eden.mp4",
+    "durationSeconds": 69,
+    "advertiserName": "Eden-1",
+    "advertiserUrl": "https://launchgallery.video/video/eden-1-meet-eden-1-the-era-of-human-labour-is-coming-to-a-magnificent-end/",
+    "title": "Meet Eden-1",
+    "slogan": "The era of human labour is coming to a magnificent end."
+  },
+  {
+    "file": "locus.mp4",
+    "durationSeconds": 77,
+    "advertiserName": "Locus",
+    "advertiserUrl": "https://paywithlocus.com",
+    "title": "Start a Business Without Knowing How to Build One",
+    "slogan": "Start a business without knowing how to build one."
+  },
+  {
+    "file": "boardy.mp4",
+    "durationSeconds": 90,
+    "advertiserName": "Boardy",
+    "advertiserUrl": "https://boardy.ai",
+    "title": "Boardy Pro",
+    "slogan": "AI that makes deals happen."
+  },
+  {
+    "file": "kosh.mp4",
+    "durationSeconds": 105,
+    "advertiserName": "Kosh",
+    "advertiserUrl": "https://kosh.money",
+    "title": "KOSH: USD Account Built for Asia",
+    "slogan": "USD account built for Asia."
+  }
+]
