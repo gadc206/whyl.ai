@@ -64,7 +64,7 @@ export default function OnboardPage() {
   async function handleDetails(event: FormEvent) {
     event.preventDefault();
     if (side === 'advertiser' && !company.trim()) {
-      setError('Company / startup name is required.');
+      setError('Company name is required.');
       return;
     }
     setError('');
@@ -101,40 +101,43 @@ export default function OnboardPage() {
 
   return (
     <div className="onboard">
-      <section className="onboard-card">
-        <div className="brand">WHYL</div>
+      <section className="onboard-card waitlist-card">
+        <div className="eyebrow">join whyl</div>
+        <div className="brand">whyl<span className="accent">(</span>ai.thinks<span className="accent">)</span></div>
 
         {step === 'welcome' && (
           <>
-            <h1>While AI thinks, you earn.</h1>
-            <p>Pick a side to get started — same split as whyl.ai.</p>
-            <button onClick={() => setStep('side')}>Get Started</button>
+            <h1 className="page-title">Pick a side.<br />Get set up in under a minute.</h1>
+            <p className="muted">Same split as whyl.ai — earn during AI waits, or bid to reach people in those waits.</p>
+            <button className="btn btn-primary btn-block" onClick={() => setStep('side')}>Get Started</button>
           </>
         )}
 
         {step === 'side' && (
           <>
-            <h1>I want to…</h1>
-            <p className="muted">Choose how you’ll use WHYL.</p>
+            <div className="mono muted label">I want to…</div>
             <div className="side-picker">
               <button
                 type="button"
                 className={`side-option ${side === 'watcher' ? 'active' : ''}`}
                 onClick={() => setSide('watcher')}
               >
-                <strong>Earn tokens</strong>
-                <span>I’m building with AI</span>
+                <div className="side-title">Earn tokens</div>
+                <div className="side-sub">I’m building with AI</div>
               </button>
               <button
                 type="button"
                 className={`side-option ${side === 'advertiser' ? 'active' : ''}`}
                 onClick={() => setSide('advertiser')}
               >
-                <strong>Advertise</strong>
-                <span>I have a startup</span>
+                <div className="side-title">Advertise</div>
+                <div className="side-sub">I have a company</div>
               </button>
             </div>
-            <button onClick={() => setStep('account')}>Continue</button>
+            <p className="note">
+              Starting as an earner? You can still open the advertiser marketplace later from your profile and bid on campaigns anytime.
+            </p>
+            <button className="btn btn-primary btn-block" onClick={() => setStep('account')}>Continue</button>
           </>
         )}
 
@@ -144,12 +147,13 @@ export default function OnboardPage() {
             {error && <p className="error">{error}</p>}
             {mode === 'register' && (
               <>
-                <label>Name</label>
-                <input value={name} onChange={(event) => setName(event.target.value)} required />
+                <label className="mono muted label">name</label>
+                <input className="input" value={name} onChange={(event) => setName(event.target.value)} required />
                 {side === 'advertiser' && (
                   <>
-                    <label>Company / startup name</label>
+                    <label className="mono muted label">company name</label>
                     <input
+                      className="input"
                       value={company}
                       onChange={(event) => setCompany(event.target.value)}
                       placeholder="Acme Inc."
@@ -159,11 +163,11 @@ export default function OnboardPage() {
                 )}
               </>
             )}
-            <label>Email</label>
-            <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
-            <label>Password</label>
-            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
-            <button disabled={loading}>
+            <label className="mono muted label">email</label>
+            <input className="input" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required />
+            <label className="mono muted label">password</label>
+            <input className="input" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
+            <button className="btn btn-primary btn-block" disabled={loading}>
               {loading ? 'Working...' : mode === 'register' ? 'Create Account' : 'Log In'}
             </button>
             <button type="button" className="ghost" onClick={() => setMode(mode === 'register' ? 'login' : 'register')}>
@@ -175,40 +179,42 @@ export default function OnboardPage() {
 
         {step === 'details' && (
           <form onSubmit={handleDetails}>
-            <h1>{side === 'advertiser' ? 'Your startup' : 'Your tools'}</h1>
+            <h1>{side === 'advertiser' ? 'Your company' : 'Your tools'}</h1>
             {error && <p className="error">{error}</p>}
             {side === 'advertiser' ? (
               <>
-                <label>Company / startup name</label>
+                <label className="mono muted label">company name</label>
                 <input
+                  className="input"
                   value={company}
                   onChange={(event) => setCompany(event.target.value)}
                   placeholder="Acme Inc."
                   required
                 />
-                <p className="muted">You’ll fund campaigns that show during AI wait time.</p>
+                <p className="muted">You’ll place bids in the live order book to reach people during AI waits.</p>
               </>
             ) : (
               <>
-                <label>Which tools? (optional)</label>
+                <label className="mono muted label">which tools? (optional)</label>
                 <input
+                  className="input"
                   value={tools}
                   onChange={(event) => setTools(event.target.value)}
                   placeholder="Claude, Cursor, ChatGPT…"
                 />
               </>
             )}
-            <button>Continue</button>
+            <button className="btn btn-primary btn-block">Continue</button>
           </form>
         )}
 
         {step === 'permissions' && (
           <>
             <h1>Accept permissions</h1>
-            <p>
+            <p className="muted">
               {side === 'advertiser'
-                ? 'Advertisers can create and fund campaigns that reach people during AI waits.'
-                : 'Setup takes less than 60 seconds. WHYL never sends your chat content to the server.'}
+                ? 'Advertisers can bid in the marketplace and fund campaigns that show during AI waits.'
+                : 'Setup takes less than 60 seconds. You can open the advertiser marketplace later from your profile if you also want to run campaigns.'}
             </p>
             {error && <p className="error">{error}</p>}
             {(side === 'watcher'
@@ -218,7 +224,7 @@ export default function OnboardPage() {
                   ['earnings', 'Track credits and balances'],
                 ]
               : [
-                  ['campaigns', 'Create and manage ad campaigns'],
+                  ['campaigns', 'Create bids and manage ad campaigns'],
                 ]
             ).map(([key, label]) => (
               <label className="check" key={key}>
@@ -230,7 +236,7 @@ export default function OnboardPage() {
                 {label}
               </label>
             ))}
-            <button onClick={handlePermissions} disabled={loading}>
+            <button className="btn btn-primary btn-block" onClick={handlePermissions} disabled={loading}>
               {loading ? 'Saving...' : 'Complete Setup'}
             </button>
           </>
@@ -239,13 +245,16 @@ export default function OnboardPage() {
         {step === 'done' && (
           <>
             <h1>You are ready.</h1>
-            <p>
+            <p className="muted">
               {side === 'advertiser'
-                ? 'Create your first campaign and WHYL will deliver it during AI waiting periods.'
-                : 'Open ChatGPT, Claude, or Gemini. WHYL will activate automatically during longer AI waits.'}
+                ? 'Place a bid in the live order book. Higher bids get the top serving slots.'
+                : 'Open ChatGPT, Claude, or Gemini. WHYL activates during longer AI waits. You can still advertise later from your profile.'}
             </p>
-            <button onClick={() => navigate(side === 'advertiser' ? '/advertiser' : '/')}>
-              {side === 'advertiser' ? 'Open Campaigns' : 'Open Dashboard'}
+            <button
+              className="btn btn-primary btn-block"
+              onClick={() => navigate(side === 'advertiser' ? '/advertiser' : '/')}
+            >
+              {side === 'advertiser' ? 'Open marketplace →' : 'Open Dashboard'}
             </button>
           </>
         )}

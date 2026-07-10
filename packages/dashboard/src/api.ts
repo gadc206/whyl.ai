@@ -106,9 +106,38 @@ export const api = {
     budget: number;
     viewsTarget: number;
     viewsDelivered: number;
+    bidPer1k?: number;
+    viewPacks?: number;
+    status?: string;
     active: boolean;
     createdAt: string;
   }>>('/advertiser/campaigns'),
+  marketplace: () => request<{
+    liveBidders: number;
+    orderbook: Array<{
+      id: string;
+      advertiserName: string;
+      title: string;
+      bidPer1k: number;
+      viewPacks: number;
+      viewsTarget: number;
+      viewsDelivered: number;
+      rank: number;
+      initial: string;
+      impressionsLeft: string;
+      serving: boolean;
+      isYou: boolean;
+      status: string;
+    }>;
+  }>('/advertiser/marketplace'),
   createCampaign: (body: Record<string, unknown>) =>
-    request<{ id: string }>('/advertiser/campaigns', { method: 'POST', body: JSON.stringify(body) }),
+    request<{
+      id: string;
+      bidPer1k: number;
+      viewPacks: number;
+      budget: number;
+      viewsTarget: number;
+      status: string;
+      rank: number;
+    }>('/advertiser/campaigns', { method: 'POST', body: JSON.stringify(body) }),
 };

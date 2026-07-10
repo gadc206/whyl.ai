@@ -8,7 +8,7 @@ export default function Layout() {
   return (
     <div className="app-shell">
       <aside>
-        <div className="brand">WHYL</div>
+        <div className="brand">whyl<span className="accent">(</span>ai<span className="accent">)</span></div>
         <p>{isAdvertiser ? 'Advertise during AI waits.' : 'While AI thinks, you earn.'}</p>
         <nav>
           {!isAdvertiser && (
@@ -19,9 +19,13 @@ export default function Layout() {
               <NavLink to="/history">History</NavLink>
             </>
           )}
-          {isAdvertiser && <NavLink to="/advertiser">Campaigns</NavLink>}
-          {!isAdvertiser && <NavLink to="/advertiser">Advertiser</NavLink>}
+          <NavLink to="/advertiser">Marketplace</NavLink>
         </nav>
+        {!isAdvertiser && (
+          <p className="note sidebar-note">
+            Want to advertise too? Open Marketplace anytime — earners can fund campaigns from profile later.
+          </p>
+        )}
         <div className="account">
           <strong>{user?.name}</strong>
           <span>{user?.email}</span>
