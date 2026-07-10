@@ -191,6 +191,7 @@
   const PREDICTION_END_BUFFER_MS = 400;
   const HARD_SESSION_CAP_MS = 90000; // never keep an ad longer than this from candidate start
   const POST_PREDICTION_MAX_MS = 12000; // if still "working" after prediction, hard stop soon
+  const REACTIVATE_COOLDOWN_MS = 20000; // after hide, block auto re-show (stops flash loop)
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -908,10 +909,13 @@
       this.onStop = options.onStop || (() => {});
       this.onRestore = options.onRestore || (() => {});
       this.render();
-      const positioned = this.position();
-      this.host.style.display = positioned || this.dragging ? 'block' : 'none';
+      this.position();
+      // Always show once we've decided to show — never flash hide from a missed anchor.
+      this.host.style.display = 'block';
       this.host.style.pointerEvents = 'auto';
+      this.host.style.opacity = '1';
       this.setBadge('WHYL earning', '#4ade80');
+      this.ensureVideoPlaying();
     }
 
     update(options = {}) {
@@ -943,13 +947,19 @@
       if (this.host) {
         this.host.style.display = 'none';
         this.host.style.pointerEvents = 'none';
+        this.host.style.opacity = '0';
       }
+      if (this.root) this.root.innerHTML = '';
+      this.currentAd = null;
       this.releaseReadingSpace();
       this.setBadge('WHYL ready');
     }
 
     position() {
       if (!this.host) return false;
+      // Never re-show a hidden panel from scroll/poll. Only show() turns it back on.
+      if (!this.currentAd) return false;
+      if (this.host.style.display === 'none') return false;
       // While dragging, keep the card visible at the dragged coordinates.
       if (this.dragging) {
         this.host.style.display = 'block';
@@ -1194,63 +1204,82 @@
     }
 
     renderMedia(ad) {
-      // Play video inside extension iframe so host-page CSP cannot block media.
+      // Direct <video> from bundled extension media (web_accessible). No iframe, no CDN.
       if (ad.videoUrl) {
-        const playerUrl = chrome.runtime.getURL(`ad-player.html?url=${encodeURIComponent(ad.videoUrl)}`);
         return `
           <div class="whyl-video-wrap">
-            <iframe
-              class="whyl-video-frame"
-              src="${escapeAttr(playerUrl)}"
-              title="${escapeAttr(ad.title || 'Sponsored video')}"
-              allow="autoplay; muted"
-              loading="eager"
-            ></iframe>
+            <video
+              src="${escapeAttr(ad.videoUrl)}"
+              autoplay
+              muted
+              playsinline
+              webkit-playsinline
+              loop
+              preload="auto"
+            ></video>
             <span class="whyl-mute-badge" aria-label="Video muted">MUTE</span>
           </div>
         `;
-      }
-      if (ad.thumbnailUrl) {
-        return `<img src="${escapeAttr(ad.thumbnailUrl)}" alt="${escapeAttr(ad.title || 'Sponsored ad')}" loading="lazy" />`;
       }
       return `<div class="whyl-video-placeholder" aria-label="Sponsored video placeholder"></div>`;
     }
 
     ensureVideoPlaying() {
-      // Iframe player handles autoplay; keep a no-op hook for direct <video> fallbacks.
       const video = this.root?.querySelector('video');
       if (!video) return;
       video.muted = true;
+      video.defaultMuted = true;
       video.playsInline = true;
       video.setAttribute('playsinline', '');
       video.setAttribute('webkit-playsinline', '');
+      video.setAttribute('muted', '');
+
       const play = () => {
         const result = video.play();
-        if (result?.catch) result.catch(() => {});
+        if (result?.catch) {
+          result.catch(() => {
+            setTimeout(() => { video.play()?.catch?.(() => {}); }, 80);
+          });
+        }
       };
+
+      // Prefer blob: URL so host-page CSP cannot block chrome-extension media.
+      const src = video.getAttribute('src') || video.src;
+      if (src && src.startsWith('chrome-extension://') && !video.dataset.blobbed) {
+        video.dataset.blobbed = '1';
+        fetch(src)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const blobUrl = URL.createObjectURL(blob);
+            video.src = blobUrl;
+            video.load();
+            video.addEventListener('loadeddata', play, { once: true });
+            play();
+          })
+          .catch(() => {
+            // Fall back to direct extension URL.
+            video.addEventListener('loadeddata', play, { once: true });
+            play();
+          });
+        return;
+      }
+
       if (video.readyState >= 2) play();
-      else video.addEventListener('canplay', play, { once: true });
+      else {
+        video.addEventListener('loadeddata', play, { once: true });
+        video.addEventListener('canplay', play, { once: true });
+      }
     }
 
     stopMediaPlayback() {
       if (!this.root) return;
-
       for (const media of this.root.querySelectorAll('video, audio')) {
         try {
           media.pause();
           media.removeAttribute('src');
           media.load();
         } catch {
-          /* ignore media teardown errors */
-        }
-      }
-
-      for (const frame of this.root.querySelectorAll('iframe')) {
-        try {
-          frame.src = 'about:blank';
-          frame.removeAttribute('src');
-        } catch {
-          /* ignore cross-origin frame teardown errors */
+          /* ignore */
         }
       }
     }
@@ -1287,9 +1316,15 @@
       this.doneSinceAt = 0;
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
+      this.reactivateBlockedUntil = 0;
     }
 
     beginCandidate(allowWithoutSignal = false, promptTokens = 0) {
+      // After a finished answer, block auto re-activation or the ad flashes forever.
+      if (Date.now() < (this.reactivateBlockedUntil || 0) && !allowWithoutSignal) return;
+      if (Date.now() < (this.reactivateBlockedUntil || 0) && allowWithoutSignal) {
+        // Explicit user send clears the cooldown below via markGenerationIntent path.
+      }
       if (this.state === 'paused') {
         if (allowWithoutSignal) {
           this.overlay.hide();
@@ -1304,6 +1339,8 @@
       }
       if (this.state !== 'idle') return;
       if (!allowWithoutSignal && !this.adapter.hasGenerationSignal()) return;
+      // Fresh user send: clear cooldown so a new prompt can show an ad.
+      if (allowWithoutSignal) this.reactivateBlockedUntil = 0;
       this.state = 'candidate';
       this.candidateStartedAt = Date.now();
       this.hadSignalDuringCandidate = false;
@@ -1445,7 +1482,7 @@
       this.stopAdTimer();
       this.stopPolling();
 
-      if (this.state === 'active') {
+      if (this.state === 'active' || this.state === 'finishing') {
         this.recordObservedWait();
         await this.completeCurrentView(false);
       }
@@ -1454,26 +1491,18 @@
         await sendMessage('endSession', { sessionId: this.serverSessionId });
       }
 
+      // Block the 500ms auto-poller from immediately re-showing the ad (flash loop).
+      this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
       this.overlay.hide();
       this.reset();
+      // Keep cooldown across reset.
+      this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
     }
 
     async finishToMini() {
       if (this.state !== 'active') return;
       this.state = 'finishing';
-      this.clearCandidateTimer();
-      this.stopAdTimer();
-      this.recordObservedWait();
-
-      await this.completeCurrentView(false);
-
-      if (this.serverSessionId) {
-        await sendMessage('endSession', { sessionId: this.serverSessionId });
-        this.serverSessionId = null;
-      }
-
-      this.overlay.hide();
-      this.reset();
+      await this.endSession();
     }
 
     async expandFromPaused() {
@@ -1844,6 +1873,7 @@
     }
 
     reset() {
+      const cooldownUntil = this.reactivateBlockedUntil || 0;
       this.state = 'idle';
       this.candidateStartedAt = 0;
       this.clientSessionId = null;
@@ -1867,6 +1897,7 @@
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
       this.stopPolling();
+      this.reactivateBlockedUntil = cooldownUntil;
     }
   }
 
@@ -1896,13 +1927,23 @@
 
   function markGenerationIntent() {
     lastGenerationIntentAt = Date.now();
+    // New user send always clears hide-cooldown so the next wait can show an ad.
+    controller.reactivateBlockedUntil = 0;
   }
 
   function hasRecentGenerationIntent(windowMs = INTERACTION_WINDOW_MS) {
     return Date.now() - lastGenerationIntentAt <= windowMs;
   }
 
+  function isReactivateBlocked() {
+    return Date.now() < (controller.reactivateBlockedUntil || 0);
+  }
+
   onNetActivity = (detail = {}) => {
+    if (isReactivateBlocked()) {
+      controller.recordNetworkActivity(detail.kind);
+      return;
+    }
     if (controller.state === 'idle' && hasRecentGenerationIntent(INTENT_TO_NETWORK_WINDOW_MS)) {
       controller.beginCandidate(true, pendingPromptTokens);
     } else if (controller.state === 'paused' && hasRecentGenerationIntent() && adapter.hasGenerationSignal()) {
@@ -1942,18 +1983,22 @@
     }
   }, { passive: true });
 
-  // Start the hidden timing check from a live generation signal. The controller
-  // decides whether the predicted remaining wait can fit a useful ad window.
+  // Auto re-check only for a live wait — never during post-answer cooldown (that caused flashing).
   setInterval(() => {
     if (controller.state !== 'idle' && controller.state !== 'paused') return;
+    if (isReactivateBlocked()) return;
     if (!hasRecentGenerationIntent()) return;
     if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens);
   }, 500);
 
   window.addEventListener('scroll', () => {
-    if (!overlay.dragging) overlay.position();
+    if (overlay.dragging) return;
+    if (!overlay.currentAd) return;
+    overlay.position();
   }, { passive: true });
   window.addEventListener('resize', () => {
-    if (!overlay.dragging) overlay.position();
+    if (overlay.dragging) return;
+    if (!overlay.currentAd) return;
+    overlay.position();
   }, { passive: true });
 })();
