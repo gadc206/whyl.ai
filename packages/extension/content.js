@@ -105,29 +105,42 @@
   // Bundled Launch Gallery creatives — multiple cut lengths so we can fit the
   // remaining predicted wait (short prompts → short clips, long waits → longer).
   const LAUNCH_CREATIVE_FILES = [
-    { id: 'lg-factory-2s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Quick cut.', file: 'media/factory-2s.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 2, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-factory-3s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Quick cut.', file: 'media/factory-3s.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 3, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-4s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Short cut.', file: 'media/lightwork-4s.mp4', contentType: 'video', creditsPerView: 6, durationSeconds: 4, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-factory-5s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Short cut.', file: 'media/factory-5s.mp4', contentType: 'video', creditsPerView: 7, durationSeconds: 5, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-6s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Short cut.', file: 'media/lightwork-6s.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 6, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-crowdreply-7s', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', description: 'Short cut.', file: 'media/crowdreply-7s.mp4', contentType: 'video', creditsPerView: 9, durationSeconds: 7, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
-    { id: 'lg-factory-8s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Medium cut.', file: 'media/factory-8s.mp4', contentType: 'video', creditsPerView: 10, durationSeconds: 8, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-10s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Medium cut.', file: 'media/lightwork-10s.mp4', contentType: 'video', creditsPerView: 11, durationSeconds: 10, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-boardy-12s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', description: 'Medium cut.', file: 'media/boardy-12s.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 12, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
-    { id: 'lg-factory-15s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Long cut.', file: 'media/factory-15s.mp4', contentType: 'video', creditsPerView: 13, durationSeconds: 15, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork-20s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Long cut.', file: 'media/lightwork-20s.mp4', contentType: 'video', creditsPerView: 14, durationSeconds: 20, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-boardy-25s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', description: 'Long cut.', file: 'media/boardy-25s.mp4', contentType: 'video', creditsPerView: 15, durationSeconds: 25, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
-    { id: 'lg-factory', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Full launch cut.', file: 'media/factory.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 30, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
-    { id: 'lg-lightwork', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Full launch cut.', file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 39, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
-    { id: 'lg-crowdreply', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', description: 'Full launch cut.', file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 47, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
-    { id: 'lg-boardy', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', description: 'Full launch cut.', file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 90, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
+    { id: 'lg-factory-2s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Quick cut.', file: 'media/factory-2s.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 2, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-factory-3s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Quick cut.', file: 'media/factory-3s.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 3, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-4s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Short cut.', file: 'media/lightwork-4s.mp4', contentType: 'video', creditsPerView: 6, durationSeconds: 4, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-factory-5s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Short cut.', file: 'media/factory-5s.mp4', contentType: 'video', creditsPerView: 7, durationSeconds: 5, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-6s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Short cut.', file: 'media/lightwork-6s.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 6, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-crowdreply-7s', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers', description: 'Short cut.', file: 'media/crowdreply-7s.mp4', contentType: 'video', creditsPerView: 9, durationSeconds: 7, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
+    { id: 'lg-factory-8s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Medium cut.', file: 'media/factory-8s.mp4', contentType: 'video', creditsPerView: 10, durationSeconds: 8, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-10s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Medium cut.', file: 'media/lightwork-10s.mp4', contentType: 'video', creditsPerView: 11, durationSeconds: 10, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-boardy-12s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen', description: 'Medium cut.', file: 'media/boardy-12s.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 12, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
+    { id: 'lg-factory-15s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Long cut.', file: 'media/factory-15s.mp4', contentType: 'video', creditsPerView: 13, durationSeconds: 15, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-20s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Long cut.', file: 'media/lightwork-20s.mp4', contentType: 'video', creditsPerView: 14, durationSeconds: 20, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-boardy-25s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen', description: 'Long cut.', file: 'media/boardy-25s.mp4', contentType: 'video', creditsPerView: 15, durationSeconds: 25, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
+    { id: 'lg-factory', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'Software factories, not coding agents', description: 'Full launch cut.', file: 'media/factory.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 30, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Lightwork — work that moves itself', description: 'Full launch cut.', file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 39, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-crowdreply', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers', description: 'Full launch cut.', file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 47, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
+    { id: 'lg-boardy', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen', description: 'Full launch cut.', file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 90, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
   ];
+
+  function sloganForAd(ad) {
+    if (!ad) return '';
+    const custom = String(ad.slogan || '').trim();
+    if (custom) return custom;
+    const name = String(ad.advertiserName || '').trim();
+    const title = String(ad.title || '').trim();
+    if (name && title && !title.toLowerCase().includes(name.toLowerCase())) {
+      return `${name} — ${title}`;
+    }
+    return title || name || '';
+  }
 
   function resolveCreative(entry, preferredSeconds = null) {
     return {
       ...entry,
       videoUrl: chrome.runtime.getURL(entry.file),
       thumbnailUrl: '',
+      slogan: entry.slogan || sloganForAd(entry),
       // Keep the clip's real length — don't stretch a 2s file into a 15s timer.
       durationSeconds: preferredSeconds != null
         ? Math.min(preferredSeconds, entry.durationSeconds)
@@ -171,6 +184,7 @@
       videoUrl: ad.videoUrl,
       thumbnailUrl: ad.thumbnailUrl || '',
       contentType: 'video',
+      slogan: ad.slogan || fallback.slogan || sloganForAd(ad),
       durationSeconds: Math.min(preferredSeconds, fallback.durationSeconds),
     };
   }
@@ -688,7 +702,7 @@
     // not when a finished plan card is still sitting in the transcript.
     const candidates = document.querySelectorAll('button, [role="button"], div, section, article');
     for (const el of candidates) {
-      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill, #whyl-status-stack, #whyl-ad-slogan')) continue;
       const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
       if (!text || text.length > 420) continue;
       const looksLikeRunningResearch =
@@ -759,7 +773,7 @@
     for (const root of roots) {
       const nodes = root.querySelectorAll('p, span, div, li, button, [role="status"], [aria-live], [role="progressbar"] + *');
       for (const el of nodes) {
-        if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+        if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill, #whyl-status-stack, #whyl-ad-slogan')) continue;
         if (excludeAssistantContent && isInsideAssistantMessage(el)) continue;
         const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
         if (!text || text.length > 160 || DONE_STATUS_RE.test(text)) continue;
@@ -776,7 +790,7 @@
     // (assistant replies often contain "working", "reading", "writing", etc.).
     const nodes = document.querySelectorAll('[role="status"], [aria-live="polite"], [aria-live="assertive"], [aria-busy="true"]');
     for (const el of nodes) {
-      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill, #whyl-status-stack, #whyl-ad-slogan')) continue;
       if (isInsideAssistantMessage(el)) continue;
       const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
       if (!text || text.length > 120 || DONE_STATUS_RE.test(text)) continue;
@@ -787,7 +801,7 @@
 
   function findActiveProgressBar() {
     for (const el of document.querySelectorAll('[role="progressbar"], progress')) {
-      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill, #whyl-status-stack, #whyl-ad-slogan')) continue;
       // Ignore indeterminate bars with no numeric value — those often linger after done.
       const max = Number(el.getAttribute('aria-valuemax') || el.max || 100);
       const raw = el.getAttribute('aria-valuenow') ?? el.value;
@@ -851,8 +865,12 @@
       this.host = null;
       this.shadow = null;
       this.root = null;
+      this.badgeStack = null;
       this.badge = null;
+      this.sloganEl = null;
       this.currentAd = null;
+      this.lastPlayedAd = null;
+      this.afterglowAd = null;
       this.sessionCredits = 0;
       this.balance = 0;
       this.progressRatio = 0;
@@ -916,16 +934,27 @@
     }
 
     ensureBadge() {
-      if (this.badge) return;
+      if (this.badgeStack) return;
+      this.badgeStack = document.createElement('div');
+      this.badgeStack.id = 'whyl-status-stack';
+      this.badgeStack.style.cssText = [
+        'position:fixed',
+        'top:14px',
+        'left:50%',
+        'transform:translateX(-50%)',
+        'z-index:2147483645',
+        'display:flex',
+        'flex-direction:column',
+        'align-items:center',
+        'gap:7px',
+        'pointer-events:none',
+        'max-width:min(92vw, 420px)',
+      ].join(';');
+
       this.badge = document.createElement('div');
       this.badge.id = 'whyl-status-pill';
       this.badge.innerHTML = this.badgeMarkup('on');
       this.badge.style.cssText = [
-        'position:fixed',
-        'top:18px',
-        'left:50%',
-        'transform:translateX(-50%)',
-        'z-index:2147483645',
         'display:flex',
         'align-items:center',
         'gap:8px',
@@ -937,10 +966,33 @@
         'font:800 14px/1.1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace',
         'letter-spacing:0.08em',
         'box-shadow:0 12px 34px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.07)',
-        'pointer-events:none',
         'opacity:0.96',
       ].join(';');
-      document.documentElement.appendChild(this.badge);
+
+      this.sloganEl = document.createElement('div');
+      this.sloganEl.id = 'whyl-ad-slogan';
+      this.sloganEl.setAttribute('aria-live', 'polite');
+      this.sloganEl.style.cssText = [
+        'display:none',
+        'text-align:center',
+        'font:600 12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace',
+        'letter-spacing:0.14em',
+        'text-transform:uppercase',
+        'color:#e8ff8a',
+        'text-shadow:0 0 8px rgba(214,255,63,0.95), 0 0 18px rgba(214,255,63,0.55), 0 0 34px rgba(190,255,42,0.35)',
+        'padding:0 10px',
+        'opacity:0',
+        'transform:translateY(-4px)',
+        'transition:opacity 420ms ease, transform 420ms ease',
+        'white-space:nowrap',
+        'overflow:hidden',
+        'text-overflow:ellipsis',
+        'max-width:100%',
+      ].join(';');
+
+      this.badgeStack.appendChild(this.badge);
+      this.badgeStack.appendChild(this.sloganEl);
+      document.documentElement.appendChild(this.badgeStack);
     }
 
     setBadge(text, color = '#d6ff3f') {
@@ -957,10 +1009,46 @@
       `;
     }
 
+    // Illuminated afterglow under the pill — stays until the next question.
+    showAfterglowSlogan(ad) {
+      this.ensureBadge();
+      const slogan = sloganForAd(ad);
+      if (!slogan || !this.sloganEl) return;
+      this.afterglowAd = ad;
+      this.sloganEl.textContent = slogan;
+      this.sloganEl.style.display = 'block';
+      // Retrigger illuminate animation.
+      this.sloganEl.style.opacity = '0';
+      this.sloganEl.style.transform = 'translateY(-4px)';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (!this.sloganEl) return;
+          this.sloganEl.style.opacity = '1';
+          this.sloganEl.style.transform = 'translateY(0)';
+        });
+      });
+    }
+
+    clearAfterglowSlogan() {
+      this.afterglowAd = null;
+      if (!this.sloganEl) return;
+      this.sloganEl.style.opacity = '0';
+      this.sloganEl.style.transform = 'translateY(-4px)';
+      const el = this.sloganEl;
+      setTimeout(() => {
+        if (el !== this.sloganEl) return;
+        el.style.display = 'none';
+        el.textContent = '';
+      }, 280);
+    }
+
     show(ad, options) {
       this.ensure();
+      // New ad playing — clear previous afterglow so the pill stays clean while watching.
+      this.clearAfterglowSlogan();
       if (this.currentAd && this.currentAd.id !== ad?.id) this.stopMediaPlayback();
       this.currentAd = ad;
+      this.lastPlayedAd = ad;
       this.sessionCredits = options.sessionCredits || 0;
       this.balance = options.balance || 0;
       this.progressRatio = options.progressRatio || 0;
@@ -1003,7 +1091,9 @@
       if (tokens) tokens.textContent = `+${projectedSession}`;
     }
 
-    hide() {
+    hide(options = {}) {
+      const leaveAfterglow = options.leaveAfterglow !== false;
+      const adForAfterglow = this.currentAd || this.lastPlayedAd;
       this.stopMediaPlayback();
       if (this.host) {
         this.host.style.display = 'none';
@@ -1014,6 +1104,8 @@
       this.currentAd = null;
       this.releaseReadingSpace();
       this.setBadge('WHYL ready');
+      if (leaveAfterglow && adForAfterglow) this.showAfterglowSlogan(adForAfterglow);
+      else if (!leaveAfterglow) this.clearAfterglowSlogan();
     }
 
     position() {
@@ -1435,6 +1527,8 @@
     }
 
     openWaitSession(promptTokens = 0, promptText = '') {
+      // New question — clear previous ad afterglow under the pill.
+      this.overlay.clearAfterglowSlogan();
       this.waitSessionId = `${this.adapter.id}-wait-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
       this.waitClosed = false;
       this.adsPlayedThisWait = 0;
@@ -1458,7 +1552,8 @@
       this.clearCandidateTimer();
       this.stopAdTimer();
       this.stopPolling();
-      this.overlay.hide();
+      // Leave illuminated slogan under the pill until the next question.
+      this.overlay.hide({ leaveAfterglow: true });
       this.state = 'idle';
     }
 
@@ -1473,7 +1568,7 @@
 
       if (this.state === 'paused') {
         if (allowWithoutSignal) {
-          this.overlay.hide();
+          this.overlay.hide({ leaveAfterglow: false });
           this.overlay.minimized = false;
           this.resetPausedOnly();
         } else if (this.adapter.hasGenerationSignal()) {
@@ -1819,7 +1914,7 @@
             return;
           }
           if (Date.now() - this.lastWorkActivityAt > 60000) {
-            this.overlay.hide();
+            this.overlay.hide({ leaveAfterglow: false });
             this.reset();
           }
           return;
@@ -2172,6 +2267,7 @@
       lastGenerationIntentAt = 0;
       pendingPromptTokens = 0;
       pendingPromptText = '';
+      overlay.clearAfterglowSlogan();
       controller.closeWaitSession();
       if (controller.state === 'candidate' || controller.state === 'active') controller.endSession();
       return;
