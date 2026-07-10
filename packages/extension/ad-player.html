@@ -22,16 +22,28 @@
 <body>
   <video id="video" autoplay muted playsinline webkit-playsinline loop preload="auto"></video>
   <script>
-    const FALLBACK = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
     const params = new URLSearchParams(location.search);
-    const primary = params.get('url') || FALLBACK;
+    const primary = params.get('url');
+    // Bundled fallbacks — never depend on external CDNs from the player.
+    const FALLBACKS = [
+      'media/factory.mp4',
+      'media/lightwork.mp4',
+      'media/boardy.mp4',
+      'media/crowdreply.mp4',
+    ].map((file) => {
+      try { return chrome.runtime.getURL(file); } catch { return file; }
+    });
     const video = document.getElementById('video');
-    let usedFallback = false;
+    let attempt = 0;
+    const queue = [primary, ...FALLBACKS].filter(Boolean);
 
     function load(src) {
+      if (!src) return;
       video.src = src;
       video.muted = true;
       video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
       video.load();
       const tryPlay = () => {
         const result = video.play();
@@ -42,12 +54,11 @@
     }
 
     video.addEventListener('error', () => {
-      if (usedFallback) return;
-      usedFallback = true;
-      load(FALLBACK);
+      attempt += 1;
+      if (attempt < queue.length) load(queue[attempt]);
     });
 
-    load(primary);
+    load(queue[0]);
   </script>
 </body>
 </html>

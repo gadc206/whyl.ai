@@ -5,14 +5,15 @@ export function seedDatabase() {
   const count = db.prepare('SELECT COUNT(*) as count FROM campaigns').get() as { count: number };
   if (count.count > 0) return;
 
+  // Seed metadata only — extension always plays bundled local Launch Gallery MP4s.
   const campaigns = [
     {
       advertiserName: 'Factory',
       advertiserUrl: 'https://factory.ai',
       title: 'Factory 2.0',
       description: 'From coding agents to software factories. Via Launch Gallery.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066587985991413760/vid/avc1/1280x720/VmTP9cSkwe6DWJUd.mp4?tag=14',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066587985991413760/img/RP0TnMdwXdgbWgHK.jpg',
+      videoUrl: null,
+      thumbnailUrl: null,
       contentType: 'video',
       budget: 420,
       viewsTarget: 100000,
@@ -27,8 +28,8 @@ export function seedDatabase() {
       advertiserUrl: 'https://lightwork.ai',
       title: 'Introducing Lightwork',
       description: 'Launch Gallery startup launch cut.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066581137703481344/vid/avc1/1280x720/cx_oabsQzIx4PSWI.mp4?tag=28',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066581137703481344/img/CQafKQxRCH6LIXB2.jpg',
+      videoUrl: null,
+      thumbnailUrl: null,
       contentType: 'video',
       budget: 385,
       viewsTarget: 100000,
@@ -43,8 +44,8 @@ export function seedDatabase() {
       advertiserUrl: 'https://boardy.ai',
       title: 'Boardy Pro',
       description: 'AI that makes deals happen.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066537570910003200/vid/avc1/1280x720/mVpAMbmVYV70U3wM.mp4?tag=28',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066537570910003200/img/wTU48rtG4ijBspXb.jpg',
+      videoUrl: null,
+      thumbnailUrl: null,
       contentType: 'video',
       budget: 275,
       viewsTarget: 100000,
@@ -59,8 +60,8 @@ export function seedDatabase() {
       advertiserUrl: 'https://crowdreply.io',
       title: 'Searchmaxxing',
       description: 'Visibility in AI answers.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2064363313048477696/vid/avc1/1280x720/raWVzgDsqohLBuGs.mp4?tag=27',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2064363313048477696/img/gTTUduvQKGwwB5ZX.jpg',
+      videoUrl: null,
+      thumbnailUrl: null,
       contentType: 'video',
       budget: 210,
       viewsTarget: 100000,

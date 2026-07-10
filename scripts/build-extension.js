@@ -24,6 +24,7 @@ const files = [
 
 fs.rmSync(distDir, { recursive: true, force: true });
 fs.mkdirSync(path.join(distDir, 'icons'), { recursive: true });
+fs.mkdirSync(path.join(distDir, 'media'), { recursive: true });
 
 for (const file of files) {
   let contents = fs.readFileSync(path.join(extensionDir, file), 'utf8');
@@ -33,6 +34,14 @@ for (const file of files) {
       .replaceAll('__WHYL_DASHBOARD_URL__', DASHBOARD_URL);
   }
   fs.writeFileSync(path.join(distDir, file), contents);
+}
+
+const mediaDir = path.join(extensionDir, 'media');
+if (fs.existsSync(mediaDir)) {
+  for (const name of fs.readdirSync(mediaDir)) {
+    if (!name.endsWith('.mp4')) continue;
+    fs.copyFileSync(path.join(mediaDir, name), path.join(distDir, 'media', name));
+  }
 }
 
 const manifestPath = path.join(distDir, 'manifest.json');

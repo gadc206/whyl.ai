@@ -75,7 +75,11 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["panel.css", "ad-player.html"],
+      "resources": [
+        "panel.css",
+        "ad-player.html",
+        "media/*"
+      ],
       "matches": ["https://*/*"]
     }
   ]

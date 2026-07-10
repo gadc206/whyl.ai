@@ -89,16 +89,15 @@
     'Searching the web',
   ];
 
-  // Real launch creatives from launchgallery.video (X/Twitter amplify MP4s).
-  const LAUNCH_CREATIVES = [
+  // Bundled Launch Gallery creatives (local MP4s — no CDN black-screen failures).
+  const LAUNCH_CREATIVE_FILES = [
     {
       id: 'lg-factory',
       advertiserName: 'Factory',
       advertiserUrl: 'https://factory.ai',
       title: 'Factory 2.0',
       description: 'From coding agents to software factories.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066587985991413760/vid/avc1/1280x720/VmTP9cSkwe6DWJUd.mp4?tag=14',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066587985991413760/img/RP0TnMdwXdgbWgHK.jpg',
+      file: 'media/factory.mp4',
       contentType: 'video',
       creditsPerView: 14,
       durationSeconds: 30,
@@ -110,8 +109,7 @@
       advertiserUrl: 'https://lightwork.ai',
       title: 'Introducing Lightwork',
       description: 'Launch Gallery startup launch cut.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066581137703481344/vid/avc1/1280x720/cx_oabsQzIx4PSWI.mp4?tag=28',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066581137703481344/img/CQafKQxRCH6LIXB2.jpg',
+      file: 'media/lightwork.mp4',
       contentType: 'video',
       creditsPerView: 12,
       durationSeconds: 30,
@@ -123,38 +121,11 @@
       advertiserUrl: 'https://boardy.ai',
       title: 'Boardy Pro',
       description: 'AI that makes deals happen.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066537570910003200/vid/avc1/1280x720/mVpAMbmVYV70U3wM.mp4?tag=28',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066537570910003200/img/wTU48rtG4ijBspXb.jpg',
+      file: 'media/boardy.mp4',
       contentType: 'video',
       creditsPerView: 12,
       durationSeconds: 30,
       source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/',
-    },
-    {
-      id: 'lg-eden-1',
-      advertiserName: 'Eden-1',
-      advertiserUrl: 'https://eden-1.com',
-      title: 'Meet Eden-1',
-      description: 'YC-style launch energy.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2059649655382933504/vid/avc1/1280x720/EWZ9rrfJUkRlILCV.mp4?tag=27',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2059649655382933504/img/Wx2pw07MZa5xsXkK.jpg',
-      contentType: 'video',
-      creditsPerView: 12,
-      durationSeconds: 30,
-      source: 'https://launchgallery.video/video/eden-1-meet-eden-1-the-era-of-human-labour-is-coming-to-a-magnificent-end/',
-    },
-    {
-      id: 'lg-sync-labs',
-      advertiserName: 'Sync Labs',
-      advertiserUrl: 'https://synclabs.so',
-      title: 'Lipsync in production',
-      description: 'Launch Gallery research launch.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2066588292225884160/vid/avc1/1280x720/FO4zeaJwHIxGKVIt.mp4?tag=28',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2066588292225884160/img/sD_7IN4AcjeRQ_Q6.jpg',
-      contentType: 'video',
-      creditsPerView: 12,
-      durationSeconds: 30,
-      source: 'https://launchgallery.video/video/sync-labs-lipsync-technology-now-in-production-to-unlock-stories/',
     },
     {
       id: 'lg-crowdreply',
@@ -162,8 +133,7 @@
       advertiserUrl: 'https://crowdreply.io',
       title: 'Searchmaxxing',
       description: 'Visibility in AI answers.',
-      videoUrl: 'https://video.twimg.com/amplify_video/2064363313048477696/vid/avc1/1280x720/raWVzgDsqohLBuGs.mp4?tag=27',
-      thumbnailUrl: 'https://pbs.twimg.com/amplify_video_thumb/2064363313048477696/img/gTTUduvQKGwwB5ZX.jpg',
+      file: 'media/crowdreply.mp4',
       contentType: 'video',
       creditsPerView: 12,
       durationSeconds: 30,
@@ -171,27 +141,33 @@
     },
   ];
 
-  const DEMO_AD = LAUNCH_CREATIVES[0];
-  const FALLBACK_MP4 = 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-
-  function pickLaunchCreative(preferredSeconds = 15) {
-    const ranked = [...LAUNCH_CREATIVES].sort(
-      (a, b) => Math.abs((a.durationSeconds || 15) - preferredSeconds) - Math.abs((b.durationSeconds || 15) - preferredSeconds),
-    );
-    const pick = ranked[Math.floor(Math.random() * Math.min(4, ranked.length))] || DEMO_AD;
-    return { ...pick, durationSeconds: preferredSeconds };
+  function resolveCreative(entry, preferredSeconds = 15) {
+    return {
+      ...entry,
+      videoUrl: chrome.runtime.getURL(entry.file),
+      thumbnailUrl: '',
+      durationSeconds: preferredSeconds,
+    };
   }
 
-  // Always return a playable MP4. Prefer Launch Gallery creatives over broken API URLs.
+  const LAUNCH_CREATIVES = LAUNCH_CREATIVE_FILES.map((entry) => resolveCreative(entry, entry.durationSeconds));
+  const DEMO_AD = LAUNCH_CREATIVES[0];
+
+  function pickLaunchCreative(preferredSeconds = 15) {
+    const pick = LAUNCH_CREATIVE_FILES[Math.floor(Math.random() * LAUNCH_CREATIVE_FILES.length)] || LAUNCH_CREATIVE_FILES[0];
+    return resolveCreative(pick, preferredSeconds);
+  }
+
+  // Always prefer bundled local MP4s so the player never depends on flaky CDNs.
   function ensurePlayableAd(ad, preferredSeconds = 15) {
     const fallback = pickLaunchCreative(preferredSeconds);
     if (!ad || ad.error) return fallback;
-    const looksPlayable = typeof ad.videoUrl === 'string' && /\.mp4(\?|$)/i.test(ad.videoUrl);
+    const local = typeof ad.videoUrl === 'string' && ad.videoUrl.startsWith('chrome-extension://');
     return {
       ...fallback,
       ...ad,
-      videoUrl: looksPlayable ? ad.videoUrl : fallback.videoUrl,
-      thumbnailUrl: ad.thumbnailUrl || fallback.thumbnailUrl,
+      videoUrl: local ? ad.videoUrl : fallback.videoUrl,
+      thumbnailUrl: ad.thumbnailUrl || '',
       contentType: 'video',
       durationSeconds: preferredSeconds,
     };
@@ -213,6 +189,8 @@
 
   const DONE_HIDE_GRACE_MS = 500;
   const PREDICTION_END_BUFFER_MS = 400;
+  const HARD_SESSION_CAP_MS = 90000; // never keep an ad longer than this from candidate start
+  const POST_PREDICTION_MAX_MS = 12000; // if still "working" after prediction, hard stop soon
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -236,31 +214,20 @@
       ],
       thinkingSelectors: [
         'button[data-testid="stop-button"]',
-        'button[aria-label*="Stop"]',
-        'button[title*="Stop"]',
-        '[data-testid*="stop"]',
-        '[aria-label*="Stop generating"]',
-        '[aria-label*="Stop streaming"]',
-        '[aria-busy="true"]',
-        '[data-testid*="research"]',
-        '[data-testid*="progress"]',
+        'button[aria-label*="Stop generating"]',
+        'button[aria-label*="Stop streaming"]',
+        'button[aria-label="Stop"]',
+        'button[data-testid*="stop-button"]',
       ],
       thinkingIndicatorSelectors: [
         'button[data-testid="stop-button"]',
-        'button[aria-label*="Stop"]',
-        '[data-testid*="stop"]',
-        '[aria-busy="true"]',
-        '[data-testid*="research"]',
-        '[data-testid*="progress"]',
+        'button[aria-label*="Stop generating"]',
+        'button[aria-label*="Stop streaming"]',
         '[data-testid*="deep-research"]',
-        '[class*="research"]',
-        '[class*="progress"]',
-        '[aria-label*="research"]',
-        '[aria-label*="Research"]',
       ],
       thinkingText: ['Thinking', 'Reasoning', 'Generating', 'Calibrating'],
       liveText: WORKING_STATUS_WORDS,
-      controlText: ['Stop', 'Stop generating', 'Stop streaming', 'Stop response', 'Stop research', 'Cancel'],
+      controlText: ['Stop generating', 'Stop streaming', 'Stop response', 'Stop research'],
       assistantSelectors: ['[data-message-author-role="assistant"]', '[data-testid*="conversation-turn"]'],
       skipActivationAfterFirstToken: true,
       requireStatusTextForActivation: true,
@@ -268,7 +235,7 @@
       allowGenerationElementAsThinkingAnchor: true,
       // ChatGPT deep research / searching often uses status copy that is not "Thinking".
       useGlobalLiveStatus: true,
-      useGenericProgress: true,
+      useGenericProgress: false,
     }),
     createAdapter({
       id: 'claude',
@@ -696,18 +663,21 @@
   }
 
   function hasStopControlVisible() {
-    return !!findVisibleControlText(['Stop', 'Stop generating', 'Stop streaming', 'Stop response', 'Stop research', 'Cancel']);
+    return !!findVisibleControlText(['Stop generating', 'Stop streaming', 'Stop response', 'Stop research']);
   }
 
-  // Single coherent "AI is still working" signal used for keep + hide.
+  // Strict "still working" for HIDE decisions — only strong live signals.
+  // Broad generation scans are intentionally NOT used here (they false-positive forever on ChatGPT).
   function isAiStillWorking(adapterInstance) {
     if (hasStopControlVisible()) return true;
     if (netWorking()) return true;
     if (findDeepResearchPlan()) return true;
-    if (findActiveProgressBar()) return true;
     if (findGlobalLiveStatusText()) return true;
-    if (adapterInstance?.hasVisibleThinkingIndicator?.()) return true;
-    if (adapterInstance?.hasVisibleGenerationSignal?.()) return true;
+    // Platform-specific streaming markers only (e.g. Claude data-is-streaming).
+    if (adapterInstance?.id === 'claude') {
+      const streaming = document.querySelector('[data-is-streaming="true"]');
+      if (streaming && isVisible(streaming)) return true;
+    }
     return false;
   }
 
@@ -1310,6 +1280,8 @@
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
       this.predictedEndAt = 0;
+      this.postPredictionSinceAt = 0;
+      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1339,6 +1311,8 @@
       this.promptTokens = Math.max(0, promptTokens || 0);
       this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
       this.predictedEndAt = predictedAnswerAt(Date.now(), this.adapter.id, this.promptTokens);
+      this.postPredictionSinceAt = 0;
+      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1511,6 +1485,8 @@
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
       this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, 0);
+      this.postPredictionSinceAt = 0;
+      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1654,12 +1630,19 @@
           const now = Date.now();
           const pastPrediction = this.predictedEndAt && now >= this.predictedEndAt;
           const stillWorking = isAiStillWorking(this.adapter);
+          const sessionAge = now - (this.candidateStartedAt || now);
+          const hardCapHit = sessionAge >= HARD_SESSION_CAP_MS;
 
-          // Primary clock: per-prompt prediction. Hide when predicted answer time hits
-          // unless the AI is still clearly working (extend), or hide early if finished.
+          // Hard stop: never leave an ad up forever.
+          if (hardCapHit) {
+            this.endSession();
+            return;
+          }
+
+          // Hide as soon as strong working signals are gone.
           if (!stillWorking) {
             if (!this.doneSinceAt) this.doneSinceAt = now;
-            if (now - this.doneSinceAt >= DONE_HIDE_GRACE_MS || pastPrediction) {
+            if (now - this.doneSinceAt >= DONE_HIDE_GRACE_MS) {
               this.endSession();
               return;
             }
@@ -1667,9 +1650,16 @@
           }
 
           this.doneSinceAt = 0;
+
+          // Past prediction while still working: allow a short extension, then hard stop.
           if (pastPrediction) {
-            // Still working past prediction — extend the clock and keep the ad.
-            this.predictedEndAt = now + 8000;
+            if (!this.postPredictionSinceAt) this.postPredictionSinceAt = now;
+            if (now - this.postPredictionSinceAt >= POST_PREDICTION_MAX_MS) {
+              this.endSession();
+              return;
+            }
+          } else {
+            this.postPredictionSinceAt = 0;
           }
         }
       }, POLL_MS);
@@ -1773,6 +1763,8 @@
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
       this.predictedEndAt = 0;
+      this.postPredictionSinceAt = 0;
+      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1801,15 +1793,23 @@
       if (this.currentAd) this.currentAd.durationSeconds = Math.round(durationMs / 1000);
 
       this.adTimer = setInterval(() => {
-        const progressRatio = Math.min((Date.now() - this.adStartedAt) / durationMs, 1);
+        const now = Date.now();
+        const progressRatio = Math.min((now - this.adStartedAt) / durationMs, 1);
         this.overlay.update({
           balance: this.balance,
           sessionCredits: this.sessionCredits,
           progressRatio,
         });
 
-        // Hard stop at predicted answer time even mid-ad.
-        if (this.predictedEndAt && Date.now() >= this.predictedEndAt && !isAiStillWorking(this.adapter)) {
+        // Hard stop at predicted answer time when generation is done.
+        if (this.predictedEndAt && now >= this.predictedEndAt && !isAiStillWorking(this.adapter)) {
+          this.stopAdTimer();
+          this.endSession();
+          return;
+        }
+
+        // Hard session cap — never loop forever.
+        if (this.candidateStartedAt && now - this.candidateStartedAt >= HARD_SESSION_CAP_MS) {
           this.stopAdTimer();
           this.endSession();
           return;
@@ -1817,7 +1817,14 @@
 
         if (progressRatio >= 1) {
           this.stopAdTimer();
-          if (isAiStillWorking(this.adapter) && Date.now() < (this.predictedEndAt || 0) + 5000) {
+          // One continuation max only if still clearly working and under prediction window.
+          if (
+            isAiStillWorking(this.adapter) &&
+            this.predictedEndAt &&
+            now < this.predictedEndAt &&
+            !this.continuedOnce
+          ) {
+            this.continuedOnce = true;
             this.continueEarning();
           } else {
             this.endSession();
@@ -1852,6 +1859,8 @@
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
       this.predictedEndAt = 0;
+      this.postPredictionSinceAt = 0;
+      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
