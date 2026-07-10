@@ -1,99 +1,59 @@
 [
   {
-    "file": "apple-3s.mp4",
-    "durationSeconds": 3,
-    "advertiserName": "Apple",
-    "advertiserUrl": "https://www.apple.com",
-    "title": "iPhone 17 Ceramic Shield",
-    "slogan": "More durable than ever."
-  },
-  {
-    "file": "apple-4s.mp4",
-    "durationSeconds": 4,
+    "file": "apple-iphone17e.mp4",
+    "durationSeconds": 11,
     "advertiserName": "Apple",
     "advertiserUrl": "https://www.apple.com",
     "title": "Meet iPhone 17e",
     "slogan": "A whole lot of battery. For a lot less."
   },
   {
-    "file": "geico-5s.mp4",
-    "durationSeconds": 5,
-    "advertiserName": "GEICO",
-    "advertiserUrl": "https://www.geico.com",
-    "title": "GEICO Unskippable High Five",
-    "slogan": "15 minutes could save you 15% or more."
-  },
-  {
-    "file": "mtn-dew-6s.mp4",
-    "durationSeconds": 6,
-    "advertiserName": "Mountain Dew",
-    "advertiserUrl": "https://www.mountaindew.com",
-    "title": "Puppy Monkey Baby",
-    "slogan": "Do the Dew."
-  },
-  {
-    "file": "nike-7s.mp4",
-    "durationSeconds": 7,
+    "file": "nike-shorts.mp4",
+    "durationSeconds": 14,
     "advertiserName": "Nike",
     "advertiserUrl": "https://www.nike.com",
-    "title": "WHY DO IT?",
+    "title": "Just Do It",
     "slogan": "Just Do It."
   },
   {
-    "file": "coke-8s.mp4",
-    "durationSeconds": 8,
+    "file": "coke-shorts.mp4",
+    "durationSeconds": 15,
     "advertiserName": "Coca-Cola",
     "advertiserUrl": "https://www.coca-cola.com",
-    "title": "Share a Coke",
+    "title": "Coca-Cola Short",
     "slogan": "Taste the Feeling."
   },
   {
-    "file": "geico-9s.mp4",
-    "durationSeconds": 9,
-    "advertiserName": "GEICO",
-    "advertiserUrl": "https://www.geico.com",
-    "title": "GEICO Unskippable Family Dinner",
-    "slogan": "15 minutes could save you 15% or more."
-  },
-  {
-    "file": "apple-10s.mp4",
-    "durationSeconds": 10,
-    "advertiserName": "Apple",
-    "advertiserUrl": "https://www.apple.com",
-    "title": "Meet iPhone 17e",
-    "slogan": "A whole lot of battery. For a lot less."
-  },
-  {
-    "file": "geico-12s.mp4",
-    "durationSeconds": 12,
+    "file": "geico-elevator.mp4",
+    "durationSeconds": 15,
     "advertiserName": "GEICO",
     "advertiserUrl": "https://www.geico.com",
     "title": "GEICO Unskippable Elevator",
     "slogan": "15 minutes could save you 15% or more."
   },
   {
-    "file": "apple-15s.mp4",
+    "file": "geico-family.mp4",
     "durationSeconds": 15,
+    "advertiserName": "GEICO",
+    "advertiserUrl": "https://www.geico.com",
+    "title": "GEICO Unskippable Family Dinner",
+    "slogan": "15 minutes could save you 15% or more."
+  },
+  {
+    "file": "mtn-dew-shorts.mp4",
+    "durationSeconds": 15,
+    "advertiserName": "Mountain Dew",
+    "advertiserUrl": "https://www.mountaindew.com",
+    "title": "Mountain Dew NBA",
+    "slogan": "Do the Dew."
+  },
+  {
+    "file": "apple-ceramic.mp4",
+    "durationSeconds": 20,
     "advertiserName": "Apple",
     "advertiserUrl": "https://www.apple.com",
     "title": "iPhone 17 Ceramic Shield",
     "slogan": "More durable than ever."
-  },
-  {
-    "file": "folk-20s.mp4",
-    "durationSeconds": 20,
-    "advertiserName": "Folk",
-    "advertiserUrl": "https://folk.app",
-    "title": "Introducing Geolocation for Folk",
-    "slogan": "Geolocation for Folk."
-  },
-  {
-    "file": "shift-25s.mp4",
-    "durationSeconds": 25,
-    "advertiserName": "Shift",
-    "advertiserUrl": "https://joinshift.com",
-    "title": "Free NYC Apartment Cleaning",
-    "slogan": "Robotics training data from real homes."
   },
   {
     "file": "3jane.mp4",
@@ -104,12 +64,44 @@
     "slogan": "Open to the public."
   },
   {
+    "file": "coke-share.mp4",
+    "durationSeconds": 28,
+    "advertiserName": "Coca-Cola",
+    "advertiserUrl": "https://www.coca-cola.com",
+    "title": "Share a Coke",
+    "slogan": "Taste the Feeling."
+  },
+  {
     "file": "factory.mp4",
     "durationSeconds": 30,
     "advertiserName": "Factory",
     "advertiserUrl": "https://factory.ai",
     "title": "Factory 2.0",
     "slogan": "From coding agents to software factories."
+  },
+  {
+    "file": "geico-gecko-shorts.mp4",
+    "durationSeconds": 30,
+    "advertiserName": "GEICO",
+    "advertiserUrl": "https://www.geico.com",
+    "title": "GEICO Gecko Golf",
+    "slogan": "15 minutes could save you 15% or more."
+  },
+  {
+    "file": "geico-highfive.mp4",
+    "durationSeconds": 30,
+    "advertiserName": "GEICO",
+    "advertiserUrl": "https://www.geico.com",
+    "title": "GEICO Unskippable High Five",
+    "slogan": "15 minutes could save you 15% or more."
+  },
+  {
+    "file": "mtn-dew-puppy.mp4",
+    "durationSeconds": 30,
+    "advertiserName": "Mountain Dew",
+    "advertiserUrl": "https://www.mountaindew.com",
+    "title": "Puppy Monkey Baby",
+    "slogan": "Do the Dew."
   },
   {
     "file": "switchlabs.mp4",
@@ -174,6 +166,14 @@
     "advertiserUrl": "https://result.computer",
     "title": "Result: OS for Starting a Business",
     "slogan": "OS for starting a business."
+  },
+  {
+    "file": "nike-whydoit.mp4",
+    "durationSeconds": 60,
+    "advertiserName": "Nike",
+    "advertiserUrl": "https://www.nike.com",
+    "title": "WHY DO IT?",
+    "slogan": "Just Do It."
   },
   {
     "file": "synclabs.mp4",

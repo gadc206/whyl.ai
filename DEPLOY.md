@@ -51,12 +51,31 @@ Goal: public API + dashboard so the Chrome extension works on someone else's mac
 ## Point the extension at production
 
 ```bash
-WHYL_API_URL=https://<api>.onrender.com/api \
-WHYL_DASHBOARD_URL=https://<dashboard>.onrender.com \
+WHYL_API_URL=https://whyl-api.onrender.com/api \
+WHYL_DASHBOARD_URL=https://whyl-api-dashboard.onrender.com \
 npm run build:extension
 ```
 
-Zip `packages/extension/dist` and send that folder/zip to the investor with the install steps.
+This writes a production build to `packages/extension/dist`. Then package the investor zip locally (not committed — GitHub 100MB limit):
+
+```bash
+rm -rf /tmp/whyl-extension && mkdir -p /tmp/whyl-extension
+cp -R packages/extension/dist/* /tmp/whyl-extension/
+(cd /tmp && zip -r whyl-extension-beta.zip whyl-extension)
+cp /tmp/whyl-extension-beta.zip packages/extension/
+cp /tmp/whyl-extension-beta.zip website/
+```
+
+## Investor install (Load unpacked)
+
+1. Download `whyl-extension-beta.zip`
+2. Unzip it — you should get a folder named `whyl-extension` that contains `manifest.json`
+3. Open Chrome → `chrome://extensions`
+4. Turn on **Developer mode**
+5. Click **Load unpacked** → select the unzipped `whyl-extension` folder
+6. Open [chatgpt.com](https://chatgpt.com), send a prompt, and watch for the ad during the wait
+
+Do **not** point Load unpacked at `Projects/whyl.ai/packages/extension/dist` on your machine — use the unzipped folder from the zip.
 
 ## Notes
 

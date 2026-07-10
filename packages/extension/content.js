@@ -105,36 +105,36 @@
   // Short slots: iconic brand ads. Long slots: Launch Gallery full videos.
   // Sorted short→long so wait-fit picks the longest real video that fits.
   const LAUNCH_CREATIVE_FILES = [
-    { id: 'brand-apple-3s', advertiserName: 'Apple', advertiserUrl: 'https://www.apple.com', title: 'iPhone 17 Ceramic Shield', slogan: 'More durable than ever.', description: 'Iconic brand bumper.', file: 'media/apple-3s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 3 },
-    { id: 'brand-apple-4s', advertiserName: 'Apple', advertiserUrl: 'https://www.apple.com', title: 'Meet iPhone 17e', slogan: 'A whole lot of battery. For a lot less.', description: 'Iconic brand bumper.', file: 'media/apple-4s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 4 },
-    { id: 'brand-geico-5s', advertiserName: 'GEICO', advertiserUrl: 'https://www.geico.com', title: 'GEICO Unskippable High Five', slogan: '15 minutes could save you 15% or more.', description: 'Iconic brand bumper.', file: 'media/geico-5s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 5 },
-    { id: 'brand-mtn-dew-6s', advertiserName: 'Mountain Dew', advertiserUrl: 'https://www.mountaindew.com', title: 'Puppy Monkey Baby', slogan: 'Do the Dew.', description: 'Iconic brand bumper.', file: 'media/mtn-dew-6s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 6 },
-    { id: 'brand-nike-7s', advertiserName: 'Nike', advertiserUrl: 'https://www.nike.com', title: 'WHY DO IT?', slogan: 'Just Do It.', description: 'Iconic brand bumper.', file: 'media/nike-7s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 7 },
-    { id: 'brand-coke-8s', advertiserName: 'Coca-Cola', advertiserUrl: 'https://www.coca-cola.com', title: 'Share a Coke', slogan: 'Taste the Feeling.', description: 'Iconic brand bumper.', file: 'media/coke-8s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 8 },
-    { id: 'brand-geico-9s', advertiserName: 'GEICO', advertiserUrl: 'https://www.geico.com', title: 'GEICO Unskippable Family Dinner', slogan: '15 minutes could save you 15% or more.', description: 'Iconic brand bumper.', file: 'media/geico-9s.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 9 },
-    { id: 'brand-apple-10s', advertiserName: 'Apple', advertiserUrl: 'https://www.apple.com', title: 'Meet iPhone 17e', slogan: 'A whole lot of battery. For a lot less.', description: 'Iconic brand bumper.', file: 'media/apple-10s.mp4', contentType: 'video', creditsPerView: 2, durationSeconds: 10 },
-    { id: 'brand-geico-12s', advertiserName: 'GEICO', advertiserUrl: 'https://www.geico.com', title: 'GEICO Unskippable Elevator', slogan: '15 minutes could save you 15% or more.', description: 'Iconic brand bumper.', file: 'media/geico-12s.mp4', contentType: 'video', creditsPerView: 2, durationSeconds: 12 },
-    { id: 'brand-apple-15s', advertiserName: 'Apple', advertiserUrl: 'https://www.apple.com', title: 'iPhone 17 Ceramic Shield', slogan: 'More durable than ever.', description: 'Iconic brand bumper.', file: 'media/apple-15s.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 15 },
-    { id: 'lg-folk-20s', advertiserName: 'Folk', advertiserUrl: 'https://folk.app', title: 'Introducing Geolocation for Folk', slogan: 'Geolocation for Folk.', description: 'Launch Gallery opening hook.', file: 'media/folk-20s.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 20 },
-    { id: 'lg-shift-25s', advertiserName: 'Shift', advertiserUrl: 'https://joinshift.com', title: 'Free NYC Apartment Cleaning', slogan: 'Robotics training data from real homes.', description: 'Launch Gallery opening hook.', file: 'media/shift-25s.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 25 },
-    { id: 'lg-3jane', advertiserName: '3Jane', advertiserUrl: 'https://3jane.xyz', title: '3Jane is now open to the public', slogan: 'Open to the public.', description: 'Launch Gallery creative.', file: 'media/3jane.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 28 },
-    { id: 'lg-factory', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', slogan: 'From coding agents to software factories.', description: 'Launch Gallery creative.', file: 'media/factory.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 30 },
-    { id: 'lg-switchlabs', advertiserName: 'TheSwitchLabs', advertiserUrl: 'https://theswitchlabs.com', title: 'You Do The Building. We Handle The Distribution.', slogan: 'You build. We distribute.', description: 'Launch Gallery creative.', file: 'media/switchlabs.mp4', contentType: 'video', creditsPerView: 6, durationSeconds: 37 },
-    { id: 'lg-collective', advertiserName: 'The Collective', advertiserUrl: 'https://launchgallery.video/video/the-collective-launching-the-collective-platform-for-young-founders-builders/', title: 'Launching The Collective', slogan: 'Platform for young founders & builders.', description: 'Launch Gallery creative.', file: 'media/collective.mp4', contentType: 'video', creditsPerView: 7, durationSeconds: 38 },
-    { id: 'lg-lightwork', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', slogan: 'Work that moves itself.', description: 'Launch Gallery creative.', file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 39 },
-    { id: 'lg-pear', advertiserName: 'Pear', advertiserUrl: 'https://pear.trade', title: 'One account. Every market.', slogan: 'One account. Every market.', description: 'Launch Gallery creative.', file: 'media/pear.mp4', contentType: 'video', creditsPerView: 9, durationSeconds: 39 },
-    { id: 'lg-crowdreply', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', slogan: 'Be visible in AI answers.', description: 'Launch Gallery creative.', file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 10, durationSeconds: 47 },
-    { id: 'lg-stitch', advertiserName: 'Stitch', advertiserUrl: 'https://launchgallery.video/video/stitch-stitch-pressure-free-mini-vlog-app-for-shy-introverts/', title: 'Stitch', slogan: 'Pressure-free mini-vlogs for shy introverts.', description: 'Launch Gallery creative.', file: 'media/stitch.mp4', contentType: 'video', creditsPerView: 11, durationSeconds: 47 },
-    { id: 'lg-kaito', advertiserName: 'Kaito AI', advertiserUrl: 'https://kaito.ai', title: 'Influence mapping to 1M users', slogan: 'Expanding influence mapping to 1M users.', description: 'Launch Gallery creative.', file: 'media/kaito.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 50 },
-    { id: 'lg-result', advertiserName: 'Result', advertiserUrl: 'https://result.computer', title: 'Result: OS for Starting a Business', slogan: 'OS for starting a business.', description: 'Launch Gallery creative.', file: 'media/result.mp4', contentType: 'video', creditsPerView: 13, durationSeconds: 55 },
-    { id: 'lg-synclabs', advertiserName: 'Sync Labs', advertiserUrl: 'https://synclabs.so', title: 'Lipsync Technology Now in Production', slogan: 'Lipsync in production to unlock stories.', description: 'Launch Gallery creative.', file: 'media/synclabs.mp4', contentType: 'video', creditsPerView: 14, durationSeconds: 60 },
-    { id: 'lg-folk', advertiserName: 'Folk', advertiserUrl: 'https://folk.app', title: 'Introducing Geolocation for Folk', slogan: 'Geolocation for Folk.', description: 'Launch Gallery creative.', file: 'media/folk.mp4', contentType: 'video', creditsPerView: 15, durationSeconds: 62 },
-    { id: 'lg-shift', advertiserName: 'Shift', advertiserUrl: 'https://joinshift.com', title: 'Free NYC Apartment Cleaning', slogan: 'Robotics training data from real homes.', description: 'Launch Gallery creative.', file: 'media/shift.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 63 },
-    { id: 'lg-eden', advertiserName: 'Eden-1', advertiserUrl: 'https://launchgallery.video/video/eden-1-meet-eden-1-the-era-of-human-labour-is-coming-to-a-magnificent-end/', title: 'Meet Eden-1', slogan: 'The era of human labour is coming to a magnificent end.', description: 'Launch Gallery creative.', file: 'media/eden.mp4', contentType: 'video', creditsPerView: 17, durationSeconds: 69 },
-    { id: 'lg-locus', advertiserName: 'Locus', advertiserUrl: 'https://paywithlocus.com', title: 'Start a Business Without Knowing How to Build One', slogan: 'Start a business without knowing how to build one.', description: 'Launch Gallery creative.', file: 'media/locus.mp4', contentType: 'video', creditsPerView: 18, durationSeconds: 77 },
-    { id: 'lg-boardy', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', slogan: 'AI that makes deals happen.', description: 'Launch Gallery creative.', file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 19, durationSeconds: 90 },
-    { id: 'lg-kosh', advertiserName: 'Kosh', advertiserUrl: 'https://kosh.money', title: 'KOSH: USD Account Built for Asia', slogan: 'USD account built for Asia.', description: 'Launch Gallery creative.', file: 'media/kosh.mp4', contentType: 'video', creditsPerView: 20, durationSeconds: 105 },
-  ];;
+    { id: 'brand-apple-iphone17e', advertiserName: "Apple", advertiserUrl: "https://www.apple.com", title: "Meet iPhone 17e", slogan: "A whole lot of battery. For a lot less.", description: "Iconic brand spot.", file: 'media/apple-iphone17e.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 11 },
+    { id: 'brand-nike-shorts', advertiserName: "Nike", advertiserUrl: "https://www.nike.com", title: "Just Do It", slogan: "Just Do It.", description: "Iconic brand spot.", file: 'media/nike-shorts.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 14 },
+    { id: 'brand-coke-shorts', advertiserName: "Coca-Cola", advertiserUrl: "https://www.coca-cola.com", title: "Coca-Cola Short", slogan: "Taste the Feeling.", description: "Iconic brand spot.", file: 'media/coke-shorts.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 15 },
+    { id: 'brand-geico-elevator', advertiserName: "GEICO", advertiserUrl: "https://www.geico.com", title: "GEICO Unskippable Elevator", slogan: "15 minutes could save you 15% or more.", description: "Iconic brand spot.", file: 'media/geico-elevator.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 15 },
+    { id: 'brand-geico-family', advertiserName: "GEICO", advertiserUrl: "https://www.geico.com", title: "GEICO Unskippable Family Dinner", slogan: "15 minutes could save you 15% or more.", description: "Iconic brand spot.", file: 'media/geico-family.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 15 },
+    { id: 'brand-mtn-dew-shorts', advertiserName: "Mountain Dew", advertiserUrl: "https://www.mountaindew.com", title: "Mountain Dew NBA", slogan: "Do the Dew.", description: "Iconic brand spot.", file: 'media/mtn-dew-shorts.mp4', contentType: 'video', creditsPerView: 1, durationSeconds: 15 },
+    { id: 'brand-apple-ceramic', advertiserName: "Apple", advertiserUrl: "https://www.apple.com", title: "iPhone 17 Ceramic Shield", slogan: "More durable than ever.", description: "Iconic brand spot.", file: 'media/apple-ceramic.mp4', contentType: 'video', creditsPerView: 2, durationSeconds: 20 },
+    { id: 'lg-3jane', advertiserName: "3Jane", advertiserUrl: "https://3jane.xyz", title: "3Jane is now open to the public", slogan: "Open to the public.", description: "Launch Gallery creative.", file: 'media/3jane.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 28 },
+    { id: 'brand-coke-share', advertiserName: "Coca-Cola", advertiserUrl: "https://www.coca-cola.com", title: "Share a Coke", slogan: "Taste the Feeling.", description: "Iconic brand spot.", file: 'media/coke-share.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 28 },
+    { id: 'lg-factory', advertiserName: "Factory", advertiserUrl: "https://factory.ai", title: "Factory 2.0", slogan: "From coding agents to software factories.", description: "Launch Gallery creative.", file: 'media/factory.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 30 },
+    { id: 'brand-geico-gecko', advertiserName: "GEICO", advertiserUrl: "https://www.geico.com", title: "GEICO Gecko Golf", slogan: "15 minutes could save you 15% or more.", description: "Iconic brand spot.", file: 'media/geico-gecko-shorts.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 30 },
+    { id: 'brand-geico-highfive', advertiserName: "GEICO", advertiserUrl: "https://www.geico.com", title: "GEICO Unskippable High Five", slogan: "15 minutes could save you 15% or more.", description: "Iconic brand spot.", file: 'media/geico-highfive.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 30 },
+    { id: 'brand-mtn-dew-puppy', advertiserName: "Mountain Dew", advertiserUrl: "https://www.mountaindew.com", title: "Puppy Monkey Baby", slogan: "Do the Dew.", description: "Iconic brand spot.", file: 'media/mtn-dew-puppy.mp4', contentType: 'video', creditsPerView: 3, durationSeconds: 30 },
+    { id: 'lg-switchlabs', advertiserName: "TheSwitchLabs", advertiserUrl: "https://theswitchlabs.com", title: "You Do The Building. We Handle The Distribution.", slogan: "You build. We distribute.", description: "Launch Gallery creative.", file: 'media/switchlabs.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 37 },
+    { id: 'lg-collective', advertiserName: "The Collective", advertiserUrl: "https://launchgallery.video/video/the-collective-launching-the-collective-platform-for-young-founders-builders/", title: "Launching The Collective", slogan: "Platform for young founders & builders.", description: "Launch Gallery creative.", file: 'media/collective.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 38 },
+    { id: 'lg-lightwork', advertiserName: "Lightwork", advertiserUrl: "https://lightwork.ai", title: "Introducing Lightwork", slogan: "Work that moves itself.", description: "Launch Gallery creative.", file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 39 },
+    { id: 'lg-pear', advertiserName: "Pear", advertiserUrl: "https://pear.trade", title: "One account. Every market.", slogan: "One account. Every market.", description: "Launch Gallery creative.", file: 'media/pear.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 39 },
+    { id: 'lg-crowdreply', advertiserName: "CrowdReply", advertiserUrl: "https://crowdreply.io", title: "Searchmaxxing", slogan: "Be visible in AI answers.", description: "Launch Gallery creative.", file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 47 },
+    { id: 'lg-stitch', advertiserName: "Stitch", advertiserUrl: "https://launchgallery.video/video/stitch-stitch-pressure-free-mini-vlog-app-for-shy-introverts/", title: "Stitch", slogan: "Pressure-free mini-vlogs for shy introverts.", description: "Launch Gallery creative.", file: 'media/stitch.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 47 },
+    { id: 'lg-kaito', advertiserName: "Kaito AI", advertiserUrl: "https://kaito.ai", title: "Influence mapping to 1M users", slogan: "Expanding influence mapping to 1M users.", description: "Launch Gallery creative.", file: 'media/kaito.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 50 },
+    { id: 'lg-result', advertiserName: "Result", advertiserUrl: "https://result.computer", title: "Result: OS for Starting a Business", slogan: "OS for starting a business.", description: "Launch Gallery creative.", file: 'media/result.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 55 },
+    { id: 'brand-nike-whydoit', advertiserName: "Nike", advertiserUrl: "https://www.nike.com", title: "WHY DO IT?", slogan: "Just Do It.", description: "Iconic brand spot.", file: 'media/nike-whydoit.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 60 },
+    { id: 'lg-synclabs', advertiserName: "Sync Labs", advertiserUrl: "https://synclabs.so", title: "Lipsync Technology Now in Production", slogan: "Lipsync in production to unlock stories.", description: "Launch Gallery creative.", file: 'media/synclabs.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 60 },
+    { id: 'lg-folk', advertiserName: "Folk", advertiserUrl: "https://folk.app", title: "Introducing Geolocation for Folk", slogan: "Geolocation for Folk.", description: "Launch Gallery creative.", file: 'media/folk.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 62 },
+    { id: 'lg-shift', advertiserName: "Shift", advertiserUrl: "https://joinshift.com", title: "Free NYC Apartment Cleaning", slogan: "Robotics training data from real homes.", description: "Launch Gallery creative.", file: 'media/shift.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 63 },
+    { id: 'lg-eden', advertiserName: "Eden-1", advertiserUrl: "https://launchgallery.video/video/eden-1-meet-eden-1-the-era-of-human-labour-is-coming-to-a-magnificent-end/", title: "Meet Eden-1", slogan: "The era of human labour is coming to a magnificent end.", description: "Launch Gallery creative.", file: 'media/eden.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 69 },
+    { id: 'lg-locus', advertiserName: "Locus", advertiserUrl: "https://paywithlocus.com", title: "Start a Business Without Knowing How to Build One", slogan: "Start a business without knowing how to build one.", description: "Launch Gallery creative.", file: 'media/locus.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 77 },
+    { id: 'lg-boardy', advertiserName: "Boardy", advertiserUrl: "https://boardy.ai", title: "Boardy Pro", slogan: "AI that makes deals happen.", description: "Launch Gallery creative.", file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 20, durationSeconds: 90 },
+    { id: 'lg-kosh', advertiserName: "Kosh", advertiserUrl: "https://kosh.money", title: "KOSH: USD Account Built for Asia", slogan: "USD account built for Asia.", description: "Launch Gallery creative.", file: 'media/kosh.mp4', contentType: 'video', creditsPerView: 20, durationSeconds: 105 },
+  ];
 
   function sloganForAd(ad) {
     if (!ad) return '';
@@ -209,25 +209,26 @@
   // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + live mode penalty.
   // No keyword blacklists — short text can still be deep research / tools and get a long wait.
   const PLATFORM_WAIT_DEFAULTS = {
-    chatgpt: { ttftMs: 500, msPerInputToken: 0.2, tokensPerSecond: 45, baseOutput: 50, promptFactor: 2.5, toolPenaltyMs: 0 },
-    claude: { ttftMs: 600, msPerInputToken: 0.22, tokensPerSecond: 40, baseOutput: 60, promptFactor: 2.7, toolPenaltyMs: 0 },
-    gemini: { ttftMs: 450, msPerInputToken: 0.18, tokensPerSecond: 55, baseOutput: 45, promptFactor: 2.3, toolPenaltyMs: 0 },
-    cursor: { ttftMs: 1000, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 220, promptFactor: 3.2, toolPenaltyMs: 6000 },
-    replit: { ttftMs: 1100, msPerInputToken: 0.28, tokensPerSecond: 26, baseOutput: 200, promptFactor: 3.0, toolPenaltyMs: 5000 },
-    grok: { ttftMs: 520, msPerInputToken: 0.18, tokensPerSecond: 50, baseOutput: 50, promptFactor: 2.4, toolPenaltyMs: 0 },
-    manus: { ttftMs: 1500, msPerInputToken: 0.32, tokensPerSecond: 18, baseOutput: 450, promptFactor: 3.5, toolPenaltyMs: 15000 },
-    lovable: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 24, baseOutput: 250, promptFactor: 3.2, toolPenaltyMs: 8000 },
-    default: { ttftMs: 550, msPerInputToken: 0.2, tokensPerSecond: 40, baseOutput: 55, promptFactor: 2.5, toolPenaltyMs: 800 },
+    // Softened TPS / baseOutput so short prompts map to short native spots and long prompts to Launch Gallery.
+    chatgpt: { ttftMs: 700, msPerInputToken: 0.35, tokensPerSecond: 12, baseOutput: 80, promptFactor: 4.2, toolPenaltyMs: 0 },
+    claude: { ttftMs: 800, msPerInputToken: 0.38, tokensPerSecond: 11, baseOutput: 90, promptFactor: 4.2, toolPenaltyMs: 0 },
+    gemini: { ttftMs: 650, msPerInputToken: 0.3, tokensPerSecond: 13, baseOutput: 75, promptFactor: 3.8, toolPenaltyMs: 0 },
+    cursor: { ttftMs: 1100, msPerInputToken: 0.35, tokensPerSecond: 18, baseOutput: 260, promptFactor: 3.4, toolPenaltyMs: 6000 },
+    replit: { ttftMs: 1200, msPerInputToken: 0.35, tokensPerSecond: 16, baseOutput: 240, promptFactor: 3.2, toolPenaltyMs: 5000 },
+    grok: { ttftMs: 700, msPerInputToken: 0.3, tokensPerSecond: 12, baseOutput: 80, promptFactor: 4.0, toolPenaltyMs: 0 },
+    manus: { ttftMs: 1500, msPerInputToken: 0.4, tokensPerSecond: 12, baseOutput: 480, promptFactor: 3.6, toolPenaltyMs: 15000 },
+    lovable: { ttftMs: 1200, msPerInputToken: 0.35, tokensPerSecond: 14, baseOutput: 280, promptFactor: 3.4, toolPenaltyMs: 8000 },
+    default: { ttftMs: 750, msPerInputToken: 0.35, tokensPerSecond: 12, baseOutput: 85, promptFactor: 4.0, toolPenaltyMs: 800 },
   };
 
   const DONE_HIDE_GRACE_MS = 0; // hide the instant stop disappears
   const PREDICTION_END_BUFFER_MS = 400;
   const HARD_SESSION_CAP_MS = 180000;
   // Only show an ad when remaining predicted wait can fit a real creative.
-  const MIN_AD_MS = 3000; // shortest opening hook is 3s
+  const MIN_AD_MS = 11000; // shortest native creative is 11s
   // Under-estimate remaining wait so the chosen clip finishes before the answer.
   // Ads should fit inside the wait — never overrun it.
-  const AD_FIT_SAFETY = 0.78;
+  const AD_FIT_SAFETY = 0.85;
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
 
   // Soft cues for expected output size (affect estimate only — never force skip/show).
@@ -587,7 +588,12 @@
     const text = String(promptText || '');
     let scaled = defaults.baseOutput + Math.round(Math.max(0, inputTokens) * defaults.promptFactor);
 
-    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 1.55);
+    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 1.85);
+    if (/\b(essay|comprehensive|in[- ]depth|deep research)\b/i.test(text)) {
+      scaled = Math.round(scaled * 2.2);
+    } else if (/\bresearch\b/i.test(text)) {
+      scaled = Math.round(scaled * 1.35);
+    }
     const wordCue = text.match(WORD_COUNT_CUE_RE);
     if (wordCue) {
       const n = Number(wordCue[1]);
@@ -597,12 +603,12 @@
       }
     }
 
-    // Small prompts → small replies; no huge floor that invents wait for "hi".
-    if (inputTokens <= 4) return clamp(scaled, 16, 90);
-    if (inputTokens <= 12) return clamp(scaled, 40, 220);
-    if (inputTokens <= 40) return clamp(scaled, 100, 650);
-    if (inputTokens <= 100) return clamp(scaled, 180, 1200);
-    return clamp(scaled, 280, 3200);
+    // Tiny → often skip; short Q → short brand; medium explain → mid spots; essay → gallery.
+    if (inputTokens <= 3) return clamp(scaled, 12, 70);
+    if (inputTokens <= 12) return clamp(scaled, 210, 380);
+    if (inputTokens <= 40) return clamp(scaled, 420, 1100);
+    if (inputTokens <= 100) return clamp(scaled, 480, 1800);
+    return clamp(scaled, 700, 4200);
   }
 
   function clamp(value, min, max) {

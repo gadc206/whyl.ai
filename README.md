@@ -24,7 +24,18 @@ npm run build:extension
 npm run dev
 ```
 
+### Local Load unpacked (dev)
+
 Load `packages/extension/dist` from `chrome://extensions` using **Load unpacked**.
+
+### Investor beta zip
+
+1. Download `whyl-extension-beta.zip` (built locally into `packages/extension/` / `website/`, or shared separately — not stored in git)
+2. Unzip → folder `whyl-extension` (contains `manifest.json`)
+3. Chrome → `chrome://extensions` → Developer mode → **Load unpacked** → select that `whyl-extension` folder
+4. Open chatgpt.com, send a prompt, see an ad during the wait
+
+Do not select `Projects/whyl.ai/packages/extension/dist` — use the unzipped zip folder.
 
 ### Website (local preview)
 

@@ -5,3 +5,6 @@ dist/
 *.db-wal
 .env
 .DS_Store
+
+# Investor extension zip ( >100MB; distribute outside GitHub )
+**/whyl-extension-beta.zip
