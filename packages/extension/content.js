@@ -127,12 +127,13 @@
     if (!ad) return '';
     const custom = String(ad.slogan || '').trim();
     if (custom) return custom;
-    const name = String(ad.advertiserName || '').trim();
     const title = String(ad.title || '').trim();
-    if (name && title && !title.toLowerCase().includes(name.toLowerCase())) {
-      return `${name} — ${title}`;
-    }
-    return title || name || '';
+    return title || '';
+  }
+
+  function companyForAd(ad) {
+    if (!ad) return '';
+    return String(ad.advertiserName || '').trim();
   }
 
   function resolveCreative(entry, preferredSeconds = null) {
@@ -974,19 +975,14 @@
       this.sloganEl.setAttribute('aria-live', 'polite');
       this.sloganEl.style.cssText = [
         'display:none',
+        'flex-direction:column',
+        'align-items:center',
+        'gap:5px',
         'text-align:center',
-        'font:600 12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace',
-        'letter-spacing:0.14em',
-        'text-transform:uppercase',
-        'color:#e8ff8a',
-        'text-shadow:0 0 8px rgba(214,255,63,0.95), 0 0 18px rgba(214,255,63,0.55), 0 0 34px rgba(190,255,42,0.35)',
         'padding:0 10px',
         'opacity:0',
         'transform:translateY(-4px)',
         'transition:opacity 420ms ease, transform 420ms ease',
-        'white-space:nowrap',
-        'overflow:hidden',
-        'text-overflow:ellipsis',
         'max-width:100%',
       ].join(';');
 
@@ -1009,14 +1005,30 @@
       `;
     }
 
+    afterglowMarkup(ad) {
+      const slogan = sloganForAd(ad);
+      const company = companyForAd(ad);
+      if (!slogan && !company) return '';
+      const sloganHtml = slogan
+        ? `<div style="font:600 12px/1.35 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:0.14em;text-transform:uppercase;color:#e8ff8a;text-shadow:0 0 8px rgba(214,255,63,0.95), 0 0 18px rgba(214,255,63,0.55), 0 0 34px rgba(190,255,42,0.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${escapeHtml(slogan)}</div>`
+        : '';
+      const companyHtml = company
+        ? `<div style="display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;border:1px solid rgba(214,255,63,0.28);background:rgba(9,12,8,0.72);box-shadow:0 0 14px rgba(214,255,63,0.18);">
+            <span style="width:6px;height:6px;border-radius:999px;background:#d6ff3f;box-shadow:0 0 10px rgba(214,255,63,0.95);display:block;"></span>
+            <span style="font:800 10px/1 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;letter-spacing:0.16em;text-transform:uppercase;color:#d6ff3f;text-shadow:0 0 10px rgba(214,255,63,0.7);">${escapeHtml(company)}</span>
+          </div>`
+        : '';
+      return `${sloganHtml}${companyHtml}`;
+    }
+
     // Illuminated afterglow under the pill — stays until the next question.
     showAfterglowSlogan(ad) {
       this.ensureBadge();
-      const slogan = sloganForAd(ad);
-      if (!slogan || !this.sloganEl) return;
+      const markup = this.afterglowMarkup(ad);
+      if (!markup || !this.sloganEl) return;
       this.afterglowAd = ad;
-      this.sloganEl.textContent = slogan;
-      this.sloganEl.style.display = 'block';
+      this.sloganEl.innerHTML = markup;
+      this.sloganEl.style.display = 'flex';
       // Retrigger illuminate animation.
       this.sloganEl.style.opacity = '0';
       this.sloganEl.style.transform = 'translateY(-4px)';
@@ -1038,7 +1050,7 @@
       setTimeout(() => {
         if (el !== this.sloganEl) return;
         el.style.display = 'none';
-        el.textContent = '';
+        el.innerHTML = '';
       }, 280);
     }
 
