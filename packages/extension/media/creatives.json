@@ -1,83 +1,83 @@
 [
   {
-    "file": "factory-3s.mp4",
+    "file": "apple-3s.mp4",
     "durationSeconds": 3,
-    "advertiserName": "Factory",
-    "advertiserUrl": "https://factory.ai",
-    "title": "Factory 2.0",
-    "slogan": "From coding agents to software factories."
+    "advertiserName": "Apple",
+    "advertiserUrl": "https://www.apple.com",
+    "title": "iPhone 17 Ceramic Shield",
+    "slogan": "More durable than ever."
   },
   {
-    "file": "lightwork-4s.mp4",
+    "file": "apple-4s.mp4",
     "durationSeconds": 4,
-    "advertiserName": "Lightwork",
-    "advertiserUrl": "https://lightwork.ai",
-    "title": "Introducing Lightwork",
-    "slogan": "Work that moves itself."
+    "advertiserName": "Apple",
+    "advertiserUrl": "https://www.apple.com",
+    "title": "Meet iPhone 17e",
+    "slogan": "A whole lot of battery. For a lot less."
   },
   {
-    "file": "3jane-5s.mp4",
+    "file": "geico-5s.mp4",
     "durationSeconds": 5,
-    "advertiserName": "3Jane",
-    "advertiserUrl": "https://3jane.xyz",
-    "title": "3Jane is now open to the public",
-    "slogan": "Open to the public."
+    "advertiserName": "GEICO",
+    "advertiserUrl": "https://www.geico.com",
+    "title": "GEICO Unskippable High Five",
+    "slogan": "15 minutes could save you 15% or more."
   },
   {
-    "file": "pear-6s.mp4",
+    "file": "mtn-dew-6s.mp4",
     "durationSeconds": 6,
-    "advertiserName": "Pear",
-    "advertiserUrl": "https://pear.trade",
-    "title": "One account. Every market.",
-    "slogan": "One account. Every market."
+    "advertiserName": "Mountain Dew",
+    "advertiserUrl": "https://www.mountaindew.com",
+    "title": "Puppy Monkey Baby",
+    "slogan": "Do the Dew."
   },
   {
-    "file": "switchlabs-7s.mp4",
+    "file": "nike-7s.mp4",
     "durationSeconds": 7,
-    "advertiserName": "TheSwitchLabs",
-    "advertiserUrl": "https://theswitchlabs.com",
-    "title": "You Do The Building. We Handle The Distribution.",
-    "slogan": "You build. We distribute."
+    "advertiserName": "Nike",
+    "advertiserUrl": "https://www.nike.com",
+    "title": "WHY DO IT?",
+    "slogan": "Just Do It."
   },
   {
-    "file": "collective-8s.mp4",
+    "file": "coke-8s.mp4",
     "durationSeconds": 8,
-    "advertiserName": "The Collective",
-    "advertiserUrl": "https://launchgallery.video/video/the-collective-launching-the-collective-platform-for-young-founders-builders/",
-    "title": "Launching The Collective",
-    "slogan": "Platform for young founders & builders."
+    "advertiserName": "Coca-Cola",
+    "advertiserUrl": "https://www.coca-cola.com",
+    "title": "Share a Coke",
+    "slogan": "Taste the Feeling."
   },
   {
-    "file": "stitch-9s.mp4",
+    "file": "geico-9s.mp4",
     "durationSeconds": 9,
-    "advertiserName": "Stitch",
-    "advertiserUrl": "https://launchgallery.video/video/stitch-stitch-pressure-free-mini-vlog-app-for-shy-introverts/",
-    "title": "Stitch",
-    "slogan": "Pressure-free mini-vlogs for shy introverts."
+    "advertiserName": "GEICO",
+    "advertiserUrl": "https://www.geico.com",
+    "title": "GEICO Unskippable Family Dinner",
+    "slogan": "15 minutes could save you 15% or more."
   },
   {
-    "file": "crowdreply-10s.mp4",
+    "file": "apple-10s.mp4",
     "durationSeconds": 10,
-    "advertiserName": "CrowdReply",
-    "advertiserUrl": "https://crowdreply.io",
-    "title": "Searchmaxxing",
-    "slogan": "Be visible in AI answers."
+    "advertiserName": "Apple",
+    "advertiserUrl": "https://www.apple.com",
+    "title": "Meet iPhone 17e",
+    "slogan": "A whole lot of battery. For a lot less."
   },
   {
-    "file": "kaito-12s.mp4",
+    "file": "geico-12s.mp4",
     "durationSeconds": 12,
-    "advertiserName": "Kaito AI",
-    "advertiserUrl": "https://kaito.ai",
-    "title": "Influence mapping to 1M users",
-    "slogan": "Expanding influence mapping to 1M users."
+    "advertiserName": "GEICO",
+    "advertiserUrl": "https://www.geico.com",
+    "title": "GEICO Unskippable Elevator",
+    "slogan": "15 minutes could save you 15% or more."
   },
   {
-    "file": "synclabs-15s.mp4",
+    "file": "apple-15s.mp4",
     "durationSeconds": 15,
-    "advertiserName": "Sync Labs",
-    "advertiserUrl": "https://synclabs.so",
-    "title": "Lipsync Technology Now in Production",
-    "slogan": "Lipsync in production to unlock stories."
+    "advertiserName": "Apple",
+    "advertiserUrl": "https://www.apple.com",
+    "title": "iPhone 17 Ceramic Shield",
+    "slogan": "More durable than ever."
   },
   {
     "file": "folk-20s.mp4",
