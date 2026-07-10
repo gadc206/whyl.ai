@@ -175,29 +175,28 @@
     };
   }
 
-  // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + mode penalty.
-  // Output expectation scales hard with prompt size — "hi" stays tiny; real asks get real waits.
+  // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + live mode penalty.
+  // No keyword blacklists — short text can still be deep research / tools and get a long wait.
   const PLATFORM_WAIT_DEFAULTS = {
-    chatgpt: { ttftMs: 500, msPerInputToken: 0.2, tokensPerSecond: 45, baseOutput: 60, promptFactor: 2.8, toolPenaltyMs: 0 },
-    claude: { ttftMs: 600, msPerInputToken: 0.22, tokensPerSecond: 40, baseOutput: 70, promptFactor: 3.0, toolPenaltyMs: 0 },
-    gemini: { ttftMs: 450, msPerInputToken: 0.18, tokensPerSecond: 55, baseOutput: 55, promptFactor: 2.5, toolPenaltyMs: 0 },
-    cursor: { ttftMs: 1000, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 250, promptFactor: 3.5, toolPenaltyMs: 6000 },
-    replit: { ttftMs: 1100, msPerInputToken: 0.28, tokensPerSecond: 26, baseOutput: 220, promptFactor: 3.2, toolPenaltyMs: 5000 },
-    grok: { ttftMs: 520, msPerInputToken: 0.18, tokensPerSecond: 50, baseOutput: 60, promptFactor: 2.6, toolPenaltyMs: 0 },
-    manus: { ttftMs: 1500, msPerInputToken: 0.32, tokensPerSecond: 18, baseOutput: 500, promptFactor: 3.8, toolPenaltyMs: 15000 },
-    lovable: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 24, baseOutput: 280, promptFactor: 3.4, toolPenaltyMs: 8000 },
-    default: { ttftMs: 550, msPerInputToken: 0.2, tokensPerSecond: 40, baseOutput: 65, promptFactor: 2.8, toolPenaltyMs: 800 },
+    chatgpt: { ttftMs: 500, msPerInputToken: 0.2, tokensPerSecond: 45, baseOutput: 50, promptFactor: 2.5, toolPenaltyMs: 0 },
+    claude: { ttftMs: 600, msPerInputToken: 0.22, tokensPerSecond: 40, baseOutput: 60, promptFactor: 2.7, toolPenaltyMs: 0 },
+    gemini: { ttftMs: 450, msPerInputToken: 0.18, tokensPerSecond: 55, baseOutput: 45, promptFactor: 2.3, toolPenaltyMs: 0 },
+    cursor: { ttftMs: 1000, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 220, promptFactor: 3.2, toolPenaltyMs: 6000 },
+    replit: { ttftMs: 1100, msPerInputToken: 0.28, tokensPerSecond: 26, baseOutput: 200, promptFactor: 3.0, toolPenaltyMs: 5000 },
+    grok: { ttftMs: 520, msPerInputToken: 0.18, tokensPerSecond: 50, baseOutput: 50, promptFactor: 2.4, toolPenaltyMs: 0 },
+    manus: { ttftMs: 1500, msPerInputToken: 0.32, tokensPerSecond: 18, baseOutput: 450, promptFactor: 3.5, toolPenaltyMs: 15000 },
+    lovable: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 24, baseOutput: 250, promptFactor: 3.2, toolPenaltyMs: 8000 },
+    default: { ttftMs: 550, msPerInputToken: 0.2, tokensPerSecond: 40, baseOutput: 55, promptFactor: 2.5, toolPenaltyMs: 800 },
   };
 
   const DONE_HIDE_GRACE_MS = 0; // hide the instant stop disappears
-  const PREDICTION_END_BUFFER_MS = 300;
-  const HARD_SESSION_CAP_MS = 120000;
-  // Must be able to fit at least our shortest creative (~2s) with a little slack.
+  const PREDICTION_END_BUFFER_MS = 250;
+  const HARD_SESSION_CAP_MS = 180000;
+  // Only show an ad when remaining predicted wait can fit a real creative.
   const MIN_AD_MS = 2000;
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
 
-  // Tiny / greeting prompts finish too fast for any ad — skip entirely.
-  const TRIVIAL_PROMPT_RE = /^(hi|hii+|hello|hey|yo|sup|hola|thanks|thank you|thx|ok|okay|k|yes|no|yep|nope|sure|cool|lol|test|ping|help|\?+|!+)$/i;
+  // Soft cues for expected output size (affect estimate only — never force skip/show).
   const LONG_OUTPUT_CUE_RE = /\b(essay|detailed|thorough|comprehensive|in[- ]depth|step[- ]by[- ]step|explain|write|implement|build|create|research|analyze|compare|summarize|list|code|script|function|app|website)\b/i;
   const WORD_COUNT_CUE_RE = /\b(\d{3,5})\s*(words?|pages?|paragraphs?)\b/i;
 
@@ -525,39 +524,50 @@
     return String(getElementText(platformAdapter.getComposer()) || '').replace(/\s+/g, ' ').trim();
   }
 
-  function isTrivialPrompt(promptText, promptTokens) {
-    const text = String(promptText || '').replace(/\s+/g, ' ').trim();
-    if (!text) return (promptTokens || 0) <= 4;
-    // Only exact greetings / one-word acknowledgements — not short real questions.
-    if (text.length <= 12 && TRIVIAL_PROMPT_RE.test(text)) return true;
-    if ((promptTokens || 0) <= 2 && text.length <= 8 && !/[?]/.test(text)) return true;
-    return false;
+  // Live mode signals dominate wait length — deep research on "hi" is still a long wait.
+  function detectLiveWaitMode(platform) {
+    if (findDeepResearchPlan()) {
+      return {
+        kind: 'deep_research',
+        toolPenaltyMs: platform === 'chatgpt' || platform === 'claude' ? 90000 : 60000,
+        decodeMultiplier: 1.4,
+      };
+    }
+    if (hasVisibleStatusText({
+      liveText: [
+        'Researching', 'Searching', 'Browsing', 'Deep research', 'Calibrating',
+        'Using tools', 'Reading sources', 'Collecting sources', 'Web search',
+      ],
+      useGlobalLiveStatus: true,
+    })) {
+      return { kind: 'tools_search', toolPenaltyMs: 28000, decodeMultiplier: 1.15 };
+    }
+    if (hasStopControlVisible() || netWorkingFresh(1200)) {
+      return { kind: 'generating', toolPenaltyMs: 0, decodeMultiplier: 1 };
+    }
+    return { kind: 'default', toolPenaltyMs: 0, decodeMultiplier: 1 };
   }
 
-  // Expected output tokens scale with prompt size + content cues.
+  // Expected output scales with prompt size + soft content cues. Never forces skip/show.
   function expectedOutputTokens(defaults, inputTokens, promptText) {
     const text = String(promptText || '');
-    if (isTrivialPrompt(text, inputTokens)) {
-      return clamp(8 + inputTokens, 6, 20);
-    }
+    let scaled = defaults.baseOutput + Math.round(Math.max(0, inputTokens) * defaults.promptFactor);
 
-    let scaled = defaults.baseOutput + Math.round(inputTokens * defaults.promptFactor);
-
-    // Content cues that usually mean longer replies.
-    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 1.7);
+    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 1.55);
     const wordCue = text.match(WORD_COUNT_CUE_RE);
     if (wordCue) {
       const n = Number(wordCue[1]);
       if (Number.isFinite(n)) {
-        // ~1.3 tokens/word rough; pages ≈ 400 words.
         const unit = /pages?/i.test(wordCue[2]) ? 400 : /paragraphs?/i.test(wordCue[2]) ? 80 : 1;
         scaled = Math.max(scaled, Math.round(n * unit * 1.3));
       }
     }
 
-    if (inputTokens <= 6) return clamp(scaled, 30, 160);
-    if (inputTokens <= 20) return clamp(scaled, 80, 450);
-    if (inputTokens <= 60) return clamp(scaled, 160, 900);
+    // Small prompts → small replies; no huge floor that invents wait for "hi".
+    if (inputTokens <= 4) return clamp(scaled, 16, 90);
+    if (inputTokens <= 12) return clamp(scaled, 40, 220);
+    if (inputTokens <= 40) return clamp(scaled, 100, 650);
+    if (inputTokens <= 100) return clamp(scaled, 180, 1200);
     return clamp(scaled, 280, 3200);
   }
 
@@ -608,51 +618,34 @@
     const defaults = PLATFORM_WAIT_DEFAULTS[platform] || PLATFORM_WAIT_DEFAULTS.default;
     const inputTokens = Math.max(0, promptTokens || 0);
     const text = String(promptText || '');
+    const mode = detectLiveWaitMode(platform);
 
-    // Trivial prompts ("hi", "ok") finish in well under 2s — never worth an ad.
-    if (isTrivialPrompt(text, inputTokens)) {
-      return {
-        totalMs: 900,
-        ttftMs: 350,
-        decodeMs: 550,
-        expectedOutput: 12,
-        source: 'trivial',
-        skipAd: true,
-      };
-    }
-
-    // Exact industry formula used in serving systems:
-    // total ≈ TTFT(prefill) + (expected_output_tokens / TPS)
+    // total ≈ TTFT(prefill) + (expected_output_tokens / TPS) + live mode penalty
     const ttftMs = defaults.ttftMs + (inputTokens * defaults.msPerInputToken);
     const expectedOutput = expectedOutputTokens(defaults, inputTokens, text);
     let decodeMs = (expectedOutput / Math.max(defaults.tokensPerSecond, 1)) * 1000;
-    let toolPenaltyMs = defaults.toolPenaltyMs || 0;
+    decodeMs *= mode.decodeMultiplier || 1;
 
-    // Mode multipliers when the UI shows long-running work.
-    if (findDeepResearchPlan()) {
-      toolPenaltyMs = Math.max(toolPenaltyMs, platform === 'chatgpt' || platform === 'claude' ? 75000 : 50000);
-      decodeMs *= 1.35;
-    } else if (hasVisibleStatusText({
-      liveText: ['Researching', 'Searching', 'Browsing', 'Deep research', 'Calibrating', 'Using tools'],
-      useGlobalLiveStatus: true,
-    })) {
-      toolPenaltyMs = Math.max(toolPenaltyMs, 25000);
-    }
-
+    const toolPenaltyMs = Math.max(defaults.toolPenaltyMs || 0, mode.toolPenaltyMs || 0);
     let formulaMs = ttftMs + decodeMs + toolPenaltyMs;
 
-    // Don't blend observed averages into tiny prompts — that re-inflates "hi" waits.
+    // Blend observed averages only for non-tiny prompts, and never erase a live long mode.
     const observed = loadWaitStats()[platform];
-    if (inputTokens >= 20 && observed?.count >= 3 && observed.avgTotalMs > 0) {
-      const observedWeight = observed.count >= 8 ? 0.55 : 0.35;
+    if (
+      mode.kind === 'default' &&
+      inputTokens >= 16 &&
+      observed?.count >= 3 &&
+      observed.avgTotalMs > 0
+    ) {
+      const observedWeight = observed.count >= 8 ? 0.5 : 0.3;
       formulaMs = formulaMs * (1 - observedWeight) + observed.avgTotalMs * observedWeight;
       return {
         totalMs: formulaMs,
         ttftMs,
         decodeMs,
         expectedOutput,
+        mode: mode.kind,
         source: 'observed',
-        skipAd: formulaMs < MIN_AD_MS,
       };
     }
 
@@ -661,17 +654,15 @@
       ttftMs,
       decodeMs,
       expectedOutput,
+      mode: mode.kind,
       source: 'ttft+tps',
-      skipAd: formulaMs < MIN_AD_MS,
     };
   }
 
-  // Ad length = remaining predicted wait from TTFT + decode(output/TPS).
-  // Must fit an actual creative file — if remaining < shortest clip, return 0 (no ad).
+  // Ad length = remaining predicted wait. 0 means "not enough depth yet" — keep waiting,
+  // don't show a blip. Live mode (deep research) can grow the estimate on the next check.
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs, promptText = '') {
     const estimate = estimateResponseTiming(platform, promptTokens, promptText);
-    if (estimate.skipAd) return 0;
-
     const remainingMs = Math.max(
       0,
       (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS,
@@ -679,17 +670,14 @@
     if (remainingMs < MIN_AD_MS) return 0;
 
     const remainingSec = Math.floor(remainingMs / 1000);
-    // Only return a length we actually have a creative for.
     const available = LAUNCH_CREATIVE_FILES
       .map((e) => e.durationSeconds)
       .filter((sec) => sec <= remainingSec)
       .sort((a, b) => b - a);
 
-    if (!available.length) return 0;
-    return available[0];
+    return available[0] || 0;
   }
 
-  // Absolute predicted end time for this prompt (from candidate start).
   function predictedAnswerAt(candidateStartedAt, platform, promptTokens, promptText = '') {
     const estimate = estimateResponseTiming(platform, promptTokens, promptText);
     return (candidateStartedAt || Date.now()) + Math.max(0, estimate.totalMs || 0);
@@ -1460,12 +1448,8 @@
       this.observationRecorded = false;
       this.doneSinceAt = 0;
       this.sessionCredits = 0;
-
-      // Skip the whole wait session when math says no ad can fit (e.g. "hi").
-      if (this.waitEstimate.skipAd || chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0, this.promptText) <= 0) {
-        this.waitClosed = true;
-        this.waitSessionId = null;
-      }
+      // Never skip here based on prompt text alone — live mode (deep research / tools)
+      // may appear after send and grow the wait enough for an ad.
     }
 
     closeWaitSession() {
@@ -1483,8 +1467,6 @@
       // A new user send opens a fresh wait session (allowWithoutSignal=true).
       if (allowWithoutSignal) {
         this.openWaitSession(promptTokens, promptText);
-        // Trivial / too-short waits never enter candidate — no blip.
-        if (this.waitClosed || !this.waitSessionId) return;
       } else if (this.waitClosed || !this.waitSessionId) {
         return;
       }
@@ -1518,16 +1500,6 @@
       this.markWorkActivity();
       this.clientSessionId = `${this.adapter.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-      // Bail before any UI if remaining wait can't fit a creative.
-      if (
-        this.waitEstimate.skipAd ||
-        chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0, this.promptText) <= 0
-      ) {
-        this.closeWaitSession();
-        this.reset();
-        return;
-      }
-
       this.candidateTimer = setTimeout(() => this.tryActivate(), INITIAL_ACTIVATION_CHECK_MS);
       this.startPolling();
     }
@@ -1558,7 +1530,7 @@
 
       this.state = 'active';
       this.activeSignalGraceUntil = decision.keepAlive ? Date.now() + RESTORE_KEEPALIVE_MS : 0;
-      // Refresh prediction at activation with elapsed time already spent waiting.
+      // Refresh prediction at activation — live mode (deep research / tools) may have appeared.
       this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens, this.promptText);
       this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens, this.promptText);
 
@@ -1570,15 +1542,36 @@
         Date.now() - this.candidateStartedAt,
         this.promptText,
       );
-      // Remaining predicted wait too short for even a short ad — skip entirely.
+
+      // Not enough remaining wait for a creative yet.
       if (!fittedSeconds) {
+        // Answer already done → leave quietly (no blip).
+        if (isAnswerFinished(this.adapter) || this.waitClosed) {
+          this.closeWaitSession();
+          this.reset();
+          return;
+        }
+        // Still working — live mode may grow the estimate (deep research on a short prompt).
+        // Stay in candidate and re-check; never flash an undersized ad.
+        this.state = 'candidate';
+        const maxWaitMs = this.userInitiatedWait ? HARD_SESSION_CAP_MS : 45000;
+        if (Date.now() - this.candidateStartedAt < maxWaitMs && isAiStillWorking(this.adapter)) {
+          this.candidateTimer = setTimeout(() => this.tryActivate(), ACTIVATION_RETRY_MS);
+          return;
+        }
         this.closeWaitSession();
         this.reset();
         return;
       }
+
       this.overlay.customPos = null;
       let ad = pickLaunchCreative(fittedSeconds);
       if (!ad) {
+        this.state = 'candidate';
+        if (isAiStillWorking(this.adapter) && Date.now() - this.candidateStartedAt < HARD_SESSION_CAP_MS) {
+          this.candidateTimer = setTimeout(() => this.tryActivate(), ACTIVATION_RETRY_MS);
+          return;
+        }
         this.closeWaitSession();
         this.reset();
         return;
