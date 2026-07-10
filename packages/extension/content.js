@@ -200,12 +200,11 @@
     default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
   };
 
-  const DONE_HIDE_GRACE_MS = 0; // hide on the same poll once stop is gone
+  const DONE_HIDE_GRACE_MS = 80;
   const PREDICTION_END_BUFFER_MS = 800;
-  const HARD_SESSION_CAP_MS = 60000;
-  const POST_PREDICTION_MAX_MS = 4000;
-  const REACTIVATE_COOLDOWN_MS = 45000; // block leftover-signal re-shows after hide
-  const INTENT_CONSUMED = { value: false }; // one ad attempt per user send
+  const HARD_SESSION_CAP_MS = 120000;
+  // After a prompt's wait is closed, never auto-reopen until the user sends again.
+  // This stops flicker without limiting to one ad per question.
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -621,7 +620,8 @@
   }
 
   // Pick an ad length that fits the remaining predicted wait for this prompt.
-  const AD_DURATION_BUCKETS_SEC = [4, 6, 8, 10, 12, 15, 20, 30];
+  // Multiple ads can chain while the wait session is still open.
+  const AD_DURATION_BUCKETS_SEC = [3, 4, 5, 6, 8, 10, 12, 15, 20];
 
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
     const estimate = estimateResponseTiming(platform, promptTokens);
@@ -631,20 +631,23 @@
       if (seconds * 1000 <= remainingMs) chosen = seconds;
     }
     if (findDeepResearchPlan() && remainingMs >= 18000) {
-      chosen = Math.max(chosen, 15);
+      chosen = Math.max(chosen, 12);
     }
-    // Short prompts: keep ads brief — hide will still cut early when stop disappears.
-    const tokens = promptTokens || 0;
-    if (tokens < 20) chosen = Math.min(chosen || 4, 4);
-    else if (tokens < 60) chosen = Math.min(chosen || 6, 8);
-    else if (tokens < 120) chosen = Math.min(chosen || 8, 12);
-    return chosen || 4;
+    // Short prompts: keep creatives short so hide-on-done feels snappy.
+    if ((promptTokens || 0) < 50) {
+      chosen = Math.min(chosen || 3, 5);
+    } else if ((promptTokens || 0) < 120) {
+      chosen = Math.min(chosen || 4, 8);
+    }
+    return chosen || 3;
   }
 
   // Absolute predicted end time for this prompt (from candidate start).
   function predictedAnswerAt(candidateStartedAt, platform, promptTokens) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    return (candidateStartedAt || Date.now()) + Math.max(estimate.totalMs || 0, 6000);
+    // Don't force a 6s floor — short prompts can be ~2–4s.
+    const total = Math.max(estimate.totalMs || 0, (promptTokens || 0) < 40 ? 2500 : 4000);
+    return (candidateStartedAt || Date.now()) + total;
   }
 
   function findDeepResearchPlan() {
@@ -692,15 +695,19 @@
     return !!findVisibleControlText(['Stop generating', 'Stop streaming', 'Stop response', 'Stop research']);
   }
 
-  // Hide = stop button gone. Do not use stale network / leftover aria-live
-  // (those keep short-prompt ads up and cause flicker re-shows).
+  // Hide decisions: stop-button edge detection is the strongest "answer finished" signal.
   function isAiStillWorking(adapterInstance) {
-    if (hasStopControlVisible()) return true;
+    const stopVisible = hasStopControlVisible();
+    if (stopVisible) return true;
+
     if (adapterInstance?.id === 'claude') {
       const streaming = document.querySelector('[data-is-streaming="true"]');
       if (streaming && isVisible(streaming)) return true;
     }
+
     if (findDeepResearchPlan()) return true;
+    // Only very fresh network activity — stale sockets must not keep ads alive.
+    if (netWorkingFresh(1200)) return true;
     return false;
   }
 
@@ -860,7 +867,7 @@
         'z-index:2147483646',
         'display:none',
         'pointer-events:none',
-        'transition:none',
+        'transition:top 240ms cubic-bezier(.2,.8,.2,1), left 240ms cubic-bezier(.2,.8,.2,1), width 240ms cubic-bezier(.2,.8,.2,1), opacity 160ms ease',
         'transform-origin:top center',
       ].join(';');
       this.shadow = this.host.attachShadow({ mode: 'closed' });
@@ -1363,54 +1370,75 @@
       this.promptTokens = 0;
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
       this.predictedEndAt = 0;
-      this.postPredictionSinceAt = 0;
-      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
-      this.reactivateBlockedUntil = 0;
+      // Per-prompt wait session: open on send, closed when answer finishes.
+      // Multiple ads can play while open; nothing auto-reopens after close.
+      this.waitSessionId = null;
+      this.waitClosed = false;
+      this.adsPlayedThisWait = 0;
+      this.sawStopDuringWait = false;
+    }
+
+    openWaitSession(promptTokens = 0) {
+      this.waitSessionId = `${this.adapter.id}-wait-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+      this.waitClosed = false;
+      this.adsPlayedThisWait = 0;
+      this.sawStopDuringWait = false;
+      this.promptTokens = Math.max(0, promptTokens || 0);
+      this.candidateStartedAt = Date.now();
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens);
+      this.firstTokenAt = 0;
+      this.observationRecorded = false;
+      this.doneSinceAt = 0;
+      this.sessionCredits = 0;
+    }
+
+    closeWaitSession() {
+      this.waitClosed = true;
+      this.waitSessionId = null;
+      this.clearCandidateTimer();
+      this.stopAdTimer();
+      this.stopPolling();
+      this.overlay.hide();
+      this.state = 'idle';
     }
 
     beginCandidate(allowWithoutSignal = false, promptTokens = 0) {
-      // One ad attempt per user send. Auto/net re-entry is blocked after hide.
-      if (Date.now() < (this.reactivateBlockedUntil || 0)) return;
-      if (INTENT_CONSUMED.value && !allowWithoutSignal) return;
+      // Flicker fix: once this prompt's wait is closed, ignore auto re-activation.
+      // A new user send opens a fresh wait session (allowWithoutSignal=true).
+      if (allowWithoutSignal) {
+        this.openWaitSession(promptTokens);
+      } else if (this.waitClosed || !this.waitSessionId) {
+        return;
+      }
 
       if (this.state === 'paused') {
         if (allowWithoutSignal) {
           this.overlay.hide();
           this.overlay.minimized = false;
           this.resetPausedOnly();
+        } else if (this.adapter.hasGenerationSignal()) {
+          this.expandFromPaused();
+          return;
         } else {
           return;
         }
       }
       if (this.state !== 'idle') return;
-
-      // Only explicit user sends may start without an existing generation signal.
-      // Auto/net paths require a visible stop control (real generation), not leftover chrome.
-      if (!allowWithoutSignal) {
-        if (!hasStopControlVisible() && !isAiStillWorking(this.adapter)) return;
-      }
-
-      if (allowWithoutSignal) {
-        this.reactivateBlockedUntil = 0;
-        INTENT_CONSUMED.value = false;
-      }
+      if (!allowWithoutSignal && !this.adapter.hasGenerationSignal()) return;
 
       this.state = 'candidate';
-      this.candidateStartedAt = Date.now();
+      if (!this.candidateStartedAt) this.candidateStartedAt = Date.now();
       this.hadSignalDuringCandidate = false;
       this.userInitiatedWait = allowWithoutSignal;
-      this.promptTokens = Math.max(0, promptTokens || 0);
+      this.promptTokens = Math.max(0, promptTokens || this.promptTokens || 0);
       this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
-      this.predictedEndAt = predictedAnswerAt(Date.now(), this.adapter.id, this.promptTokens);
-      this.postPredictionSinceAt = 0;
-      this.continuedOnce = false;
-      this.firstTokenAt = 0;
-      this.observationRecorded = false;
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens);
       this.doneSinceAt = 0;
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
@@ -1487,21 +1515,19 @@
 
       ad = ensurePlayableAd(ad, fittedSeconds);
 
-      // If the answer already finished (stop gone), never flash an ad.
-      if (isAnswerFinished(this.adapter)) {
+      // If the answer already finished while we were fetching, don't flash an ad.
+      if (isAnswerFinished(this.adapter) || this.waitClosed) {
         if (this.currentViewId) await this.completeCurrentView(false);
         if (this.serverSessionId) await sendMessage('endSession', { sessionId: this.serverSessionId });
-        this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
-        INTENT_CONSUMED.value = true;
-        this.overlay.hide();
+        this.closeWaitSession();
         this.reset();
-        this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
         return;
       }
 
       this.currentAd = ad;
       this.balance = balance;
       this.viewStartedAt = Date.now();
+      this.adsPlayedThisWait += 1;
       this.overlay.show(ad, {
         balance: this.balance,
         sessionCredits: this.sessionCredits,
@@ -1517,10 +1543,10 @@
       if (this.hadSignalDuringCandidate || this.firstTokenAt) this.recordObservedWait();
       this.clearCandidateTimer();
       this.stopPolling();
-      INTENT_CONSUMED.value = true;
-      this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
+      // If we never showed an ad and wait is still open, keep session open for auto-assist.
+      // If generation already finished, close the wait so we don't flicker later.
+      if (isAnswerFinished(this.adapter)) this.closeWaitSession();
       this.reset();
-      this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
     }
 
     async completeCurrentView(continued) {
@@ -1554,14 +1580,12 @@
 
       if (this.serverSessionId) {
         await sendMessage('endSession', { sessionId: this.serverSessionId });
+        this.serverSessionId = null;
       }
 
-      // Block auto re-shows for this send. Next explicit user send clears it.
-      INTENT_CONSUMED.value = true;
-      this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
-      this.overlay.hide();
+      // Close this prompt's wait permanently — no auto re-show until next send.
+      this.closeWaitSession();
       this.reset();
-      this.reactivateBlockedUntil = Date.now() + REACTIVATE_COOLDOWN_MS;
     }
 
     async finishToMini() {
@@ -1571,22 +1595,96 @@
     }
 
     async expandFromPaused() {
-      // Disabled — paused restore was a flicker source.
-      return;
+      // Dead path kept for friend's API shape — route through wait session.
+      if (this.waitClosed || !this.waitSessionId) return;
+      if (this.state !== 'paused') return;
+      if (!this.adapter.hasGenerationSignal()) return;
+      this.state = 'idle';
+      this.beginCandidate(false, this.promptTokens);
     }
 
     async continueEarning() {
-      // Never chain a second ad mid-session — that causes timing/flicker issues.
-      await this.endSession();
+      // Chain another ad in the SAME wait session (long waits / deep research).
+      if (this.state !== 'active') return;
+      if (this.waitClosed || !this.waitSessionId) {
+        await this.endSession();
+        return;
+      }
+      if (!isAiStillWorking(this.adapter)) {
+        await this.endSession();
+        return;
+      }
+
+      const remainingMs = (this.predictedEndAt || 0) - Date.now();
+      if (remainingMs < 2500) {
+        await this.endSession();
+        return;
+      }
+
+      this.markWorkActivity();
+      await this.completeCurrentView(true);
+
+      const fittedSeconds = chooseAdDurationSeconds(
+        this.adapter.id,
+        this.promptTokens,
+        Date.now() - this.candidateStartedAt,
+      );
+      if (fittedSeconds < 3) {
+        await this.endSession();
+        return;
+      }
+
+      let ad = pickLaunchCreative(fittedSeconds);
+      if (this.serverSessionId) {
+        const nextAd = await sendMessage('getNextAd');
+        if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds);
+        const view = await sendMessage('startView', {
+          sessionId: this.serverSessionId,
+          campaignId: ad.id,
+          platform: this.adapter.id,
+        });
+        if (!view.error) this.currentViewId = view.viewId;
+      }
+
+      // Re-check after async — answer may have finished.
+      if (!isAiStillWorking(this.adapter) || this.waitClosed) {
+        await this.endSession();
+        return;
+      }
+
+      ad = ensurePlayableAd(ad, fittedSeconds);
+      this.currentAd = ad;
+      this.viewStartedAt = Date.now();
+      this.adsPlayedThisWait += 1;
+      this.overlay.show(ad, {
+        balance: this.balance,
+        sessionCredits: this.sessionCredits,
+        progressRatio: 0,
+        onContinue: () => this.continueEarning(),
+        onStop: () => this.stopWatching(),
+        onRestore: () => this.restoreFromMini(),
+      });
+      this.startAdTimer();
     }
 
     async stopWatching() {
       if (this.state !== 'active') return;
-      await this.endSession();
+      this.stopAdTimer();
+      this.markWorkActivity();
+      this.keepAliveUntil = Date.now() + RESTORE_KEEPALIVE_MS;
+      await this.completeCurrentView(false);
+      this.overlay.minimize(() => this.restoreFromMini());
     }
 
     async restoreFromMini() {
-      return;
+      if (this.state === 'paused') {
+        await this.expandFromPaused();
+        return;
+      }
+      if (this.state !== 'active') return;
+      this.markWorkActivity();
+      this.keepAliveUntil = Date.now() + RESTORE_KEEPALIVE_MS;
+      await this.continueEarning();
     }
 
     startPolling() {
@@ -1618,37 +1716,43 @@
 
         if (this.state === 'active') {
           if (!this.overlay.dragging) this.overlay.position();
-
-          const now = Date.now();
-          const stillWorking = isAiStillWorking(this.adapter);
-          const sessionAge = now - (this.candidateStartedAt || now);
-          const hardCapHit = sessionAge >= HARD_SESSION_CAP_MS;
-          const pastPrediction = this.predictedEndAt && now >= this.predictedEndAt;
-
-          // Hard stop: never leave an ad up forever.
-          if (hardCapHit) {
+          if (this.waitClosed) {
             this.endSession();
             return;
           }
 
-          // Hide the moment stop is gone — no grace delay.
-          if (!stillWorking) {
+          const now = Date.now();
+          const stopVisible = hasStopControlVisible();
+          if (stopVisible) this.sawStopDuringWait = true;
+
+          // Strongest finish signal: stop was visible, then disappeared.
+          if (this.sawStopDuringWait && !stopVisible && !netWorkingFresh(900)) {
             this.endSession();
+            return;
+          }
+
+          const stillWorking = isAiStillWorking(this.adapter);
+          const sessionAge = now - (this.candidateStartedAt || now);
+
+          if (sessionAge >= HARD_SESSION_CAP_MS) {
+            this.endSession();
+            return;
+          }
+
+          // Fast hide when generation is clearly done.
+          if (!stillWorking) {
+            if (!this.doneSinceAt) this.doneSinceAt = now;
+            if (now - this.doneSinceAt >= DONE_HIDE_GRACE_MS) {
+              this.endSession();
+              return;
+            }
             return;
           }
 
           this.doneSinceAt = 0;
 
-          // Past prediction while still working: short extension only, then hard stop.
-          if (pastPrediction) {
-            if (!this.postPredictionSinceAt) this.postPredictionSinceAt = now;
-            if (now - this.postPredictionSinceAt >= POST_PREDICTION_MAX_MS) {
-              this.endSession();
-              return;
-            }
-          } else {
-            this.postPredictionSinceAt = 0;
-          }
+          // Past predicted end while still working: keep going (deep research),
+          // but don't invent infinite extensions — hard cap still applies.
         }
       }, POLL_MS);
     }
@@ -1683,30 +1787,47 @@
       const elapsedMs = Date.now() - this.candidateStartedAt;
       if (elapsedMs < INITIAL_ACTIVATION_CHECK_MS) return { activate: false, wait: true };
 
-      // Only show while a real stop/streaming control is visible.
-      // Leftover aria-live / progress chrome must not activate an ad.
-      if (hasStopControlVisible()) return { activate: true };
-      if (this.adapter.id === 'claude') {
-        const streaming = document.querySelector('[data-is-streaming="true"]');
-        if (streaming && isVisible(streaming)) return { activate: true };
-      }
-      if (findDeepResearchPlan()) return { activate: true };
+      // Friend's core: activate when thinking is visible.
+      // Also allow stop/streaming generation signals so ChatGPT doesn't miss the window.
+      if (this.adapter.hasVisibleThinkingIndicator()) return { activate: true };
+      if (this.adapter.hasVisibleGenerationSignal()) return { activate: true, keepAlive: true };
 
-      // Wait a bit for stop to appear after send; then cancel.
-      if (elapsedMs < 4000) return { activate: false, wait: true };
+      const hasVisibleSignal = this.adapter.hasVisibleGenerationSignal();
+      const hasVisibleStatusText = this.adapter.hasVisibleStatusText();
+      const hasSignal = hasVisibleSignal || this.hadSignalDuringCandidate;
+      if (
+        this.firstTokenAt &&
+        this.adapter.shouldSkipActivationAfterFirstToken() &&
+        !hasVisibleStatusText
+      ) {
+        return { activate: false, wait: false };
+      }
+      if (!hasSignal && elapsedMs < SIGNALLESS_ACTIVATION_MS) {
+        return { activate: false, wait: true };
+      }
+
+      // Prediction-backed activation: if we still expect wait remaining, keep waiting to activate.
+      const remainingMs = (this.predictedEndAt || 0) - Date.now();
+      if (remainingMs > 2500 && (hasSignal || this.userInitiatedWait)) {
+        return { activate: false, wait: true };
+      }
+
+      const maxWaitMs = this.userInitiatedWait ? 120000 : 45000;
+      const waitUntilMs = this.userInitiatedWait
+        ? maxWaitMs
+        : Math.min(maxWaitMs, Math.max(this.waitEstimate.totalMs, LONG_WAIT_FALLBACK_MS));
+      if (elapsedMs < waitUntilMs) return { activate: false, wait: true };
+
       return { activate: false, wait: false };
     }
 
     hasActivationEvidence() {
-      if (hasStopControlVisible()) return true;
-      if (findDeepResearchPlan()) return true;
-      if (this.adapter.id === 'claude') {
-        const streaming = document.querySelector('[data-is-streaming="true"]');
-        if (streaming && isVisible(streaming)) return true;
-      }
-      // User just sent — give stop button a moment to appear.
-      if (this.userInitiatedWait && Date.now() - this.candidateStartedAt < 4000) return true;
-      return false;
+      if (this.adapter.hasGenerationSignal()) return true;
+      if (!this.userInitiatedWait) return false;
+      if (Date.now() - this.candidateStartedAt < SIGNALLESS_ACTIVATION_MS) return false;
+      // User sent a message and waited. Keep considering an ad unless streaming clearly finished.
+      if (this.hadSignalDuringCandidate && Date.now() - this.lastWorkActivityAt > 4000) return false;
+      return true;
     }
 
     recordNetworkActivity(kind) {
@@ -1731,11 +1852,6 @@
       this.currentViewId = null;
       this.viewStartedAt = 0;
       this.keepAliveUntil = 0;
-      this.promptTokens = 0;
-      this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
-      this.predictedEndAt = 0;
-      this.postPredictionSinceAt = 0;
-      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
@@ -1752,13 +1868,12 @@
     startAdTimer() {
       this.stopAdTimer();
       this.adStartedAt = Date.now();
-      // Ad length is the remaining predicted wait for this prompt.
       const remainingMs = Math.max(
-        4000,
-        (this.predictedEndAt || (Date.now() + 12000)) - Date.now(),
+        3000,
+        (this.predictedEndAt || (Date.now() + 10000)) - Date.now(),
       );
       const durationMs = Math.min(
-        Math.max((this.currentAd?.durationSeconds || 8) * 1000, 4000),
+        Math.max((this.currentAd?.durationSeconds || 5) * 1000, 3000),
         remainingMs,
       );
       if (this.currentAd) this.currentAd.durationSeconds = Math.round(durationMs / 1000);
@@ -1772,21 +1887,21 @@
           progressRatio,
         });
 
-        // Answer finished mid-ad → hide immediately (don't wait for progress bar).
+        const stopVisible = hasStopControlVisible();
+        if (stopVisible) this.sawStopDuringWait = true;
+        if (this.sawStopDuringWait && !stopVisible && !netWorkingFresh(900)) {
+          this.stopAdTimer();
+          this.endSession();
+          return;
+        }
+
+        // Answer finished mid-ad → hide immediately.
         if (!isAiStillWorking(this.adapter)) {
           this.stopAdTimer();
           this.endSession();
           return;
         }
 
-        // Hard stop at predicted answer time when generation is done.
-        if (this.predictedEndAt && now >= this.predictedEndAt && !isAiStillWorking(this.adapter)) {
-          this.stopAdTimer();
-          this.endSession();
-          return;
-        }
-
-        // Hard session cap — never loop forever.
         if (this.candidateStartedAt && now - this.candidateStartedAt >= HARD_SESSION_CAP_MS) {
           this.stopAdTimer();
           this.endSession();
@@ -1795,9 +1910,19 @@
 
         if (progressRatio >= 1) {
           this.stopAdTimer();
-          this.endSession();
+          // Chain another ad in the same wait session if still waiting.
+          if (
+            !this.waitClosed &&
+            this.waitSessionId &&
+            isAiStillWorking(this.adapter) &&
+            (this.predictedEndAt || 0) - now >= 2500
+          ) {
+            this.continueEarning();
+          } else {
+            this.endSession();
+          }
         }
-      }, 200);
+      }, 150);
     }
 
     stopAdTimer() {
@@ -1811,31 +1936,42 @@
     }
 
     reset() {
-      const cooldownUntil = this.reactivateBlockedUntil || 0;
+      // Preserve waitClosed / waitSessionId — those are per-prompt, not per-ad.
+      const waitClosed = this.waitClosed;
+      const waitSessionId = this.waitSessionId;
+      const adsPlayed = this.adsPlayedThisWait;
+      const sawStop = this.sawStopDuringWait;
+      const promptTokens = this.promptTokens;
+      const candidateStartedAt = this.candidateStartedAt;
+      const predictedEndAt = this.predictedEndAt;
+      const sessionCredits = this.sessionCredits;
+
       this.state = 'idle';
-      this.candidateStartedAt = 0;
       this.clientSessionId = null;
       this.serverSessionId = null;
       this.currentAd = null;
       this.currentViewId = null;
       this.viewStartedAt = 0;
-      this.sessionCredits = 0;
       this.lastWorkActivityAt = 0;
       this.keepAliveUntil = 0;
       this.hadSignalDuringCandidate = false;
       this.userInitiatedWait = false;
-      this.promptTokens = 0;
-      this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
-      this.predictedEndAt = 0;
-      this.postPredictionSinceAt = 0;
-      this.continuedOnce = false;
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
       this.stopPolling();
-      this.reactivateBlockedUntil = cooldownUntil;
+
+      this.waitClosed = waitClosed;
+      this.waitSessionId = waitSessionId;
+      this.adsPlayedThisWait = adsPlayed;
+      this.sawStopDuringWait = sawStop;
+      this.promptTokens = promptTokens;
+      this.candidateStartedAt = candidateStartedAt;
+      this.predictedEndAt = predictedEndAt;
+      this.sessionCredits = sessionCredits;
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens || 0);
     }
   }
 
@@ -1865,26 +2001,28 @@
 
   function markGenerationIntent() {
     lastGenerationIntentAt = Date.now();
-    // New user send: allow exactly one ad attempt for this prompt.
-    INTENT_CONSUMED.value = false;
-    controller.reactivateBlockedUntil = 0;
   }
 
   function hasRecentGenerationIntent(windowMs = INTERACTION_WINDOW_MS) {
     return Date.now() - lastGenerationIntentAt <= windowMs;
   }
 
-  function isReactivateBlocked() {
-    return INTENT_CONSUMED.value || Date.now() < (controller.reactivateBlockedUntil || 0);
-  }
-
   onNetActivity = (detail = {}) => {
-    // Never auto-start from network alone after an answer — that caused flicker.
+    // Never auto-open a wait after this prompt closed — only a new send can.
+    if (controller.waitClosed && !hasRecentGenerationIntent(INTENT_TO_NETWORK_WINDOW_MS)) {
+      controller.recordNetworkActivity(detail.kind);
+      return;
+    }
+    if (controller.state === 'idle' && hasRecentGenerationIntent(INTENT_TO_NETWORK_WINDOW_MS) && !controller.waitClosed) {
+      controller.beginCandidate(false, pendingPromptTokens);
+    } else if (controller.state === 'paused' && hasRecentGenerationIntent() && adapter.hasGenerationSignal()) {
+      controller.expandFromPaused();
+    }
     controller.recordNetworkActivity(detail.kind);
   };
   const observer = new MutationObserver(() => {
     if (controller.state === 'idle') return;
-    if (!hasStopControlVisible()) return;
+    if (!adapter.hasGenerationSignal()) return;
     controller.markWorkActivity();
   });
   observer.observe(document.body, { childList: true, subtree: true, characterData: true });
@@ -1893,10 +2031,8 @@
     if (isNewChatAction(event.target)) {
       lastGenerationIntentAt = 0;
       pendingPromptTokens = 0;
-      INTENT_CONSUMED.value = true;
-      if (controller.state === 'candidate' || controller.state === 'active') {
-        controller.endSession();
-      }
+      controller.closeWaitSession();
+      if (controller.state === 'candidate' || controller.state === 'active') controller.endSession();
       return;
     }
 
@@ -1904,7 +2040,8 @@
       markGenerationIntent();
       controller.markWorkActivity();
       const promptTokens = rememberPromptEstimate();
-      setTimeout(() => controller.beginCandidate(true, promptTokens), 250);
+      // New send always opens a fresh wait session (can show multiple ads while waiting).
+      setTimeout(() => controller.beginCandidate(true, promptTokens), 200);
     }
   }, { passive: true });
 
@@ -1913,13 +2050,17 @@
     if (adapter.isComposerTarget(event.target)) {
       markGenerationIntent();
       const promptTokens = rememberPromptEstimate();
-      setTimeout(() => controller.beginCandidate(true, promptTokens), 250);
+      setTimeout(() => controller.beginCandidate(true, promptTokens), 200);
     }
   }, { passive: true });
 
-  // No auto re-activation poller. Ads only start from an explicit user send.
-  // (The old 500ms poller re-showed ads after answers and caused flicker.)
-
+  // Auto assist only while a wait session is open — never after close (flicker fix).
+  setInterval(() => {
+    if (controller.waitClosed || !controller.waitSessionId) return;
+    if (controller.state !== 'idle' && controller.state !== 'paused') return;
+    if (!hasRecentGenerationIntent()) return;
+    if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens);
+  }, 500);
 
   window.addEventListener('scroll', () => {
     if (overlay.dragging) return;
