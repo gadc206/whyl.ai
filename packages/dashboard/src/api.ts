@@ -1,10 +1,14 @@
 export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
+export type AccountRole = 'watcher' | 'advertiser';
+
 export interface User {
   id: string;
   email: string;
   name: string;
   referralCode: string;
+  role: AccountRole;
+  company?: string | null;
   onboardingComplete: boolean;
   permissionsAccepted?: boolean;
   balance?: number;
@@ -51,15 +55,25 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export const api = {
-  register: (body: { email: string; password: string; name: string; referralCode?: string }) =>
-    request<{ token: string; user: User }>('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
+  register: (body: {
+    email: string;
+    password: string;
+    name: string;
+    referralCode?: string;
+    role?: AccountRole;
+    company?: string;
+  }) => request<{ token: string; user: User }>('/auth/register', { method: 'POST', body: JSON.stringify(body) }),
   login: (body: { email: string; password: string }) =>
     request<{ token: string; user: User }>('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   me: () => request<User>('/auth/me'),
-  completeOnboarding: (permissionsAccepted: boolean) =>
-    request<{ success: true }>('/auth/onboarding/complete', {
+  completeOnboarding: (body: {
+    permissionsAccepted: boolean;
+    role?: AccountRole;
+    company?: string;
+  }) =>
+    request<{ success: true; role: AccountRole; company: string | null }>('/auth/onboarding/complete', {
       method: 'POST',
-      body: JSON.stringify({ permissionsAccepted }),
+      body: JSON.stringify(body),
     }),
   summary: () => request<Summary>('/earnings/summary'),
   history: () => request<Array<{

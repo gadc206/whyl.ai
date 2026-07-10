@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Navigate, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
-import { api, clearToken, setToken, type User } from './api';
+import { api, clearToken, setToken, type AccountRole, type User } from './api';
 import Layout from './components/Layout';
 import AdvertiserPage from './pages/AdvertiserPage';
 import DashboardPage from './pages/DashboardPage';
@@ -13,7 +13,14 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string, referralCode?: string) => Promise<void>;
+  register: (
+    email: string,
+    password: string,
+    name: string,
+    referralCode?: string,
+    role?: AccountRole,
+    company?: string,
+  ) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
 }
@@ -55,8 +62,15 @@ function AuthProvider({ children }: { children: ReactNode }) {
     setUser(result.user);
   };
 
-  const register = async (email: string, password: string, name: string, referralCode?: string) => {
-    const result = await api.register({ email, password, name, referralCode });
+  const register = async (
+    email: string,
+    password: string,
+    name: string,
+    referralCode?: string,
+    role?: AccountRole,
+    company?: string,
+  ) => {
+    const result = await api.register({ email, password, name, referralCode, role, company });
     setToken(result.token);
     setUser(result.user);
   };
@@ -81,11 +95,21 @@ function Protected() {
   return <Outlet />;
 }
 
+function HomeRedirect() {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="center-card">Loading WHYL...</div>;
+  if (!user) return <Navigate to="/onboard" replace />;
+  if (!user.onboardingComplete) return <Navigate to="/onboard" replace />;
+  if (user.role === 'advertiser') return <Navigate to="/advertiser" replace />;
+  return <DashboardPage />;
+}
+
 function RedirectHome() {
+  const { user } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
-    navigate('/', { replace: true });
-  }, [navigate]);
+    navigate(user?.role === 'advertiser' ? '/advertiser' : '/', { replace: true });
+  }, [navigate, user?.role]);
   return null;
 }
 
@@ -96,7 +120,7 @@ export default function App() {
         <Route path="/onboard" element={<OnboardPage />} />
         <Route element={<Protected />}>
           <Route element={<Layout />}>
-            <Route path="/" element={<DashboardPage />} />
+            <Route path="/" element={<HomeRedirect />} />
             <Route path="/earnings" element={<EarningsPage />} />
             <Route path="/referrals" element={<ReferralsPage />} />
             <Route path="/history" element={<HistoryPage />} />

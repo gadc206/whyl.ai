@@ -47,4 +47,13 @@ Then open `http://localhost:3000`.
 
 ## Activation Rule
 
-WHYL does not show ads immediately. A send event creates a hidden candidate session. The sponsored panel appears only when the AI is visibly thinking and hides when thinking ends.
+WHYL does not show ads immediately. A send event creates a hidden candidate session. The sponsored panel appears only when:
+
+1. the AI is visibly thinking, and
+2. a wait equation says a full ad still fits in the remaining predicted wait.
+
+Ad length is chosen from 8–30s buckets. If the remaining wait is too short, WHYL stays silent (no blip). The panel hides when thinking ends or remaining predicted time can no longer finish the ad.
+
+## Investor deploy
+
+See [DEPLOY.md](./DEPLOY.md) for Render Web Service + Static Site setup, then rebuild the extension with production URLs.

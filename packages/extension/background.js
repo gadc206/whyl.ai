@@ -1,7 +1,8 @@
 'use strict';
 
-const API_BASE = 'http://localhost:3001/api';
-const DASHBOARD_URL = 'http://localhost:5173';
+// Replaced at build time by scripts/build-extension.js when WHYL_API_URL / WHYL_DASHBOARD_URL are set.
+const API_BASE = '__WHYL_API_URL__';
+const DASHBOARD_URL = '__WHYL_DASHBOARD_URL__';
 
 async function apiRequest(path, options = {}) {
   const { token } = await chrome.storage.local.get('token');

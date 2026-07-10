@@ -9,10 +9,38 @@ import { creditUser } from '../ledger.js';
 const router = Router();
 const createReferralCode = customAlphabet('abcdefghijklmnopqrstuvwxyz0123456789', 8);
 
+function serializeUser(user: {
+  id: string;
+  email: string;
+  name: string;
+  referral_code: string;
+  role?: string;
+  company?: string | null;
+  onboarding_complete: number;
+  permissions_accepted: number;
+}) {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    referralCode: user.referral_code,
+    role: user.role === 'advertiser' ? 'advertiser' : 'watcher',
+    company: user.company || null,
+    onboardingComplete: !!user.onboarding_complete,
+    permissionsAccepted: !!user.permissions_accepted,
+  };
+}
+
 router.post('/register', (req, res) => {
-  const { email, password, name, referralCode } = req.body;
+  const { email, password, name, referralCode, role, company } = req.body;
   if (!email || !password || !name) {
     return res.status(400).json({ error: 'Email, password, and name are required' });
+  }
+
+  const accountRole = role === 'advertiser' ? 'advertiser' : 'watcher';
+  const companyName = accountRole === 'advertiser' ? String(company || '').trim() : '';
+  if (accountRole === 'advertiser' && !companyName) {
+    return res.status(400).json({ error: 'Company / startup name is required for advertisers' });
   }
 
   const normalizedEmail = String(email).trim().toLowerCase();
@@ -30,9 +58,18 @@ router.post('/register', (req, res) => {
   }
 
   db.prepare(`
-    INSERT INTO users (id, email, password_hash, name, referral_code, referred_by)
-    VALUES (?, ?, ?, ?, ?, ?)
-  `).run(userId, normalizedEmail, passwordHash, name, code, referredBy);
+    INSERT INTO users (id, email, password_hash, name, referral_code, referred_by, role, company)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    userId,
+    normalizedEmail,
+    passwordHash,
+    name,
+    code,
+    referredBy,
+    accountRole,
+    companyName || null,
+  );
 
   getOrCreateBalance(userId);
 
@@ -61,6 +98,8 @@ router.post('/register', (req, res) => {
       email: normalizedEmail,
       name,
       referralCode: code,
+      role: accountRole,
+      company: companyName || null,
       onboardingComplete: false,
       permissionsAccepted: false,
     },
@@ -78,6 +117,8 @@ router.post('/login', (req, res) => {
     password_hash: string;
     name: string;
     referral_code: string;
+    role?: string;
+    company?: string | null;
     onboarding_complete: number;
     permissions_accepted: number;
   } | undefined;
@@ -89,14 +130,7 @@ router.post('/login', (req, res) => {
   const token = signToken({ id: user.id, email: user.email });
   res.json({
     token,
-    user: {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      referralCode: user.referral_code,
-      onboardingComplete: !!user.onboarding_complete,
-      permissionsAccepted: !!user.permissions_accepted,
-    },
+    user: serializeUser(user),
   });
 });
 
@@ -106,6 +140,8 @@ router.get('/me', authMiddleware, (req, res) => {
     email: string;
     name: string;
     referral_code: string;
+    role?: string;
+    company?: string | null;
     onboarding_complete: number;
     permissions_accepted: number;
   } | undefined;
@@ -114,12 +150,7 @@ router.get('/me', authMiddleware, (req, res) => {
   const balance = getOrCreateBalance(user.id);
 
   res.json({
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    referralCode: user.referral_code,
-    onboardingComplete: !!user.onboarding_complete,
-    permissionsAccepted: !!user.permissions_accepted,
+    ...serializeUser(user),
     balance: balance.balance,
     lifetimeEarnings: balance.lifetime_earnings,
     referralEarnings: balance.referral_earnings,
@@ -129,13 +160,31 @@ router.get('/me', authMiddleware, (req, res) => {
 });
 
 router.post('/onboarding/complete', authMiddleware, (req, res) => {
-  const { permissionsAccepted } = req.body;
-  db.prepare(`
-    UPDATE users SET onboarding_complete = 1, permissions_accepted = ?
-    WHERE id = ?
-  `).run(permissionsAccepted ? 1 : 0, req.user!.id);
+  const { permissionsAccepted, role, company } = req.body;
+  const existing = db.prepare('SELECT role, company FROM users WHERE id = ?').get(req.user!.id) as {
+    role?: string;
+    company?: string | null;
+  } | undefined;
 
-  res.json({ success: true });
+  const nextRole = role === 'advertiser' || existing?.role === 'advertiser' ? 'advertiser' : 'watcher';
+  const nextCompany = nextRole === 'advertiser'
+    ? String(company || existing?.company || '').trim()
+    : null;
+
+  if (nextRole === 'advertiser' && !nextCompany) {
+    return res.status(400).json({ error: 'Company / startup name is required for advertisers' });
+  }
+
+  db.prepare(`
+    UPDATE users SET
+      onboarding_complete = 1,
+      permissions_accepted = ?,
+      role = ?,
+      company = ?
+    WHERE id = ?
+  `).run(permissionsAccepted ? 1 : 0, nextRole, nextCompany, req.user!.id);
+
+  res.json({ success: true, role: nextRole, company: nextCompany });
 });
 
 export default router;

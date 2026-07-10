@@ -1,5 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api';
+import { useAuth } from '../App';
 
 interface Campaign {
   id: string;
@@ -13,9 +15,12 @@ interface Campaign {
 }
 
 export default function AdvertiserPage() {
+  const { user } = useAuth();
+  const isAdvertiser = user?.role === 'advertiser';
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({
-    advertiserName: '',
+    advertiserName: user?.company || user?.name || '',
     advertiserUrl: '',
     title: '',
     description: '',
@@ -32,20 +37,50 @@ export default function AdvertiserPage() {
   }
 
   useEffect(() => {
-    load();
+    load().catch((err) => setError(err instanceof Error ? err.message : 'Failed to load campaigns'));
   }, []);
+
+  useEffect(() => {
+    if (user?.company || user?.name) {
+      setForm((current) => ({
+        ...current,
+        advertiserName: current.advertiserName || user.company || user.name || '',
+      }));
+    }
+  }, [user?.company, user?.name]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
-    await api.createCampaign(form);
-    setForm({ ...form, title: '', description: '', videoUrl: '', thumbnailUrl: '' });
-    await load();
+    setError('');
+    try {
+      await api.createCampaign(form);
+      setForm({ ...form, title: '', description: '', videoUrl: '', thumbnailUrl: '' });
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not create campaign');
+    }
+  }
+
+  if (!isAdvertiser) {
+    return (
+      <>
+        <h1>Advertise on WHYL</h1>
+        <p className="muted">
+          Same split as whyl.ai — create an advertiser account to fund campaigns that show during AI waits.
+        </p>
+        <Link className="primary-link" to="/onboard?side=advertiser">Switch to advertiser onboarding</Link>
+      </>
+    );
   }
 
   return (
     <>
-      <h1>Advertiser Campaigns</h1>
-      <p className="muted">Upload campaign details and WHYL will deliver ads during AI waiting periods.</p>
+      <h1>Fund a campaign</h1>
+      <p className="muted">
+        {user?.company ? `${user.company} · ` : ''}
+        Upload creative details and WHYL delivers during AI waiting periods.
+      </p>
+      {error && <p className="error">{error}</p>}
       <form className="panel-form" onSubmit={submit}>
         <input placeholder="Advertiser name" value={form.advertiserName} onChange={(event) => setForm({ ...form, advertiserName: event.target.value })} required />
         <input placeholder="Landing page URL" value={form.advertiserUrl} onChange={(event) => setForm({ ...form, advertiserUrl: event.target.value })} required />
@@ -61,6 +96,7 @@ export default function AdvertiserPage() {
         </div>
         <button className="primary">Create Campaign</button>
       </form>
+      <h2>Active campaigns</h2>
       <div className="list">
         {campaigns.map((campaign) => (
           <div className="row" key={campaign.id}>
@@ -71,6 +107,7 @@ export default function AdvertiserPage() {
             <strong>{campaign.active ? 'Active' : 'Paused'}</strong>
           </div>
         ))}
+        {!campaigns.length && <p className="muted">No campaigns yet. Create your first one above.</p>}
       </div>
     </>
   );

@@ -1,0 +1,34 @@
+# WHYL on Render — create from Blueprint, or mirror these settings in the dashboard.
+# Step 1 for investors: public API + dashboard so the extension is not stuck on localhost.
+
+services:
+  - type: web
+    name: whyl-api
+    runtime: node
+    rootDir: packages/api
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DASHBOARD_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: whyl-dashboard
+    runtime: static
+    rootDir: packages/dashboard
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: VITE_API_URL
+        sync: false

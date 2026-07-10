@@ -46,7 +46,48 @@
     return recent >= 3;
   }
 
-  const DONE_STATUS_RE = /\b(finished|complete|completed|done|stopped|cancelled|canceled)\b/i;
+  // Answer is finished only when these appear without an active working signal.
+  const DONE_STATUS_RE = /\b(finished|complete|completed|done|stopped|cancelled|canceled|response is ready)\b/i;
+
+  // Any of these mean the model has not finished answering yet — ad window is open.
+  const WORKING_STATUS_WORDS = [
+    'Thinking',
+    'Reasoning',
+    'Generating',
+    'Researching',
+    'Searching',
+    'Browsing',
+    'Reading',
+    'Analyzing',
+    'Preparing',
+    'Working',
+    'In progress',
+    'Deep research',
+    'Deep researching',
+    'Calibrating',
+    'Planning',
+    'Drafting',
+    'Compiling',
+    'Running',
+    'Waiting',
+    'Queued',
+    'Processing',
+    'Loading',
+    'Summarizing',
+    'Synthesizing',
+    'Collecting',
+    'Gathering',
+    'Exploring',
+    'Investigating',
+    'Reviewing',
+    'Writing',
+    'Building',
+    'Executing',
+    'Using tools',
+    'Calling tools',
+    'Web search',
+    'Searching the web',
+  ];
 
   const DEMO_AD = {
     id: 'demo',
@@ -107,16 +148,22 @@
       thinkingIndicatorSelectors: [
         '[data-testid*="research"]',
         '[data-testid*="progress"]',
+        '[data-testid*="deep-research"]',
+        '[class*="research"]',
+        '[class*="progress"]',
+        '[aria-label*="research"]',
+        '[aria-label*="Research"]',
       ],
-      thinkingText: ['Thinking', 'Reasoning', 'Generating'],
-      liveText: ['Researching', 'Searching', 'Browsing', 'Reading', 'Analyzing', 'Preparing', 'Working', 'In progress', 'Deep research'],
-      controlText: ['Stop', 'Stop generating', 'Stop streaming', 'Stop response'],
+      thinkingText: ['Thinking', 'Reasoning', 'Generating', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
+      controlText: ['Stop', 'Stop generating', 'Stop streaming', 'Stop response', 'Stop research', 'Cancel'],
       assistantSelectors: ['[data-message-author-role="assistant"]', '[data-testid*="conversation-turn"]'],
       skipActivationAfterFirstToken: true,
       requireStatusTextForActivation: true,
       useNetworkSignal: false,
-      useGlobalLiveStatus: false,
-      useGenericProgress: false,
+      // ChatGPT deep research / searching often uses status copy that is not "Thinking".
+      useGlobalLiveStatus: true,
+      useGenericProgress: true,
     }),
     createAdapter({
       id: 'claude',
@@ -145,15 +192,15 @@
       thinkingIndicatorSelectors: [
         '[data-is-streaming="true"]',
       ],
-      thinkingText: ['Thinking', 'Generating', 'Claude is responding'],
-      liveText: ['Claude is thinking', 'Researching', 'Searching', 'Browsing', 'Reading', 'Analyzing', 'Working'],
-      controlText: ['Stop', 'Stop generating', 'Stop response'],
+      thinkingText: ['Thinking', 'Generating', 'Claude is responding', 'Calibrating'],
+      liveText: ['Claude is thinking', ...WORKING_STATUS_WORDS],
+      controlText: ['Stop', 'Stop generating', 'Stop response', 'Cancel'],
       assistantSelectors: ['[data-is-streaming="true"]', '[data-testid*="message"]'],
       excludeAssistantContentForThinkingAnchor: false,
       allowGenerationElementAsThinkingAnchor: true,
       useNetworkSignal: false,
-      useGlobalLiveStatus: false,
-      useGenericProgress: false,
+      useGlobalLiveStatus: true,
+      useGenericProgress: true,
     }),
     createAdapter({
       id: 'gemini',
@@ -173,7 +220,8 @@
         '[class*="spinner"]',
         '[class*="mat-progress"]',
       ],
-      thinkingText: ['Generating', 'Thinking'],
+      thinkingText: ['Generating', 'Thinking', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
       assistantSelectors: ['message-content', '[class*="response"]'],
     }),
     createAdapter({
@@ -182,7 +230,8 @@
       sendSelectors: ['button[aria-label*="Send"]', 'form button[type="submit"]'],
       composerSelectors: ['textarea', 'div[contenteditable="true"]'],
       thinkingSelectors: ['[class*="loading"]', '[class*="spinner"]', '[class*="generating"]'],
-      thinkingText: ['Thinking', 'Generating', 'Reasoning'],
+      thinkingText: ['Thinking', 'Generating', 'Reasoning', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
       assistantSelectors: ['main', '[role="main"]'],
     }),
     createAdapter({
@@ -191,7 +240,8 @@
       sendSelectors: ['button[aria-label*="Send"]', 'form button[type="submit"]'],
       composerSelectors: ['textarea', 'div[contenteditable="true"]'],
       thinkingSelectors: ['[class*="loading"]', '[class*="spinner"]', '[class*="generating"]'],
-      thinkingText: ['Thinking', 'Generating', 'Working'],
+      thinkingText: ['Thinking', 'Generating', 'Working', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
       assistantSelectors: ['main', '[role="main"]'],
     }),
     createAdapter({
@@ -206,7 +256,8 @@
         '[class*="generating"]',
         '[role="progressbar"]',
       ],
-      thinkingText: ['Thinking', 'Generating'],
+      thinkingText: ['Thinking', 'Generating', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
       controlText: ['Stop', 'Stop generating'],
       assistantSelectors: ['main', '[role="main"]'],
     }),
@@ -223,7 +274,8 @@
         '[class*="running"]',
         '[role="progressbar"]',
       ],
-      thinkingText: ['Thinking', 'Working', 'Executing', 'Running'],
+      thinkingText: ['Thinking', 'Working', 'Executing', 'Running', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
       controlText: ['Stop', 'Stop generating'],
       assistantSelectors: ['main', '[role="main"]'],
     }),
@@ -233,7 +285,8 @@
       sendSelectors: ['button[aria-label*="Send"]', 'form button[type="submit"]'],
       composerSelectors: ['textarea', 'div[contenteditable="true"]'],
       thinkingSelectors: ['[class*="loading"]', '[class*="spinner"]', '[class*="generating"]'],
-      thinkingText: ['Thinking', 'Generating', 'Building'],
+      thinkingText: ['Thinking', 'Generating', 'Building', 'Calibrating'],
+      liveText: WORKING_STATUS_WORDS,
       assistantSelectors: ['main', '[role="main"]'],
     }),
   ];
@@ -254,7 +307,8 @@
         '[class*="generating"]',
         '[role="progressbar"]',
       ],
-      thinkingText: ['Thinking', 'Generating', 'Working'],
+      thinkingText: ['Thinking', 'Generating', 'Working', ...WORKING_STATUS_WORDS],
+      liveText: WORKING_STATUS_WORDS,
       controlText: ['Stop', 'Stop generating'],
       assistantSelectors: ['main', '[role="main"]'],
     });
@@ -301,6 +355,7 @@
     return !!findVisible(config.thinkingSelectors) ||
       !!findVisibleControlText(config.controlText || []) ||
       hasVisibleStatusText(config) ||
+      !!findDeepResearchPlan() ||
       (config.useGenericProgress === false ? false : !!findActiveProgressBar()) ||
       (config.useGenericProgress === false ? false : !!findStopNearProgress());
   }
@@ -309,6 +364,7 @@
     const excludeAssistantContent = options.excludeAssistantContent ?? true;
     return findVisibleLiveText(config.liveText || [], config.useGlobalLiveStatus !== false, excludeAssistantContent) ||
       (config.useGlobalLiveStatus === false ? null : findGlobalLiveStatusText()) ||
+      findDeepResearchPlan() ||
       (config.useGenericProgress === false ? null : findActiveProgressBar()) ||
       (config.useGenericProgress === false ? null : findStopNearProgress()) ||
       findVisible(config.thinkingSelectors) ||
@@ -319,6 +375,7 @@
     const excludeAssistantContent = config.excludeAssistantContentForThinkingAnchor !== false;
     return findVisibleLiveText(config.liveText || [], config.useGlobalLiveStatus !== false, excludeAssistantContent) ||
       (config.useGlobalLiveStatus === false ? null : findGlobalLiveStatusText()) ||
+      findDeepResearchPlan() ||
       findVisible(config.thinkingIndicatorSelectors || []) ||
       (config.useGenericProgress === false ? null : findActiveProgressBar()) ||
       (config.allowGenerationElementAsThinkingAnchor
@@ -429,7 +486,18 @@
   function estimateResponseTiming(platform, promptTokens) {
     const defaults = PLATFORM_WAIT_DEFAULTS[platform] || PLATFORM_WAIT_DEFAULTS.default;
     const outputTokens = clamp(defaults.outputTokens + Math.round((promptTokens || 0) * 0.6), 180, 2200);
-    const formulaMs = defaults.ttftMs + (outputTokens / defaults.tokensPerSecond) * 1000;
+    let formulaMs = defaults.ttftMs + (outputTokens / defaults.tokensPerSecond) * 1000;
+
+    // Long-running modes (deep research / web search / agent) need much longer windows.
+    if (findDeepResearchPlan()) {
+      formulaMs = Math.max(formulaMs, platform === 'chatgpt' || platform === 'claude' ? 90000 : 60000);
+    } else if (hasVisibleStatusText({
+      liveText: ['Researching', 'Searching', 'Browsing', 'Deep research', 'Calibrating', 'Using tools'],
+      useGlobalLiveStatus: true,
+    })) {
+      formulaMs = Math.max(formulaMs, 45000);
+    }
+
     const observed = loadWaitStats()[platform];
 
     if (observed?.count >= 3 && observed.avgTotalMs > 0) {
@@ -443,6 +511,42 @@
     return { totalMs: formulaMs, source: 'default' };
   }
 
+  // Pick an ad length that fits the remaining predicted wait for this platform.
+  // Activation itself still follows the friend's thinking-signal rules.
+  const AD_DURATION_BUCKETS_SEC = [8, 10, 12, 15, 20, 30];
+
+  function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
+    const estimate = estimateResponseTiming(platform, promptTokens);
+    const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - 1500);
+    let chosen = 8;
+    for (const seconds of AD_DURATION_BUCKETS_SEC) {
+      if (seconds * 1000 <= remainingMs) chosen = seconds;
+    }
+    // Deep research / long agent waits can take the longest creatives.
+    if (findDeepResearchPlan() && remainingMs >= 20000) {
+      chosen = Math.max(chosen, 20);
+    }
+    return chosen;
+  }
+
+  function findDeepResearchPlan() {
+    // ChatGPT deep research shows a multi-step plan before/while running.
+    // That is still "not answered yet" — treat as a working anchor.
+    const candidates = document.querySelectorAll('button, [role="button"], div, section, article');
+    for (const el of candidates) {
+      if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
+      const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (!text || text.length > 400) continue;
+      const looksLikePlan =
+        /\bdeep research\b/i.test(text) &&
+        (/\bstart\b/i.test(text) || /\b(collect|extract|synthesize|identify)\b/i.test(text));
+      const looksLikeRunningResearch =
+        /\b(researching|searching sources|reading sources|collecting sources)\b/i.test(text);
+      if (looksLikePlan || looksLikeRunningResearch) return el;
+    }
+    return null;
+  }
+
   function findVisibleLiveText(labels, includeGlobalFallback = true, excludeAssistantContent = false) {
     if (!labels.length) return includeGlobalFallback ? findGlobalLiveStatusText() : null;
     const roots = [document.querySelector('main'), document.body].filter(Boolean);
@@ -452,14 +556,14 @@
         if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill')) continue;
         if (excludeAssistantContent && el.closest('[data-message-author-role="assistant"], [data-testid*="message"], message-content')) continue;
         const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
-        if (!text || text.length > 140 || DONE_STATUS_RE.test(text)) continue;
+        if (!text || text.length > 160 || DONE_STATUS_RE.test(text)) continue;
         if (labels.some((label) => new RegExp(`\\b${escapeRegExp(label)}\\b`, 'i').test(text))) return el;
       }
     }
     return includeGlobalFallback ? findGlobalLiveStatusText() : null;
   }
 
-  const GLOBAL_LIVE_STATUS_RE = /(thinking|reasoning|searching|researching|generating|loading|processing|analyzing|reading|browsing|working|planning|drafting|compiling|running|waiting|queued|in progress)/i;
+  const GLOBAL_LIVE_STATUS_RE = /(thinking|reasoning|searching|researching|deep research|calibrating|generating|loading|processing|analyzing|reading|browsing|working|planning|drafting|compiling|running|waiting|queued|in progress|summarizing|synthesizing|collecting|gathering|exploring|investigating|reviewing|writing|building|executing|using tools|web search)/i;
 
   function findGlobalLiveStatusText() {
     const roots = [document.querySelector('main'), document.body].filter(Boolean);
@@ -1035,7 +1139,12 @@
       }
       const auth = await sendMessage('getAuth');
       const loggedIn = !!auth.token;
-      let ad = DEMO_AD;
+      const fittedSeconds = chooseAdDurationSeconds(
+        this.adapter.id,
+        this.promptTokens,
+        Date.now() - this.candidateStartedAt,
+      );
+      let ad = { ...DEMO_AD, durationSeconds: fittedSeconds };
       let balance = 0;
 
       if (loggedIn) {
@@ -1051,7 +1160,12 @@
         if (!session.error) {
           this.serverSessionId = session.sessionId;
           const nextAd = await sendMessage('getNextAd');
-          if (!nextAd.error) ad = nextAd;
+          if (!nextAd.error) {
+            ad = {
+              ...nextAd,
+              durationSeconds: Math.min(Number(nextAd.durationSeconds) || fittedSeconds, fittedSeconds),
+            };
+          }
           const view = await sendMessage('startView', {
             sessionId: this.serverSessionId,
             campaignId: ad.id,
@@ -1210,10 +1324,23 @@
       this.keepAliveUntil = Date.now() + RESTORE_KEEPALIVE_MS;
       await this.completeCurrentView(true);
 
-      let ad = DEMO_AD;
+      let ad = {
+        ...DEMO_AD,
+        durationSeconds: chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0),
+      };
       if (this.serverSessionId) {
         const nextAd = await sendMessage('getNextAd');
-        if (!nextAd.error) ad = nextAd;
+        if (!nextAd.error) {
+          const fittedSeconds = chooseAdDurationSeconds(
+            this.adapter.id,
+            this.promptTokens,
+            Date.now() - this.candidateStartedAt,
+          );
+          ad = {
+            ...nextAd,
+            durationSeconds: Math.min(Number(nextAd.durationSeconds) || fittedSeconds, fittedSeconds),
+          };
+        }
         const view = await sendMessage('startView', {
           sessionId: this.serverSessionId,
           campaignId: ad.id,

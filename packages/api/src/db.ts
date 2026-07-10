@@ -3,6 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// On Render, set DATABASE_PATH to a persistent disk mount (e.g. /var/data/whyl.db).
+// Without that, SQLite lives on the ephemeral filesystem and resets on redeploy.
 const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '..', 'whyl.db');
 
 export const db = new Database(dbPath);
@@ -18,6 +20,13 @@ export interface BalanceRow {
   withdrawal_balance: number;
 }
 
+function ensureColumn(table: string, column: string, definition: string) {
+  const columns = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+  if (!columns.some((entry) => entry.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
+}
+
 export function initDb() {
   db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -27,6 +36,8 @@ export function initDb() {
       name TEXT NOT NULL,
       referral_code TEXT UNIQUE NOT NULL,
       referred_by TEXT REFERENCES users(id),
+      role TEXT DEFAULT 'watcher',
+      company TEXT,
       onboarding_complete INTEGER DEFAULT 0,
       permissions_accepted INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
@@ -111,6 +122,11 @@ export function initDb() {
       created_at TEXT DEFAULT (datetime('now'))
     );
   `);
+
+  // Existing local/prod DBs created before role split.
+  ensureColumn('users', 'role', "TEXT DEFAULT 'watcher'");
+  ensureColumn('users', 'company', 'TEXT');
+  ensureColumn('campaigns', 'owner_user_id', 'TEXT');
 }
 
 export function getOrCreateBalance(userId: string): BalanceRow {
