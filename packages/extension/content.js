@@ -6,7 +6,7 @@
   const SIGNALLESS_ACTIVATION_MS = 4000;
   const LONG_WAIT_FALLBACK_MS = 12000;
   const USER_SIGNAL_GAP_CANCEL_MS = 60000;
-  const WAIT_STATS_KEY = 'whyl_wait_stats_v1';
+  const WAIT_STATS_KEY = 'whyl_wait_stats_v2';
   const STALE_OPEN_STREAM_MS = 15000;
   const POLL_MS = 300;
   const RESTORE_KEEPALIVE_MS = 30000;
@@ -186,25 +186,28 @@
     };
   }
 
-  // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + mode penalty,
-  // blended with local observed averages. This clock drives ad length AND hide time.
+  // Per-prompt wait prediction. Short prompts must stay short — do NOT assume
+  // a long essay reply for "hi". Observed averages are bucketed by prompt size
+  // so a deep-research wait cannot poison short-prompt timing.
   const PLATFORM_WAIT_DEFAULTS = {
-    chatgpt: { ttftMs: 700, msPerInputToken: 0.22, tokensPerSecond: 58, baseOutput: 280, promptFactor: 0.55, toolPenaltyMs: 0 },
-    claude: { ttftMs: 900, msPerInputToken: 0.24, tokensPerSecond: 52, baseOutput: 340, promptFactor: 0.6, toolPenaltyMs: 0 },
-    gemini: { ttftMs: 650, msPerInputToken: 0.18, tokensPerSecond: 68, baseOutput: 260, promptFactor: 0.5, toolPenaltyMs: 0 },
-    cursor: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 32, baseOutput: 700, promptFactor: 0.9, toolPenaltyMs: 8000 },
-    replit: { ttftMs: 1300, msPerInputToken: 0.28, tokensPerSecond: 30, baseOutput: 650, promptFactor: 0.85, toolPenaltyMs: 7000 },
-    grok: { ttftMs: 750, msPerInputToken: 0.2, tokensPerSecond: 62, baseOutput: 280, promptFactor: 0.5, toolPenaltyMs: 0 },
-    manus: { ttftMs: 1800, msPerInputToken: 0.32, tokensPerSecond: 20, baseOutput: 1100, promptFactor: 1.1, toolPenaltyMs: 20000 },
-    lovable: { ttftMs: 1400, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 800, promptFactor: 0.95, toolPenaltyMs: 10000 },
-    default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
+    chatgpt: { ttftMs: 450, msPerInputToken: 0.18, tokensPerSecond: 65, baseOutput: 48, promptFactor: 0.9, toolPenaltyMs: 0 },
+    claude: { ttftMs: 550, msPerInputToken: 0.2, tokensPerSecond: 55, baseOutput: 60, promptFactor: 1.0, toolPenaltyMs: 0 },
+    gemini: { ttftMs: 400, msPerInputToken: 0.15, tokensPerSecond: 70, baseOutput: 45, promptFactor: 0.85, toolPenaltyMs: 0 },
+    cursor: { ttftMs: 900, msPerInputToken: 0.25, tokensPerSecond: 35, baseOutput: 180, promptFactor: 1.2, toolPenaltyMs: 5000 },
+    replit: { ttftMs: 1000, msPerInputToken: 0.25, tokensPerSecond: 32, baseOutput: 160, promptFactor: 1.1, toolPenaltyMs: 4000 },
+    grok: { ttftMs: 450, msPerInputToken: 0.16, tokensPerSecond: 70, baseOutput: 50, promptFactor: 0.85, toolPenaltyMs: 0 },
+    manus: { ttftMs: 1400, msPerInputToken: 0.3, tokensPerSecond: 22, baseOutput: 400, promptFactor: 1.3, toolPenaltyMs: 15000 },
+    lovable: { ttftMs: 1100, msPerInputToken: 0.25, tokensPerSecond: 30, baseOutput: 220, promptFactor: 1.15, toolPenaltyMs: 6000 },
+    default: { ttftMs: 500, msPerInputToken: 0.18, tokensPerSecond: 55, baseOutput: 55, promptFactor: 0.95, toolPenaltyMs: 0 },
   };
 
-  const DONE_HIDE_GRACE_MS = 120;
-  const PREDICTION_END_BUFFER_MS = 400;
-  const HARD_SESSION_CAP_MS = 90000; // never keep an ad longer than this from candidate start
-  const POST_PREDICTION_MAX_MS = 8000; // if still "working" after prediction, hard stop soon
-  const REACTIVATE_COOLDOWN_MS = 20000; // after hide, block auto re-show (stops flash loop)
+  const DONE_HIDE_GRACE_MS = 80;
+  const PREDICTION_END_BUFFER_MS = 600;
+  const HARD_SESSION_CAP_MS = 90000;
+  const POST_PREDICTION_MAX_MS = 5000;
+  const REACTIVATE_COOLDOWN_MS = 20000;
+  const MIN_AD_MS = 2000;
+  const MIN_PREDICTION_MS = 1800;
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -555,13 +558,24 @@
     return current * (1 - weight) + sample * weight;
   }
 
-  function recordWaitSample(platform, sample) {
-    if (!sample?.totalMs || sample.totalMs < 1000) return;
+  function promptSizeBucket(promptTokens) {
+    const n = Math.max(0, promptTokens || 0);
+    if (n < 25) return 'xs';
+    if (n < 80) return 'sm';
+    if (n < 220) return 'md';
+    if (n < 600) return 'lg';
+    return 'xl';
+  }
+
+  function recordWaitSample(platform, sample, promptTokens = 0) {
+    if (!sample?.totalMs || sample.totalMs < 600) return;
 
     const stats = loadWaitStats();
-    const existing = stats[platform] || {};
+    const bucket = promptSizeBucket(promptTokens);
+    const key = `${platform}:${bucket}`;
+    const existing = stats[key] || {};
     const count = Math.min((existing.count || 0) + 1, 200);
-    stats[platform] = {
+    stats[key] = {
       count,
       avgTotalMs: updateMovingAverage(existing.avgTotalMs, sample.totalMs, existing.count || 0),
       avgTtftMs: updateMovingAverage(existing.avgTtftMs, sample.ttftMs, existing.count || 0),
@@ -572,19 +586,18 @@
   function estimateResponseTiming(platform, promptTokens) {
     const defaults = PLATFORM_WAIT_DEFAULTS[platform] || PLATFORM_WAIT_DEFAULTS.default;
     const inputTokens = Math.max(0, promptTokens || 0);
+    const bucket = promptSizeBucket(inputTokens);
 
-    // Exact industry formula used in serving systems:
-    // total ≈ TTFT(prefill) + (expected_output_tokens / TPS)
-    const ttftMs = defaults.ttftMs + (inputTokens * defaults.msPerInputToken);
+    // Short prompts → short replies. Do not assume a 280-token essay for "hi".
     const expectedOutput = clamp(
       defaults.baseOutput + Math.round(inputTokens * defaults.promptFactor),
-      120,
-      2800,
+      20,
+      bucket === 'xs' ? 90 : bucket === 'sm' ? 180 : bucket === 'md' ? 420 : 2200,
     );
+    const ttftMs = defaults.ttftMs + (inputTokens * defaults.msPerInputToken);
     let decodeMs = (expectedOutput / Math.max(defaults.tokensPerSecond, 1)) * 1000;
     let toolPenaltyMs = defaults.toolPenaltyMs || 0;
 
-    // Mode multipliers when the UI shows long-running work.
     if (findDeepResearchPlan()) {
       toolPenaltyMs = Math.max(toolPenaltyMs, platform === 'chatgpt' || platform === 'claude' ? 75000 : 50000);
       decodeMs *= 1.35;
@@ -596,35 +609,47 @@
     }
 
     let formulaMs = ttftMs + decodeMs + toolPenaltyMs;
-    const observed = loadWaitStats()[platform];
 
+    // Cap normal chat waits so short/medium prompts cannot balloon.
+    if (!toolPenaltyMs) {
+      const cap = bucket === 'xs' ? 4500 : bucket === 'sm' ? 8000 : bucket === 'md' ? 16000 : 45000;
+      formulaMs = Math.min(formulaMs, cap);
+    }
+
+    // Only blend same-size observed waits — never mix deep-research into "hi".
+    const observed = loadWaitStats()[`${platform}:${bucket}`];
     if (observed?.count >= 3 && observed.avgTotalMs > 0) {
-      const observedWeight = observed.count >= 8 ? 0.7 : 0.45;
+      const observedWeight = observed.count >= 8 ? 0.55 : 0.35;
       formulaMs = formulaMs * (1 - observedWeight) + observed.avgTotalMs * observedWeight;
+      if (!toolPenaltyMs) {
+        const cap = bucket === 'xs' ? 5000 : bucket === 'sm' ? 9000 : bucket === 'md' ? 18000 : 50000;
+        formulaMs = Math.min(formulaMs, cap);
+      }
       return {
-        totalMs: formulaMs,
+        totalMs: Math.max(formulaMs, MIN_PREDICTION_MS),
         ttftMs,
         decodeMs,
         expectedOutput,
+        bucket,
         source: 'observed',
       };
     }
 
     return {
-      totalMs: formulaMs,
+      totalMs: Math.max(formulaMs, MIN_PREDICTION_MS),
       ttftMs,
       decodeMs,
       expectedOutput,
+      bucket,
       source: 'ttft+tps',
     };
   }
 
   // Pick an ad length that fits the remaining predicted wait for this prompt.
-  const AD_DURATION_BUCKETS_SEC = [4, 6, 8, 10, 12, 15, 20, 30];
+  const AD_DURATION_BUCKETS_SEC = [2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 30];
 
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    // Keep a small buffer so the ad ends just before predicted answer time.
     const remainingMs = Math.max(0, (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS);
     let chosen = 0;
     for (const seconds of AD_DURATION_BUCKETS_SEC) {
@@ -633,17 +658,18 @@
     if (findDeepResearchPlan() && remainingMs >= 18000) {
       chosen = Math.max(chosen, 15);
     }
-    // Short prompts: never force a long ad — 4s floor is enough.
-    if ((promptTokens || 0) < 40 && remainingMs < 10000) {
-      chosen = Math.min(chosen || 4, 6);
-    }
-    return chosen || 4;
+    // Hard ceilings by prompt size so short chats never get long ads.
+    const bucket = estimate.bucket || promptSizeBucket(promptTokens);
+    if (bucket === 'xs') chosen = Math.min(chosen || 2, 4);
+    else if (bucket === 'sm') chosen = Math.min(chosen || 3, 7);
+    else if (bucket === 'md') chosen = Math.min(chosen || 5, 12);
+    return chosen || Math.max(2, Math.round(remainingMs / 1000) || 2);
   }
 
   // Absolute predicted end time for this prompt (from candidate start).
   function predictedAnswerAt(candidateStartedAt, platform, promptTokens) {
     const estimate = estimateResponseTiming(platform, promptTokens);
-    return (candidateStartedAt || Date.now()) + Math.max(estimate.totalMs || 0, 6000);
+    return (candidateStartedAt || Date.now()) + Math.max(estimate.totalMs || 0, MIN_PREDICTION_MS);
   }
 
   function findDeepResearchPlan() {
@@ -1841,7 +1867,7 @@
       if (this.observationRecorded || !this.candidateStartedAt) return;
       const totalMs = Date.now() - this.candidateStartedAt;
       const ttftMs = this.firstTokenAt ? this.firstTokenAt - this.candidateStartedAt : 0;
-      recordWaitSample(this.adapter.id, { totalMs, ttftMs });
+      recordWaitSample(this.adapter.id, { totalMs, ttftMs }, this.promptTokens);
       this.observationRecorded = true;
     }
 
@@ -1872,16 +1898,15 @@
     startAdTimer() {
       this.stopAdTimer();
       this.adStartedAt = Date.now();
-      // Ad length is the remaining predicted wait for this prompt.
+      // Ad length = remaining predicted wait. No artificial 4–6s floor that
+      // makes short prompts feel "too long".
       const remainingMs = Math.max(
-        4000,
-        (this.predictedEndAt || (Date.now() + 12000)) - Date.now(),
+        MIN_AD_MS,
+        (this.predictedEndAt || (Date.now() + 8000)) - Date.now(),
       );
-      const durationMs = Math.min(
-        Math.max((this.currentAd?.durationSeconds || 8) * 1000, 4000),
-        remainingMs,
-      );
-      if (this.currentAd) this.currentAd.durationSeconds = Math.round(durationMs / 1000);
+      const requestedMs = Math.max((this.currentAd?.durationSeconds || 4) * 1000, MIN_AD_MS);
+      const durationMs = Math.min(requestedMs, remainingMs);
+      if (this.currentAd) this.currentAd.durationSeconds = Math.max(2, Math.round(durationMs / 1000));
 
       this.adTimer = setInterval(() => {
         const now = Date.now();
@@ -1899,11 +1924,14 @@
           return;
         }
 
-        // Hard stop at predicted answer time when generation is done.
-        if (this.predictedEndAt && now >= this.predictedEndAt && !isAiStillWorking(this.adapter)) {
-          this.stopAdTimer();
-          this.endSession();
-          return;
+        // Predicted end reached while still working → allow short post-prediction window only.
+        if (this.predictedEndAt && now >= this.predictedEndAt) {
+          if (!this.postPredictionSinceAt) this.postPredictionSinceAt = now;
+          if (now - this.postPredictionSinceAt >= POST_PREDICTION_MAX_MS || !isAiStillWorking(this.adapter)) {
+            this.stopAdTimer();
+            this.endSession();
+            return;
+          }
         }
 
         // Hard session cap — never loop forever.
@@ -1915,7 +1943,6 @@
 
         if (progressRatio >= 1) {
           this.stopAdTimer();
-          // One continuation max only if still clearly working and under prediction window.
           if (
             isAiStillWorking(this.adapter) &&
             this.predictedEndAt &&
@@ -1928,7 +1955,7 @@
             this.endSession();
           }
         }
-      }, 200);
+      }, 150);
     }
 
     stopAdTimer() {
