@@ -108,7 +108,7 @@ export default function OnboardPage() {
         {step === 'welcome' && (
           <>
             <h1 className="page-title">Pick a side.<br />Get set up in under a minute.</h1>
-            <p className="muted">Same split as whyl.ai — earn during AI waits, or bid to reach people in those waits.</p>
+            <p className="muted">Earn during AI waits, or bid to reach people in those waits.</p>
             <button className="btn btn-primary btn-block" onClick={() => setStep('side')}>Get Started</button>
           </>
         )}
@@ -213,8 +213,8 @@ export default function OnboardPage() {
             <h1>Accept permissions</h1>
             <p className="muted">
               {side === 'advertiser'
-                ? 'Advertisers can bid in the marketplace and fund campaigns that show during AI waits.'
-                : 'Setup takes less than 60 seconds. You can open the advertiser marketplace later from your profile if you also want to run campaigns.'}
+                ? 'Allow WHYL to create bids and manage campaigns that show during AI waits.'
+                : 'Setup takes less than 60 seconds.'}
             </p>
             {error && <p className="error">{error}</p>}
             {(side === 'watcher'

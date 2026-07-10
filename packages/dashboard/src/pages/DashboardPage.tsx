@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { api, type Summary } from '../api';
 import { useAuth } from '../App';
 
@@ -16,7 +15,6 @@ export default function DashboardPage() {
     <>
       <h1>Account Summary</h1>
       <p className="muted">Welcome back, {user?.name}. WHYL is active and waits for meaningful AI thinking time.</p>
-      <div className="status">WHYL is active</div>
       <div className="grid">
         <Stat label="Credits Balance" value={summary?.balance ?? 0} accent />
         <Stat label="Lifetime Earnings" value={summary?.lifetimeEarnings ?? 0} />
@@ -24,11 +22,6 @@ export default function DashboardPage() {
         <Stat label="Pending Earnings" value={summary?.pendingEarnings ?? 0} />
         <Stat label="Withdrawal Balance" value={summary?.withdrawalBalance ?? 0} />
         <Stat label="Ads Watched" value={summary?.adsWatched ?? 0} />
-      </div>
-      <div className="actions">
-        <Link to="/earnings">Withdraw</Link>
-        <Link to="/referrals">Invite Friends</Link>
-        <Link to="/history">View History</Link>
       </div>
     </>
   );

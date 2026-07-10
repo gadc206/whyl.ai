@@ -59,24 +59,14 @@ router.get('/marketplace', authMiddleware, (req, res) => {
 });
 
 router.get('/campaigns', authMiddleware, (req, res) => {
-  const user = getUserRole(req.user!.id);
-  const isAdvertiser = user?.role === 'advertiser';
-
-  const campaigns = isAdvertiser
-    ? db.prepare(`
-        SELECT id, advertiser_name, title, budget, views_target, views_delivered,
-               bid_per_1k, view_packs, status, active, owner_user_id, created_at
-        FROM campaigns
-        WHERE owner_user_id = ? OR owner_user_id IS NULL
-        ORDER BY COALESCE(bid_per_1k, 0) DESC, created_at DESC
-      `).all(req.user!.id)
-    : db.prepare(`
-        SELECT id, advertiser_name, title, budget, views_target, views_delivered,
-               bid_per_1k, view_packs, status, active, owner_user_id, created_at
-        FROM campaigns
-        WHERE owner_user_id = ?
-        ORDER BY COALESCE(bid_per_1k, 0) DESC, created_at DESC
-      `).all(req.user!.id);
+  // Only this account's campaigns (live + previous) for the Campaigns panel.
+  const campaigns = db.prepare(`
+    SELECT id, advertiser_name, title, budget, views_target, views_delivered,
+           bid_per_1k, view_packs, status, active, owner_user_id, created_at
+    FROM campaigns
+    WHERE owner_user_id = ?
+    ORDER BY created_at DESC
+  `).all(req.user!.id);
 
   res.json((campaigns as Array<Record<string, unknown>>).map(mapCampaign));
 });
