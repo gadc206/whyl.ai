@@ -77,6 +77,8 @@ cp /tmp/whyl-extension-beta.zip website/
 
 Do **not** point Load unpacked at `Projects/whyl.ai/packages/extension/dist` on your machine — use the unzipped folder from the zip.
 
+Optional: open `website/setup.html` in a browser (or host the `website/` folder) and send that link — it walks through the same four steps with a download button for the zip.
+
 ## Notes
 
 - Free Render services sleep after idle; first request can take ~30–60s. Hit `/api/health` once before the investor tries login.

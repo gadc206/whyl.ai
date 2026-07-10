@@ -603,12 +603,13 @@
       }
     }
 
-    // Tiny → often skip; short Q → short brand; medium explain → mid spots; essay → gallery.
+    // Tiny → often skip; short Q → ~11–20s brand; medium → mid; essay → gallery.
     if (inputTokens <= 3) return clamp(scaled, 12, 70);
-    if (inputTokens <= 12) return clamp(scaled, 210, 380);
-    if (inputTokens <= 40) return clamp(scaled, 420, 1100);
-    if (inputTokens <= 100) return clamp(scaled, 480, 1800);
-    return clamp(scaled, 700, 4200);
+    if (inputTokens <= 10) return clamp(scaled, 120, 320);   // ~3–8s decode → often skip or shortest brand
+    if (inputTokens <= 25) return clamp(scaled, 280, 700);   // ~6–16s → 11–15s brand spots
+    if (inputTokens <= 60) return clamp(scaled, 500, 1400);  // mid Launch Gallery
+    if (inputTokens <= 120) return clamp(scaled, 700, 2200);
+    return clamp(scaled, 900, 4200);
   }
 
   function clamp(value, min, max) {
