@@ -102,109 +102,104 @@
     'Searching the web',
   ];
 
-  // Bundled Launch Gallery creatives (local MP4s — no CDN black-screen failures).
+  // Bundled Launch Gallery creatives — multiple cut lengths so we can fit the
+  // remaining predicted wait (short prompts → short clips, long waits → longer).
   const LAUNCH_CREATIVE_FILES = [
-    {
-      id: 'lg-factory',
-      advertiserName: 'Factory',
-      advertiserUrl: 'https://factory.ai',
-      title: 'Factory 2.0',
-      description: 'From coding agents to software factories.',
-      file: 'media/factory.mp4',
-      contentType: 'video',
-      creditsPerView: 14,
-      durationSeconds: 30,
-      source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/',
-    },
-    {
-      id: 'lg-lightwork',
-      advertiserName: 'Lightwork',
-      advertiserUrl: 'https://lightwork.ai',
-      title: 'Introducing Lightwork',
-      description: 'Launch Gallery startup launch cut.',
-      file: 'media/lightwork.mp4',
-      contentType: 'video',
-      creditsPerView: 12,
-      durationSeconds: 30,
-      source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/',
-    },
-    {
-      id: 'lg-boardy',
-      advertiserName: 'Boardy',
-      advertiserUrl: 'https://boardy.ai',
-      title: 'Boardy Pro',
-      description: 'AI that makes deals happen.',
-      file: 'media/boardy.mp4',
-      contentType: 'video',
-      creditsPerView: 12,
-      durationSeconds: 30,
-      source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/',
-    },
-    {
-      id: 'lg-crowdreply',
-      advertiserName: 'CrowdReply',
-      advertiserUrl: 'https://crowdreply.io',
-      title: 'Searchmaxxing',
-      description: 'Visibility in AI answers.',
-      file: 'media/crowdreply.mp4',
-      contentType: 'video',
-      creditsPerView: 12,
-      durationSeconds: 30,
-      source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/',
-    },
+    { id: 'lg-factory-2s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Quick cut.', file: 'media/factory-2s.mp4', contentType: 'video', creditsPerView: 4, durationSeconds: 2, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-factory-3s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Quick cut.', file: 'media/factory-3s.mp4', contentType: 'video', creditsPerView: 5, durationSeconds: 3, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-4s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Short cut.', file: 'media/lightwork-4s.mp4', contentType: 'video', creditsPerView: 6, durationSeconds: 4, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-factory-5s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Short cut.', file: 'media/factory-5s.mp4', contentType: 'video', creditsPerView: 7, durationSeconds: 5, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-6s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Short cut.', file: 'media/lightwork-6s.mp4', contentType: 'video', creditsPerView: 8, durationSeconds: 6, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-crowdreply-7s', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', description: 'Short cut.', file: 'media/crowdreply-7s.mp4', contentType: 'video', creditsPerView: 9, durationSeconds: 7, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
+    { id: 'lg-factory-8s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Medium cut.', file: 'media/factory-8s.mp4', contentType: 'video', creditsPerView: 10, durationSeconds: 8, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-10s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Medium cut.', file: 'media/lightwork-10s.mp4', contentType: 'video', creditsPerView: 11, durationSeconds: 10, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-boardy-12s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', description: 'Medium cut.', file: 'media/boardy-12s.mp4', contentType: 'video', creditsPerView: 12, durationSeconds: 12, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
+    { id: 'lg-factory-15s', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Long cut.', file: 'media/factory-15s.mp4', contentType: 'video', creditsPerView: 13, durationSeconds: 15, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork-20s', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Long cut.', file: 'media/lightwork-20s.mp4', contentType: 'video', creditsPerView: 14, durationSeconds: 20, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-boardy-25s', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', description: 'Long cut.', file: 'media/boardy-25s.mp4', contentType: 'video', creditsPerView: 15, durationSeconds: 25, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
+    { id: 'lg-factory', advertiserName: 'Factory', advertiserUrl: 'https://factory.ai', title: 'Factory 2.0', description: 'Full launch cut.', file: 'media/factory.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 30, source: 'https://launchgallery.video/video/factory-factory-2-0-from-coding-agents-to-software-factories/' },
+    { id: 'lg-lightwork', advertiserName: 'Lightwork', advertiserUrl: 'https://lightwork.ai', title: 'Introducing Lightwork', description: 'Full launch cut.', file: 'media/lightwork.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 39, source: 'https://launchgallery.video/video/lightwork-introducing-lightwork/' },
+    { id: 'lg-crowdreply', advertiserName: 'CrowdReply', advertiserUrl: 'https://crowdreply.io', title: 'Searchmaxxing', description: 'Full launch cut.', file: 'media/crowdreply.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 47, source: 'https://launchgallery.video/video/crowdreply-introducing-searchmaxxing-visibility-in-ai-answers/' },
+    { id: 'lg-boardy', advertiserName: 'Boardy', advertiserUrl: 'https://boardy.ai', title: 'Boardy Pro', description: 'Full launch cut.', file: 'media/boardy.mp4', contentType: 'video', creditsPerView: 16, durationSeconds: 90, source: 'https://launchgallery.video/video/boardy-boardy-pro-ai-that-makes-deals-happen/' },
   ];
 
-  function resolveCreative(entry, preferredSeconds = 15) {
+  function resolveCreative(entry, preferredSeconds = null) {
     return {
       ...entry,
       videoUrl: chrome.runtime.getURL(entry.file),
       thumbnailUrl: '',
-      durationSeconds: preferredSeconds,
+      // Keep the clip's real length — don't stretch a 2s file into a 15s timer.
+      durationSeconds: preferredSeconds != null
+        ? Math.min(preferredSeconds, entry.durationSeconds)
+        : entry.durationSeconds,
     };
   }
 
-  const LAUNCH_CREATIVES = LAUNCH_CREATIVE_FILES.map((entry) => resolveCreative(entry, entry.durationSeconds));
+  const LAUNCH_CREATIVES = LAUNCH_CREATIVE_FILES.map((entry) => resolveCreative(entry));
   const DEMO_AD = LAUNCH_CREATIVES[0];
+  const SHORTEST_CREATIVE_SEC = Math.min(...LAUNCH_CREATIVE_FILES.map((e) => e.durationSeconds));
 
+  // Pick the longest creative that still fits the remaining wait window.
   function pickLaunchCreative(preferredSeconds = 15) {
-    const pick = LAUNCH_CREATIVE_FILES[Math.floor(Math.random() * LAUNCH_CREATIVE_FILES.length)] || LAUNCH_CREATIVE_FILES[0];
-    return resolveCreative(pick, preferredSeconds);
+    const target = Math.max(0, preferredSeconds || 0);
+    if (target < SHORTEST_CREATIVE_SEC) return null;
+
+    const fitting = LAUNCH_CREATIVE_FILES
+      .filter((entry) => entry.durationSeconds <= target)
+      .sort((a, b) => b.durationSeconds - a.durationSeconds);
+
+    if (!fitting.length) return null;
+
+    // Prefer exact/near match; among same length, randomize brand.
+    const bestLen = fitting[0].durationSeconds;
+    const sameLen = fitting.filter((e) => e.durationSeconds === bestLen);
+    const pick = sameLen[Math.floor(Math.random() * sameLen.length)] || fitting[0];
+    return resolveCreative(pick, target);
   }
 
   // Always prefer bundled local MP4s so the player never depends on flaky CDNs.
   function ensurePlayableAd(ad, preferredSeconds = 15) {
     const fallback = pickLaunchCreative(preferredSeconds);
+    if (!fallback) return null;
     if (!ad || ad.error) return fallback;
     const local = typeof ad.videoUrl === 'string' && ad.videoUrl.startsWith('chrome-extension://');
+    // If server ad has no local file, use the duration-matched local creative.
+    if (!local) return fallback;
     return {
       ...fallback,
       ...ad,
-      videoUrl: local ? ad.videoUrl : fallback.videoUrl,
+      videoUrl: ad.videoUrl,
       thumbnailUrl: ad.thumbnailUrl || '',
       contentType: 'video',
-      durationSeconds: preferredSeconds,
+      durationSeconds: Math.min(preferredSeconds, fallback.durationSeconds),
     };
   }
 
-  // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + mode penalty,
-  // blended with local observed averages. This clock drives ad length AND hide time.
+  // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + mode penalty.
+  // Output expectation scales hard with prompt size — "hi" stays tiny; real asks get real waits.
   const PLATFORM_WAIT_DEFAULTS = {
-    chatgpt: { ttftMs: 700, msPerInputToken: 0.22, tokensPerSecond: 58, baseOutput: 280, promptFactor: 0.55, toolPenaltyMs: 0 },
-    claude: { ttftMs: 900, msPerInputToken: 0.24, tokensPerSecond: 52, baseOutput: 340, promptFactor: 0.6, toolPenaltyMs: 0 },
-    gemini: { ttftMs: 650, msPerInputToken: 0.18, tokensPerSecond: 68, baseOutput: 260, promptFactor: 0.5, toolPenaltyMs: 0 },
-    cursor: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 32, baseOutput: 700, promptFactor: 0.9, toolPenaltyMs: 8000 },
-    replit: { ttftMs: 1300, msPerInputToken: 0.28, tokensPerSecond: 30, baseOutput: 650, promptFactor: 0.85, toolPenaltyMs: 7000 },
-    grok: { ttftMs: 750, msPerInputToken: 0.2, tokensPerSecond: 62, baseOutput: 280, promptFactor: 0.5, toolPenaltyMs: 0 },
-    manus: { ttftMs: 1800, msPerInputToken: 0.32, tokensPerSecond: 20, baseOutput: 1100, promptFactor: 1.1, toolPenaltyMs: 20000 },
-    lovable: { ttftMs: 1400, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 800, promptFactor: 0.95, toolPenaltyMs: 10000 },
-    default: { ttftMs: 900, msPerInputToken: 0.22, tokensPerSecond: 45, baseOutput: 320, promptFactor: 0.6, toolPenaltyMs: 1000 },
+    chatgpt: { ttftMs: 500, msPerInputToken: 0.2, tokensPerSecond: 45, baseOutput: 60, promptFactor: 2.8, toolPenaltyMs: 0 },
+    claude: { ttftMs: 600, msPerInputToken: 0.22, tokensPerSecond: 40, baseOutput: 70, promptFactor: 3.0, toolPenaltyMs: 0 },
+    gemini: { ttftMs: 450, msPerInputToken: 0.18, tokensPerSecond: 55, baseOutput: 55, promptFactor: 2.5, toolPenaltyMs: 0 },
+    cursor: { ttftMs: 1000, msPerInputToken: 0.28, tokensPerSecond: 28, baseOutput: 250, promptFactor: 3.5, toolPenaltyMs: 6000 },
+    replit: { ttftMs: 1100, msPerInputToken: 0.28, tokensPerSecond: 26, baseOutput: 220, promptFactor: 3.2, toolPenaltyMs: 5000 },
+    grok: { ttftMs: 520, msPerInputToken: 0.18, tokensPerSecond: 50, baseOutput: 60, promptFactor: 2.6, toolPenaltyMs: 0 },
+    manus: { ttftMs: 1500, msPerInputToken: 0.32, tokensPerSecond: 18, baseOutput: 500, promptFactor: 3.8, toolPenaltyMs: 15000 },
+    lovable: { ttftMs: 1200, msPerInputToken: 0.28, tokensPerSecond: 24, baseOutput: 280, promptFactor: 3.4, toolPenaltyMs: 8000 },
+    default: { ttftMs: 550, msPerInputToken: 0.2, tokensPerSecond: 40, baseOutput: 65, promptFactor: 2.8, toolPenaltyMs: 800 },
   };
 
   const DONE_HIDE_GRACE_MS = 0; // hide the instant stop disappears
-  const PREDICTION_END_BUFFER_MS = 400;
+  const PREDICTION_END_BUFFER_MS = 300;
   const HARD_SESSION_CAP_MS = 120000;
-  const MIN_AD_MS = 1500; // skip ads when remaining predicted wait is under ~1.5s
+  // Must be able to fit at least our shortest creative (~2s) with a little slack.
+  const MIN_AD_MS = 2000;
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
+
+  // Tiny / greeting prompts finish too fast for any ad — skip entirely.
+  const TRIVIAL_PROMPT_RE = /^(hi|hii+|hello|hey|yo|sup|hola|thanks|thank you|thx|ok|okay|k|yes|no|yep|nope|sure|cool|lol|test|ping|help|\?+|!+)$/i;
+  const LONG_OUTPUT_CUE_RE = /\b(essay|detailed|thorough|comprehensive|in[- ]depth|step[- ]by[- ]step|explain|write|implement|build|create|research|analyze|compare|summarize|list|code|script|function|app|website)\b/i;
+  const WORD_COUNT_CUE_RE = /\b(\d{3,5})\s*(words?|pages?|paragraphs?)\b/i;
 
   const PLATFORM_ADAPTERS = [
     createAdapter({
@@ -526,6 +521,46 @@
     return estimateTokensFromText(getElementText(platformAdapter.getComposer()));
   }
 
+  function getCurrentPromptText(platformAdapter) {
+    return String(getElementText(platformAdapter.getComposer()) || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function isTrivialPrompt(promptText, promptTokens) {
+    const text = String(promptText || '').replace(/\s+/g, ' ').trim();
+    if (!text) return (promptTokens || 0) <= 4;
+    // Only exact greetings / one-word acknowledgements — not short real questions.
+    if (text.length <= 12 && TRIVIAL_PROMPT_RE.test(text)) return true;
+    if ((promptTokens || 0) <= 2 && text.length <= 8 && !/[?]/.test(text)) return true;
+    return false;
+  }
+
+  // Expected output tokens scale with prompt size + content cues.
+  function expectedOutputTokens(defaults, inputTokens, promptText) {
+    const text = String(promptText || '');
+    if (isTrivialPrompt(text, inputTokens)) {
+      return clamp(8 + inputTokens, 6, 20);
+    }
+
+    let scaled = defaults.baseOutput + Math.round(inputTokens * defaults.promptFactor);
+
+    // Content cues that usually mean longer replies.
+    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 1.7);
+    const wordCue = text.match(WORD_COUNT_CUE_RE);
+    if (wordCue) {
+      const n = Number(wordCue[1]);
+      if (Number.isFinite(n)) {
+        // ~1.3 tokens/word rough; pages ≈ 400 words.
+        const unit = /pages?/i.test(wordCue[2]) ? 400 : /paragraphs?/i.test(wordCue[2]) ? 80 : 1;
+        scaled = Math.max(scaled, Math.round(n * unit * 1.3));
+      }
+    }
+
+    if (inputTokens <= 6) return clamp(scaled, 30, 160);
+    if (inputTokens <= 20) return clamp(scaled, 80, 450);
+    if (inputTokens <= 60) return clamp(scaled, 160, 900);
+    return clamp(scaled, 280, 3200);
+  }
+
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
   }
@@ -569,18 +604,27 @@
     saveWaitStats(stats);
   }
 
-  function estimateResponseTiming(platform, promptTokens) {
+  function estimateResponseTiming(platform, promptTokens, promptText = '') {
     const defaults = PLATFORM_WAIT_DEFAULTS[platform] || PLATFORM_WAIT_DEFAULTS.default;
     const inputTokens = Math.max(0, promptTokens || 0);
+    const text = String(promptText || '');
+
+    // Trivial prompts ("hi", "ok") finish in well under 2s — never worth an ad.
+    if (isTrivialPrompt(text, inputTokens)) {
+      return {
+        totalMs: 900,
+        ttftMs: 350,
+        decodeMs: 550,
+        expectedOutput: 12,
+        source: 'trivial',
+        skipAd: true,
+      };
+    }
 
     // Exact industry formula used in serving systems:
     // total ≈ TTFT(prefill) + (expected_output_tokens / TPS)
     const ttftMs = defaults.ttftMs + (inputTokens * defaults.msPerInputToken);
-    const expectedOutput = clamp(
-      defaults.baseOutput + Math.round(inputTokens * defaults.promptFactor),
-      120,
-      2800,
-    );
+    const expectedOutput = expectedOutputTokens(defaults, inputTokens, text);
     let decodeMs = (expectedOutput / Math.max(defaults.tokensPerSecond, 1)) * 1000;
     let toolPenaltyMs = defaults.toolPenaltyMs || 0;
 
@@ -596,10 +640,11 @@
     }
 
     let formulaMs = ttftMs + decodeMs + toolPenaltyMs;
-    const observed = loadWaitStats()[platform];
 
-    if (observed?.count >= 3 && observed.avgTotalMs > 0) {
-      const observedWeight = observed.count >= 8 ? 0.7 : 0.45;
+    // Don't blend observed averages into tiny prompts — that re-inflates "hi" waits.
+    const observed = loadWaitStats()[platform];
+    if (inputTokens >= 20 && observed?.count >= 3 && observed.avgTotalMs > 0) {
+      const observedWeight = observed.count >= 8 ? 0.55 : 0.35;
       formulaMs = formulaMs * (1 - observedWeight) + observed.avgTotalMs * observedWeight;
       return {
         totalMs: formulaMs,
@@ -607,6 +652,7 @@
         decodeMs,
         expectedOutput,
         source: 'observed',
+        skipAd: formulaMs < MIN_AD_MS,
       };
     }
 
@@ -616,48 +662,37 @@
       decodeMs,
       expectedOutput,
       source: 'ttft+tps',
+      skipAd: formulaMs < MIN_AD_MS,
     };
   }
 
   // Ad length = remaining predicted wait from TTFT + decode(output/TPS).
-  // Short predicted waits → only short ads (or none). Never longer than remaining wait.
-  const AD_DURATION_BUCKETS_SEC = [2, 3, 4, 5, 6, 8, 10, 12, 15];
+  // Must fit an actual creative file — if remaining < shortest clip, return 0 (no ad).
+  function chooseAdDurationSeconds(platform, promptTokens, elapsedMs, promptText = '') {
+    const estimate = estimateResponseTiming(platform, promptTokens, promptText);
+    if (estimate.skipAd) return 0;
 
-  function chooseAdDurationSeconds(platform, promptTokens, elapsedMs) {
-    const estimate = estimateResponseTiming(platform, promptTokens);
     const remainingMs = Math.max(
       0,
       (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS,
     );
-    if (remainingMs < MIN_AD_MS) return 0; // too short — don't show / don't chain
+    if (remainingMs < MIN_AD_MS) return 0;
 
-    // Largest bucket that still fits entirely in remaining wait.
-    let chosen = 0;
-    for (const seconds of AD_DURATION_BUCKETS_SEC) {
-      if (seconds * 1000 <= remainingMs) chosen = seconds;
-    }
-    if (!chosen) chosen = Math.max(2, Math.floor(remainingMs / 1000));
+    const remainingSec = Math.floor(remainingMs / 1000);
+    // Only return a length we actually have a creative for.
+    const available = LAUNCH_CREATIVE_FILES
+      .map((e) => e.durationSeconds)
+      .filter((sec) => sec <= remainingSec)
+      .sort((a, b) => b - a);
 
-    // Short remaining wait → hard-cap to short creatives only.
-    if (remainingMs <= 4000) chosen = Math.min(chosen, 2);
-    else if (remainingMs <= 7000) chosen = Math.min(chosen, 4);
-    else if (remainingMs <= 12000) chosen = Math.min(chosen, 6);
-    else if (remainingMs <= 20000) chosen = Math.min(chosen, 10);
-
-    // Deep research can use longer clips, still capped by remaining math.
-    if (findDeepResearchPlan() && remainingMs >= 18000) {
-      chosen = Math.min(Math.max(chosen, 8), Math.floor(remainingMs / 1000), 15);
-    }
-
-    return chosen;
+    if (!available.length) return 0;
+    return available[0];
   }
 
   // Absolute predicted end time for this prompt (from candidate start).
-  function predictedAnswerAt(candidateStartedAt, platform, promptTokens) {
-    const estimate = estimateResponseTiming(platform, promptTokens);
-    // Use the formula as-is — no artificial long floor for short prompts.
-    const total = Math.max(estimate.totalMs || 0, MIN_AD_MS);
-    return (candidateStartedAt || Date.now()) + total;
+  function predictedAnswerAt(candidateStartedAt, platform, promptTokens, promptText = '') {
+    const estimate = estimateResponseTiming(platform, promptTokens, promptText);
+    return (candidateStartedAt || Date.now()) + Math.max(0, estimate.totalMs || 0);
   }
 
   function findDeepResearchPlan() {
@@ -1395,6 +1430,7 @@
       this.hadSignalDuringCandidate = false;
       this.userInitiatedWait = false;
       this.promptTokens = 0;
+      this.promptText = '';
       this.waitEstimate = estimateResponseTiming(this.adapter.id, 0);
       this.predictedEndAt = 0;
       this.firstTokenAt = 0;
@@ -1410,19 +1446,26 @@
       this.sawStopDuringWait = false;
     }
 
-    openWaitSession(promptTokens = 0) {
+    openWaitSession(promptTokens = 0, promptText = '') {
       this.waitSessionId = `${this.adapter.id}-wait-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
       this.waitClosed = false;
       this.adsPlayedThisWait = 0;
       this.sawStopDuringWait = false;
       this.promptTokens = Math.max(0, promptTokens || 0);
+      this.promptText = String(promptText || '').replace(/\s+/g, ' ').trim();
       this.candidateStartedAt = Date.now();
-      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
-      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens);
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens, this.promptText);
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens, this.promptText);
       this.firstTokenAt = 0;
       this.observationRecorded = false;
       this.doneSinceAt = 0;
       this.sessionCredits = 0;
+
+      // Skip the whole wait session when math says no ad can fit (e.g. "hi").
+      if (this.waitEstimate.skipAd || chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0, this.promptText) <= 0) {
+        this.waitClosed = true;
+        this.waitSessionId = null;
+      }
     }
 
     closeWaitSession() {
@@ -1435,11 +1478,13 @@
       this.state = 'idle';
     }
 
-    beginCandidate(allowWithoutSignal = false, promptTokens = 0) {
+    beginCandidate(allowWithoutSignal = false, promptTokens = 0, promptText = '') {
       // Flicker fix: once this prompt's wait is closed, ignore auto re-activation.
       // A new user send opens a fresh wait session (allowWithoutSignal=true).
       if (allowWithoutSignal) {
-        this.openWaitSession(promptTokens);
+        this.openWaitSession(promptTokens, promptText);
+        // Trivial / too-short waits never enter candidate — no blip.
+        if (this.waitClosed || !this.waitSessionId) return;
       } else if (this.waitClosed || !this.waitSessionId) {
         return;
       }
@@ -1464,13 +1509,24 @@
       this.hadSignalDuringCandidate = false;
       this.userInitiatedWait = allowWithoutSignal;
       this.promptTokens = Math.max(0, promptTokens || this.promptTokens || 0);
-      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
-      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens);
+      if (promptText) this.promptText = String(promptText).replace(/\s+/g, ' ').trim();
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens, this.promptText);
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens, this.promptText);
       this.doneSinceAt = 0;
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
       this.markWorkActivity();
       this.clientSessionId = `${this.adapter.id}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
+      // Bail before any UI if remaining wait can't fit a creative.
+      if (
+        this.waitEstimate.skipAd ||
+        chooseAdDurationSeconds(this.adapter.id, this.promptTokens, 0, this.promptText) <= 0
+      ) {
+        this.closeWaitSession();
+        this.reset();
+        return;
+      }
 
       this.candidateTimer = setTimeout(() => this.tryActivate(), INITIAL_ACTIVATION_CHECK_MS);
       this.startPolling();
@@ -1503,8 +1559,8 @@
       this.state = 'active';
       this.activeSignalGraceUntil = decision.keepAlive ? Date.now() + RESTORE_KEEPALIVE_MS : 0;
       // Refresh prediction at activation with elapsed time already spent waiting.
-      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens);
-      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens);
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens, this.promptText);
+      this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens, this.promptText);
 
       const auth = await sendMessage('getAuth');
       const loggedIn = !!auth.token;
@@ -1512,6 +1568,7 @@
         this.adapter.id,
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
+        this.promptText,
       );
       // Remaining predicted wait too short for even a short ad — skip entirely.
       if (!fittedSeconds) {
@@ -1521,6 +1578,11 @@
       }
       this.overlay.customPos = null;
       let ad = pickLaunchCreative(fittedSeconds);
+      if (!ad) {
+        this.closeWaitSession();
+        this.reset();
+        return;
+      }
       let balance = 0;
 
       if (loggedIn) {
@@ -1536,7 +1598,12 @@
         if (!session.error) {
           this.serverSessionId = session.sessionId;
           const nextAd = await sendMessage('getNextAd');
-          if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds);
+          if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds) || ad;
+          if (!ad) {
+            this.closeWaitSession();
+            this.reset();
+            return;
+          }
           const view = await sendMessage('startView', {
             sessionId: this.serverSessionId,
             campaignId: ad.id,
@@ -1547,6 +1614,11 @@
       }
 
       ad = ensurePlayableAd(ad, fittedSeconds);
+      if (!ad) {
+        this.closeWaitSession();
+        this.reset();
+        return;
+      }
 
       // If the answer already finished while we were fetching, don't flash an ad.
       if (isAnswerFinished(this.adapter) || this.waitClosed) {
@@ -1661,6 +1733,7 @@
         this.adapter.id,
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
+        this.promptText,
       );
       if (!fittedSeconds) {
         await this.endSession();
@@ -1668,9 +1741,17 @@
       }
 
       let ad = pickLaunchCreative(fittedSeconds);
+      if (!ad) {
+        await this.endSession();
+        return;
+      }
       if (this.serverSessionId) {
         const nextAd = await sendMessage('getNextAd');
-        if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds);
+        if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds) || ad;
+        if (!ad) {
+          await this.endSession();
+          return;
+        }
         const view = await sendMessage('startView', {
           sessionId: this.serverSessionId,
           campaignId: ad.id,
@@ -1686,6 +1767,10 @@
       }
 
       ad = ensurePlayableAd(ad, fittedSeconds);
+      if (!ad) {
+        await this.endSession();
+        return;
+      }
       this.currentAd = ad;
       this.viewStartedAt = Date.now();
       this.adsPlayedThisWait += 1;
@@ -1936,6 +2021,7 @@
             this.adapter.id,
             this.promptTokens,
             now - this.candidateStartedAt,
+            this.promptText,
           );
           if (
             !this.waitClosed &&
@@ -1968,6 +2054,7 @@
       const adsPlayed = this.adsPlayedThisWait;
       const sawStop = this.sawStopDuringWait;
       const promptTokens = this.promptTokens;
+      const promptText = this.promptText;
       const candidateStartedAt = this.candidateStartedAt;
       const predictedEndAt = this.predictedEndAt;
       const sessionCredits = this.sessionCredits;
@@ -1994,10 +2081,11 @@
       this.adsPlayedThisWait = adsPlayed;
       this.sawStopDuringWait = sawStop;
       this.promptTokens = promptTokens;
+      this.promptText = promptText;
       this.candidateStartedAt = candidateStartedAt;
       this.predictedEndAt = predictedEndAt;
       this.sessionCredits = sessionCredits;
-      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens || 0);
+      this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens || 0, this.promptText || '');
     }
   }
 
@@ -2019,10 +2107,12 @@
   const controller = new ActivationController(adapter, overlay);
   let lastGenerationIntentAt = 0;
   let pendingPromptTokens = 0;
+  let pendingPromptText = '';
 
   function rememberPromptEstimate() {
-    pendingPromptTokens = estimateCurrentPromptTokens(adapter) || pendingPromptTokens || 0;
-    return pendingPromptTokens;
+    pendingPromptText = getCurrentPromptText(adapter) || pendingPromptText || '';
+    pendingPromptTokens = estimateTokensFromText(pendingPromptText) || pendingPromptTokens || 0;
+    return { tokens: pendingPromptTokens, text: pendingPromptText };
   }
 
   function markGenerationIntent() {
@@ -2040,7 +2130,7 @@
       return;
     }
     if (controller.state === 'idle' && hasRecentGenerationIntent(INTENT_TO_NETWORK_WINDOW_MS) && !controller.waitClosed) {
-      controller.beginCandidate(false, pendingPromptTokens);
+      controller.beginCandidate(false, pendingPromptTokens, pendingPromptText);
     } else if (controller.state === 'paused' && hasRecentGenerationIntent() && adapter.hasGenerationSignal()) {
       controller.expandFromPaused();
     }
@@ -2088,6 +2178,7 @@
     if (isNewChatAction(event.target)) {
       lastGenerationIntentAt = 0;
       pendingPromptTokens = 0;
+      pendingPromptText = '';
       controller.closeWaitSession();
       if (controller.state === 'candidate' || controller.state === 'active') controller.endSession();
       return;
@@ -2096,9 +2187,9 @@
     if (adapter.isSendTarget(event.target) || isLikelyWaitAction(event.target)) {
       markGenerationIntent();
       controller.markWorkActivity();
-      const promptTokens = rememberPromptEstimate();
+      const prompt = rememberPromptEstimate();
       // New send always opens a fresh wait session (can show multiple ads while waiting).
-      setTimeout(() => controller.beginCandidate(true, promptTokens), 200);
+      setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
     }
   }, { passive: true });
 
@@ -2106,8 +2197,8 @@
     if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
     if (adapter.isComposerTarget(event.target)) {
       markGenerationIntent();
-      const promptTokens = rememberPromptEstimate();
-      setTimeout(() => controller.beginCandidate(true, promptTokens), 200);
+      const prompt = rememberPromptEstimate();
+      setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
     }
   }, { passive: true });
 
@@ -2116,7 +2207,7 @@
     if (controller.waitClosed || !controller.waitSessionId) return;
     if (controller.state !== 'idle' && controller.state !== 'paused') return;
     if (!hasRecentGenerationIntent()) return;
-    if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens);
+    if (adapter.hasGenerationSignal()) controller.beginCandidate(false, pendingPromptTokens, pendingPromptText);
   }, 500);
 
   window.addEventListener('scroll', () => {
