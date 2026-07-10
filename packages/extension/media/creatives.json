@@ -1,5 +1,141 @@
 [
   {
+    "file": "mercedes-4s.mp4",
+    "durationSeconds": 4,
+    "advertiserName": "Mercedes-Benz",
+    "advertiserUrl": "https://www.mercedes-benz.com",
+    "title": "3.8 seconds",
+    "slogan": "The best or nothing."
+  },
+  {
+    "file": "coke-5s.mp4",
+    "durationSeconds": 5,
+    "advertiserName": "Coca-Cola",
+    "advertiserUrl": "https://www.coca-cola.com",
+    "title": "125 Years Campaign",
+    "slogan": "Taste the Feeling."
+  },
+  {
+    "file": "cadbury-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Cadbury",
+    "advertiserUrl": "https://www.cadbury.co.uk",
+    "title": "Cadbury Minis Family Gathering",
+    "slogan": "There's a glass and a half in everyone."
+  },
+  {
+    "file": "gorilla-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Gorilla Glue",
+    "advertiserUrl": "https://www.gorillatough.com",
+    "title": "Gorilla Clear Grip",
+    "slogan": "For the Toughest Jobs on Planet Earth."
+  },
+  {
+    "file": "bravo-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Bravo Apples",
+    "advertiserUrl": "https://bravoapples.com",
+    "title": "Bravo Apples",
+    "slogan": "Crisp. Juicy. Bravo."
+  },
+  {
+    "file": "sonic-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Sonic Drive-In",
+    "advertiserUrl": "https://www.sonicdrivein.com",
+    "title": "Cookie Jar Shakes Marriage",
+    "slogan": "America's Drive-In."
+  },
+  {
+    "file": "deadpool-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "20th Century Studios",
+    "advertiserUrl": "https://www.20thcenturystudios.com",
+    "title": "Deadpool 2 Bumper",
+    "slogan": "Maximum effort."
+  },
+  {
+    "file": "oreo-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Oreo",
+    "advertiserUrl": "https://www.oreo.com",
+    "title": "Oreo Ice Cream",
+    "slogan": "Milk's favorite cookie."
+  },
+  {
+    "file": "papajohns-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Papa Johns",
+    "advertiserUrl": "https://www.papajohns.com",
+    "title": "The Hot Dog Pizza",
+    "slogan": "Better Ingredients. Better Pizza."
+  },
+  {
+    "file": "very-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Very",
+    "advertiserUrl": "https://www.very.co.uk",
+    "title": "Find their Gift",
+    "slogan": "Very good."
+  },
+  {
+    "file": "duracell-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Duracell",
+    "advertiserUrl": "https://www.duracell.com",
+    "title": "Power On",
+    "slogan": "Trusted Everywhere."
+  },
+  {
+    "file": "clearblue-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Clearblue",
+    "advertiserUrl": "https://www.clearblue.com",
+    "title": "Clear results",
+    "slogan": "So clear. So sure."
+  },
+  {
+    "file": "samsung-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Samsung",
+    "advertiserUrl": "https://www.samsung.com",
+    "title": "Galaxy S8 Pre-book",
+    "slogan": "Do What You Can't."
+  },
+  {
+    "file": "dettol-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Dettol",
+    "advertiserUrl": "https://www.dettol.co.uk",
+    "title": "Floor wipes",
+    "slogan": "Protects what matters."
+  },
+  {
+    "file": "nike-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Nike",
+    "advertiserUrl": "https://www.nike.com",
+    "title": "Nike Training Club",
+    "slogan": "Just Do It."
+  },
+  {
+    "file": "tacobell-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Taco Bell",
+    "advertiserUrl": "https://www.tacobell.com",
+    "title": "Naked Chicken Taco",
+    "slogan": "Live Más."
+  },
+  {
+    "file": "maltesers-6s.mp4",
+    "durationSeconds": 6,
+    "advertiserName": "Maltesers",
+    "advertiserUrl": "https://www.maltesers.co.uk",
+    "title": "Buttons Tiddlywinks",
+    "slogan": "The lighter way to enjoy chocolate."
+  },
+  {
     "file": "apple-iphone17e.mp4",
     "durationSeconds": 11,
     "advertiserName": "Apple",
