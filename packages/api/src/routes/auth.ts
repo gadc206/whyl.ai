@@ -18,6 +18,7 @@ function serializeUser(user: {
   company?: string | null;
   onboarding_complete: number;
   permissions_accepted: number;
+  improve_wait_timing?: number | null;
 }) {
   return {
     id: user.id,
@@ -28,6 +29,8 @@ function serializeUser(user: {
     company: user.company || null,
     onboardingComplete: !!user.onboarding_complete,
     permissionsAccepted: !!user.permissions_accepted,
+    // Default ON when column missing/null.
+    improveWaitTiming: user.improve_wait_timing !== 0,
   };
 }
 
@@ -102,6 +105,7 @@ router.post('/register', (req, res) => {
       company: companyName || null,
       onboardingComplete: false,
       permissionsAccepted: false,
+      improveWaitTiming: true,
     },
   });
 });
@@ -185,6 +189,30 @@ router.post('/onboarding/complete', authMiddleware, (req, res) => {
   `).run(permissionsAccepted ? 1 : 0, nextRole, nextCompany, req.user!.id);
 
   res.json({ success: true, role: nextRole, company: nextCompany });
+});
+
+router.patch('/preferences', authMiddleware, (req, res) => {
+  if (typeof req.body?.improveWaitTiming !== 'boolean') {
+    return res.status(400).json({ error: 'improveWaitTiming boolean is required' });
+  }
+
+  const enabled = req.body.improveWaitTiming !== false;
+  db.prepare('UPDATE users SET improve_wait_timing = ? WHERE id = ?').run(enabled ? 1 : 0, req.user!.id);
+
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user!.id) as {
+    id: string;
+    email: string;
+    name: string;
+    referral_code: string;
+    role?: string;
+    company?: string | null;
+    onboarding_complete: number;
+    permissions_accepted: number;
+    improve_wait_timing?: number | null;
+  } | undefined;
+
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json({ success: true, user: serializeUser(user) });
 });
 
 export default router;

@@ -238,8 +238,7 @@ export default function OnboardPage() {
             ))}
             {side === 'watcher' && (
               <p className="note">
-                Improve wait timing is on by default in the extension (uses chat context so ads fit
-                better). Turn it off anytime in the WHYL popup.{' '}
+                Improve wait timing is on by default (uses chat context so ads fit better). Turn it off anytime on your dashboard.{' '}
                 <a href="https://gadc206.github.io/whyl.ai/privacy/" target="_blank" rel="noreferrer">
                   Privacy policy
                 </a>

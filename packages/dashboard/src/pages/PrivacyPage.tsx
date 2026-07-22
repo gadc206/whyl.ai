@@ -51,7 +51,7 @@ export default function PrivacyPage() {
 
       <h2 style={{ fontSize: '1.15rem', marginTop: 28 }}>Improve wait timing (opt out)</h2>
       <p>
-        Open the WHYL extension popup and turn off <strong>Improve wait timing</strong>. Ads and
+        Open your WHYL dashboard and turn off <strong>Improve wait timing</strong>. Ads and
         earnings still work. You may also request deletion of previously collected chat context by
         contacting us.
       </p>

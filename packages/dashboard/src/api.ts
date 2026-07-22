@@ -11,6 +11,7 @@ export interface User {
   company?: string | null;
   onboardingComplete: boolean;
   permissionsAccepted?: boolean;
+  improveWaitTiming?: boolean;
   balance?: number;
   lifetimeEarnings?: number;
   referralEarnings?: number;
@@ -66,6 +67,11 @@ export const api = {
   login: (body: { email: string; password: string }) =>
     request<{ token: string; user: User }>('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
   me: () => request<User>('/auth/me'),
+  setPreferences: (body: { improveWaitTiming: boolean }) =>
+    request<{ success: true; user: User }>('/auth/preferences', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+    }),
   completeOnboarding: (body: {
     permissionsAccepted: boolean;
     role?: AccountRole;

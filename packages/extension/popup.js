@@ -40,7 +40,7 @@ function renderLogin(error = '') {
   });
 }
 
-function renderDashboard(summary, improveWaitTiming) {
+function renderDashboard(summary) {
   app.innerHTML = `
     <h1>Account Summary</h1>
     <p>WHYL is active on supported AI sites.</p>
@@ -50,13 +50,6 @@ function renderDashboard(summary, improveWaitTiming) {
       <div class="stat"><strong>${summary.referralEarnings ?? 0}</strong><span>Referral Earnings</span></div>
       <div class="stat"><strong>${summary.pendingEarnings ?? 0}</strong><span>Pending Earnings</span></div>
     </div>
-    <label class="toggle-row" for="improve-wait-timing">
-      <span>
-        <strong>Improve wait timing</strong>
-        <small>Uses chat context so ads fit how long AI takes. Off anytime.</small>
-      </span>
-      <input id="improve-wait-timing" type="checkbox" ${improveWaitTiming ? 'checked' : ''} />
-    </label>
     <p class="privacy-link"><a href="https://gadc206.github.io/whyl.ai/privacy/" target="_blank" rel="noopener">Privacy policy</a></p>
     <button class="primary" data-path="/earnings">Withdraw</button>
     <button class="secondary" data-path="/referrals">Invite Friends</button>
@@ -67,11 +60,6 @@ function renderDashboard(summary, improveWaitTiming) {
 
   app.querySelectorAll('[data-path]').forEach((button) => {
     button.addEventListener('click', () => sendMessage('openDashboard', { path: button.dataset.path }));
-  });
-
-  document.getElementById('improve-wait-timing').addEventListener('change', async (event) => {
-    const enabled = event.target.checked;
-    await sendMessage('setImproveWaitTiming', { enabled });
   });
 
   document.getElementById('logout').addEventListener('click', async () => {
@@ -87,16 +75,13 @@ async function render() {
     return;
   }
 
-  const [summary, prefs] = await Promise.all([
-    sendMessage('getSummary'),
-    sendMessage('getImproveWaitTiming'),
-  ]);
+  const summary = await sendMessage('getSummary');
   if (summary.error) {
     renderLogin('Cannot reach WHYL API. Run npm run dev.');
     return;
   }
 
-  renderDashboard(summary, prefs.enabled !== false);
+  renderDashboard(summary);
 }
 
 render();

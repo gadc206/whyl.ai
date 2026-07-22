@@ -134,15 +134,31 @@ const handlers = {
       body: JSON.stringify({ sessionId }),
     }),
 
-  // Preference defaults ON — soft product name, not "record conversations".
+  // Synced from dashboard account preference (default ON).
   getImproveWaitTiming: async () => {
-    const { improveWaitTiming } = await chrome.storage.local.get('improveWaitTiming');
-    return { enabled: improveWaitTiming !== false };
+    try {
+      const me = await apiRequest('/auth/me');
+      const enabled = me?.improveWaitTiming !== false;
+      await chrome.storage.local.set({ improveWaitTiming: enabled });
+      return { enabled };
+    } catch {
+      const { improveWaitTiming } = await chrome.storage.local.get('improveWaitTiming');
+      return { enabled: improveWaitTiming !== false };
+    }
   },
 
   setImproveWaitTiming: async ({ enabled }) => {
-    await chrome.storage.local.set({ improveWaitTiming: enabled !== false });
-    return { enabled: enabled !== false };
+    const next = enabled !== false;
+    await chrome.storage.local.set({ improveWaitTiming: next });
+    try {
+      await apiRequest('/auth/preferences', {
+        method: 'PATCH',
+        body: JSON.stringify({ improveWaitTiming: next }),
+      });
+    } catch {
+      /* dashboard is source of truth; local cache still updated */
+    }
+    return { enabled: next };
   },
 
   submitWaitContext: ({ platform, promptText, responseText, promptTokens, waitMs, clientSessionId }) =>

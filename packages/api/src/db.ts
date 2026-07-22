@@ -142,6 +142,7 @@ export function initDb() {
   ensureColumn('campaigns', 'bid_per_1k', 'REAL DEFAULT 2.75');
   ensureColumn('campaigns', 'view_packs', 'INTEGER DEFAULT 20');
   ensureColumn('campaigns', 'status', "TEXT DEFAULT 'queued'");
+  ensureColumn('users', 'improve_wait_timing', 'INTEGER DEFAULT 1');
 }
 
 export function getOrCreateBalance(userId: string): BalanceRow {
