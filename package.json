@@ -14,6 +14,8 @@
     "dev:website": "npx --yes serve website -l 3000",
     "build": "npm run build -w packages/api && npm run build -w packages/dashboard",
     "build:extension": "node scripts/build-extension.js",
+    "build:extension:prod": "WHYL_API_URL=https://whyl-api.onrender.com/api WHYL_DASHBOARD_URL=https://whyl-api-dashboard.onrender.com node scripts/build-extension.js",
+    "pack:extension": "npm run build:extension:prod && cd packages/extension/dist && zip -r ../whyl-extension.zip .",
     "generate-icons": "node scripts/generate-icons.js"
   },
   "devDependencies": {

@@ -10,9 +10,9 @@
   const SIGNALLESS_ACTIVATION_MS = 4000;
   const LONG_WAIT_FALLBACK_MS = 12000;
   const USER_SIGNAL_GAP_CANCEL_MS = 60000;
-  const WAIT_STATS_KEY = 'whyl_wait_stats_v1';
+  const WAIT_STATS_KEY = 'whyl_wait_stats_v2';
   const STALE_OPEN_STREAM_MS = 15000;
-  const POLL_MS = 100; // backup poll; stop-button observer hides faster
+  const POLL_MS = 50; // backup poll; stop-button observer hides faster
   const RESTORE_KEEPALIVE_MS = 30000;
   const INTERACTION_WINDOW_MS = 5 * 60 * 1000;
   const INTENT_TO_NETWORK_WINDOW_MS = 15000;
@@ -206,50 +206,66 @@
     return resolveCreative(pick, pick.durationSeconds);
   }
 
-  // Always prefer bundled local MP4s so the player never depends on flaky CDNs.
+  // Always force a bundled local MP4. Never trust server/CDN media (blank players).
   function ensurePlayableAd(ad, preferredSeconds = 15) {
     const fallback = pickLaunchCreative(preferredSeconds);
     if (!fallback) return null;
     if (!ad || ad.error) return fallback;
-    const local = typeof ad.videoUrl === 'string' && ad.videoUrl.startsWith('chrome-extension://');
-    // If server ad has no local file, use the duration-matched local creative.
-    if (!local) return fallback;
-    const fileSeconds = fallback.durationSeconds;
+    const credits = Number(ad.creditsPerView) > 0
+      ? Number(ad.creditsPerView)
+      : (fallback.creditsPerView || 1);
     return {
       ...fallback,
-      ...ad,
-      videoUrl: ad.videoUrl || fallback.videoUrl,
-      thumbnailUrl: ad.thumbnailUrl || '',
+      id: fallback.id,
+      advertiserName: ad.advertiserName || fallback.advertiserName,
+      advertiserUrl: ad.advertiserUrl || fallback.advertiserUrl,
+      title: ad.title || fallback.title,
+      slogan: ad.slogan || fallback.slogan || sloganForAd(fallback),
+      description: fallback.description,
+      file: fallback.file,
+      videoUrl: fallback.videoUrl,
+      thumbnailUrl: '',
       contentType: 'video',
-      slogan: ad.slogan || fallback.slogan || sloganForAd(ad),
-      // Clip length = real file length that was fitted to remaining wait.
-      durationSeconds: fileSeconds,
+      creditsPerView: credits,
+      durationSeconds: fallback.durationSeconds,
     };
   }
 
+  // Pick another local creative if the current file fails to decode/play.
+  function pickAlternateCreative(failedId, preferredSeconds = 15) {
+    const target = Math.max(SHORTEST_CREATIVE_SEC, preferredSeconds || SHORTEST_CREATIVE_SEC);
+    const pool = LAUNCH_CREATIVE_FILES
+      .filter((entry) => entry.id !== failedId && entry.durationSeconds <= target + 2)
+      .sort((a, b) => Math.abs(a.durationSeconds - target) - Math.abs(b.durationSeconds - target));
+    const pick = pool[0] || LAUNCH_CREATIVE_FILES.find((e) => e.id !== failedId);
+    return pick ? resolveCreative(pick, pick.durationSeconds) : null;
+  }
+
   // Per-prompt wait prediction: TTFT(prefill) + decode(output/TPS) + live mode penalty.
-  // No keyword blacklists — short text can still be deep research / tools and get a long wait.
+  // Calibrated so ~1s chat replies skip ads; only real waits fit a creative.
+  // Live deep-research / tools still inflate via detectLiveWaitMode — never keyword-blacklist.
   const PLATFORM_WAIT_DEFAULTS = {
-    // Softened TPS / baseOutput so short prompts map to short native spots and long prompts to Launch Gallery.
-    chatgpt: { ttftMs: 700, msPerInputToken: 0.35, tokensPerSecond: 12, baseOutput: 80, promptFactor: 4.2, toolPenaltyMs: 0 },
-    claude: { ttftMs: 800, msPerInputToken: 0.38, tokensPerSecond: 11, baseOutput: 90, promptFactor: 4.2, toolPenaltyMs: 0 },
-    gemini: { ttftMs: 650, msPerInputToken: 0.3, tokensPerSecond: 13, baseOutput: 75, promptFactor: 3.8, toolPenaltyMs: 0 },
-    cursor: { ttftMs: 1100, msPerInputToken: 0.35, tokensPerSecond: 18, baseOutput: 260, promptFactor: 3.4, toolPenaltyMs: 6000 },
-    replit: { ttftMs: 1200, msPerInputToken: 0.35, tokensPerSecond: 16, baseOutput: 240, promptFactor: 3.2, toolPenaltyMs: 5000 },
-    grok: { ttftMs: 700, msPerInputToken: 0.3, tokensPerSecond: 12, baseOutput: 80, promptFactor: 4.0, toolPenaltyMs: 0 },
-    manus: { ttftMs: 1500, msPerInputToken: 0.4, tokensPerSecond: 12, baseOutput: 480, promptFactor: 3.6, toolPenaltyMs: 15000 },
-    lovable: { ttftMs: 1200, msPerInputToken: 0.35, tokensPerSecond: 14, baseOutput: 280, promptFactor: 3.4, toolPenaltyMs: 8000 },
-    default: { ttftMs: 750, msPerInputToken: 0.35, tokensPerSecond: 12, baseOutput: 85, promptFactor: 4.0, toolPenaltyMs: 800 },
+    // Chat models stream ~35–60 tok/s; short answers are small. Conservative under-estimate.
+    chatgpt: { ttftMs: 450, msPerInputToken: 0.25, tokensPerSecond: 38, baseOutput: 32, promptFactor: 2.0, toolPenaltyMs: 0 },
+    // Claude long answers often run longer than ChatGPT — bias estimate up so ads fill the wait.
+    claude: { ttftMs: 700, msPerInputToken: 0.35, tokensPerSecond: 28, baseOutput: 80, promptFactor: 3.2, toolPenaltyMs: 0 },
+    gemini: { ttftMs: 400, msPerInputToken: 0.22, tokensPerSecond: 42, baseOutput: 30, promptFactor: 1.9, toolPenaltyMs: 0 },
+    cursor: { ttftMs: 900, msPerInputToken: 0.3, tokensPerSecond: 28, baseOutput: 180, promptFactor: 2.4, toolPenaltyMs: 6000 },
+    replit: { ttftMs: 1000, msPerInputToken: 0.3, tokensPerSecond: 26, baseOutput: 160, promptFactor: 2.2, toolPenaltyMs: 5000 },
+    grok: { ttftMs: 450, msPerInputToken: 0.22, tokensPerSecond: 38, baseOutput: 32, promptFactor: 2.0, toolPenaltyMs: 0 },
+    manus: { ttftMs: 1400, msPerInputToken: 0.35, tokensPerSecond: 18, baseOutput: 360, promptFactor: 2.8, toolPenaltyMs: 15000 },
+    lovable: { ttftMs: 1000, msPerInputToken: 0.3, tokensPerSecond: 24, baseOutput: 200, promptFactor: 2.4, toolPenaltyMs: 8000 },
+    default: { ttftMs: 500, msPerInputToken: 0.25, tokensPerSecond: 38, baseOutput: 32, promptFactor: 2.0, toolPenaltyMs: 800 },
   };
 
   const DONE_HIDE_GRACE_MS = 0; // hide the instant stop disappears
-  const PREDICTION_END_BUFFER_MS = 400;
+  const PREDICTION_END_BUFFER_MS = 500;
   const HARD_SESSION_CAP_MS = 180000;
   // Only show an ad when remaining predicted wait can fit a real creative.
   const MIN_AD_MS = 4000; // shortest native creative is 4s
   // Under-estimate remaining wait so the chosen clip finishes before the answer.
   // Ads should fit inside the wait — never overrun it.
-  const AD_FIT_SAFETY = 0.85;
+  const AD_FIT_SAFETY = 0.92;
   // After a prompt's wait is closed, never auto-reopen until the user sends again.
 
   // Soft cues for expected output size (affect estimate only — never force skip/show).
@@ -580,7 +596,8 @@
     return String(getElementText(platformAdapter.getComposer()) || '').replace(/\s+/g, ' ').trim();
   }
 
-  // Live mode signals dominate wait length — deep research on "hi" is still a long wait.
+  // Live mode: ONLY real deep-research / tool UIs inflate wait.
+  // Never treat normal "Thinking" as tools — that caused +28s fake waits on "hi".
   function detectLiveWaitMode(platform) {
     if (findDeepResearchPlan()) {
       return {
@@ -591,10 +608,10 @@
     }
     if (hasVisibleStatusText({
       liveText: [
-        'Researching', 'Searching', 'Browsing', 'Deep research', 'Calibrating',
+        'Researching', 'Searching', 'Browsing', 'Deep research',
         'Using tools', 'Reading sources', 'Collecting sources', 'Web search',
       ],
-      useGlobalLiveStatus: true,
+      useGlobalLiveStatus: false,
     })) {
       return { kind: 'tools_search', toolPenaltyMs: 28000, decodeMultiplier: 1.15 };
     }
@@ -604,16 +621,64 @@
     return { kind: 'default', toolPenaltyMs: 0, decodeMultiplier: 1 };
   }
 
-  // Expected output scales with prompt size + soft content cues. Never forces skip/show.
+  // Hard block: greetings / tiny chat. ONLY deep-research UI can override — not tools false-positives.
+  const TRIVIAL_GREETING_RE = /^(hi+|h+e+l+l+o+|hey+|yo+|sup|hiya|howdy|thanks?|thx|ty|ok|okay|k|yes|yep|no|nope|sure|cool|nice|bye|goodbye|good\s*(morning|afternoon|evening|night)|how are you|what'?s up|whats up|test|hola|gm|gn)\W*$/i;
+
+  function shouldNeverShowAd(promptTokens, promptText = '') {
+    const text = String(promptText || '').replace(/\s+/g, ' ').trim();
+    const tokens = Math.max(0, promptTokens || 0, estimateTokensFromText(text) || 0);
+
+    // Explicit greetings / one-word pings — always skip unless deep research plan is live.
+    if (TRIVIAL_GREETING_RE.test(text)) return true;
+    // Empty / unknown capture → skip (safer than flashing on stale long text).
+    if (!text) return true;
+    // Tiny chat without long-output intent.
+    if (text.length <= 28 && tokens <= 8 && !LONG_OUTPUT_CUE_RE.test(text) && !WORD_COUNT_CUE_RE.test(text)) {
+      return true;
+    }
+    return false;
+  }
+
+  // Short chat pings must never get ads. "hi", "ok", "thanks", "what is 2+2".
+  function isShortChatPrompt(promptTokens, promptText = '') {
+    if (shouldNeverShowAd(promptTokens, promptText)) return true;
+    const text = String(promptText || '').replace(/\s+/g, ' ').trim();
+    const tokens = Math.max(promptTokens || 0, estimateTokensFromText(text) || 0);
+    if (LONG_OUTPUT_CUE_RE.test(text) || WORD_COUNT_CUE_RE.test(text)) return false;
+    if (/\b(deep research|web search|browse|with tools)\b/i.test(text)) return false;
+    if (tokens <= 16 && text.length <= 64) return true;
+    return false;
+  }
+
+  function isLongWaitMode(mode) {
+    return mode?.kind === 'deep_research' || mode?.kind === 'tools_search';
+  }
+
+  // Only real deep-research plan unlocks ads for trivial prompts — not "Thinking"/tools flicker.
+  function canOverrideShortPromptSkip() {
+    return !!findDeepResearchPlan();
+  }
+
+  // Base wait with NO live tool/deep-research inflation — used to hard-skip short chats.
+  function estimateBaseWaitMs(platform, promptTokens, promptText = '') {
+    const defaults = PLATFORM_WAIT_DEFAULTS[platform] || PLATFORM_WAIT_DEFAULTS.default;
+    const inputTokens = Math.max(0, promptTokens || 0);
+    const ttftMs = defaults.ttftMs + (inputTokens * defaults.msPerInputToken);
+    const expectedOutput = expectedOutputTokens(defaults, inputTokens, promptText);
+    const decodeMs = (expectedOutput / Math.max(defaults.tokensPerSecond, 1)) * 1000;
+    return ttftMs + decodeMs + (defaults.toolPenaltyMs || 0);
+  }
+
+  // Expected output from prompt size + content cues. Prediction-only — drives show/skip.
   function expectedOutputTokens(defaults, inputTokens, promptText) {
     const text = String(promptText || '');
     let scaled = defaults.baseOutput + Math.round(Math.max(0, inputTokens) * defaults.promptFactor);
 
-    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 1.85);
+    if (LONG_OUTPUT_CUE_RE.test(text)) scaled = Math.round(scaled * 2.4);
     if (/\b(essay|comprehensive|in[- ]depth|deep research)\b/i.test(text)) {
-      scaled = Math.round(scaled * 2.2);
+      scaled = Math.round(scaled * 2.6);
     } else if (/\bresearch\b/i.test(text)) {
-      scaled = Math.round(scaled * 1.35);
+      scaled = Math.round(scaled * 1.5);
     }
     const wordCue = text.match(WORD_COUNT_CUE_RE);
     if (wordCue) {
@@ -624,17 +689,34 @@
       }
     }
 
-    // Tiny → often skip; short Q → ~11–20s brand; medium → mid; essay → gallery.
-    if (inputTokens <= 3) return clamp(scaled, 12, 70);
-    if (inputTokens <= 10) return clamp(scaled, 120, 320);   // ~3–8s decode → often skip or shortest brand
-    if (inputTokens <= 25) return clamp(scaled, 280, 700);   // ~6–16s → 11–15s brand spots
-    if (inputTokens <= 60) return clamp(scaled, 500, 1400);  // mid Launch Gallery
-    if (inputTokens <= 120) return clamp(scaled, 700, 2200);
-    return clamp(scaled, 900, 4200);
+    // Tiny → skip. Medium write prompts → enough for a bumper/brand. Long → gallery.
+    if (inputTokens <= 4) return clamp(scaled, 8, 40);        // "hi" → ~1s total → skip
+    if (inputTokens <= 12) return clamp(scaled, 24, 100);     // short Q → usually skip
+    if (inputTokens <= 28) return clamp(scaled, 120, 320);    // medium → 4–8s bumper
+    if (inputTokens <= 60) return clamp(scaled, 280, 700);    // longer write → brand
+    if (inputTokens <= 120) return clamp(scaled, 500, 1400);
+    return clamp(scaled, 700, 3200);
   }
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
+  }
+
+  // On-ad counter: always climbs 1 → 10 while the video plays (demo-visible earn meter).
+  const AD_TOKEN_DISPLAY_MIN = 1;
+  const AD_TOKEN_DISPLAY_MAX = 10;
+
+  function displayTokensForProgress(progressRatio) {
+    const t = Math.max(0, Math.min(1, progressRatio || 0));
+    // Start at 1 the moment the ad shows; hit 10 at the end.
+    return Math.max(
+      AD_TOKEN_DISPLAY_MIN,
+      Math.min(AD_TOKEN_DISPLAY_MAX, Math.round(AD_TOKEN_DISPLAY_MIN + t * (AD_TOKEN_DISPLAY_MAX - AD_TOKEN_DISPLAY_MIN))),
+    );
+  }
+
+  function formatCredits(value) {
+    return String(Math.max(0, Math.round(Number(value) || 0)));
   }
 
   function loadWaitStats() {
@@ -721,16 +803,29 @@
     };
   }
 
-  // Ad length = remaining predicted wait, with a safety haircut so the clip
-  // finishes before the answer. Pick the longest creative that still fits.
-  // 0 = not enough depth — keep waiting / skip (no blip).
+  // Ad length from predicted wait at send time. Show immediately if it fits a creative;
+  // return 0 to skip forever (short prompts). Never "wait 4s of real time then decide".
   function chooseAdDurationSeconds(platform, promptTokens, elapsedMs, promptText = '') {
+    const mode = detectLiveWaitMode(platform);
     const estimate = estimateResponseTiming(platform, promptTokens, promptText);
-    const rawRemainingMs = Math.max(
-      0,
-      (estimate.totalMs || 0) - Math.max(0, elapsedMs || 0) - PREDICTION_END_BUFFER_MS,
-    );
-    // Conservative fit window — never pick a clip longer than safe remaining wait.
+    const baseMs = estimateBaseWaitMs(platform, promptTokens, promptText);
+
+    // hi / hello / tiny chat → never, unless deep research plan is actually running.
+    if (shouldNeverShowAd(promptTokens, promptText) && !canOverrideShortPromptSkip()) {
+      return 0;
+    }
+
+    // Short chats → no ad unless deep research / real tools UI is already on.
+    if (isShortChatPrompt(promptTokens, promptText) && !isLongWaitMode(mode) && !canOverrideShortPromptSkip()) {
+      return 0;
+    }
+
+    // Use full predicted wait for the fit decision (elapsed only shrinks remaining for chaining).
+    const predictedTotalMs = Math.max(estimate.totalMs || 0, isLongWaitMode(mode) ? estimate.totalMs || 0 : baseMs);
+    const elapsed = Math.max(0, elapsedMs || 0);
+    const rawRemainingMs = Math.max(0, predictedTotalMs - elapsed - PREDICTION_END_BUFFER_MS);
+
+    // Must fit at least the shortest creative inside the predicted wait.
     const safeRemainingMs = Math.floor(rawRemainingMs * AD_FIT_SAFETY);
     if (safeRemainingMs < MIN_AD_MS) return 0;
 
@@ -751,13 +846,16 @@
   function findDeepResearchPlan() {
     // Only treat deep research as "working" while it is actively running —
     // not when a finished plan card is still sitting in the transcript.
+    // Keep this STRICT — a lone "researching" in sidebar chrome must not
+    // unlock ads for short prompts like "hi".
     const candidates = document.querySelectorAll('button, [role="button"], div, section, article');
     for (const el of candidates) {
       if (!isVisible(el) || el.closest('#whyl-host, #whyl-status-pill, #whyl-status-stack, #whyl-ad-slogan')) continue;
       const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
       if (!text || text.length > 420) continue;
       const looksLikeRunningResearch =
-        /\b(researching|searching sources|reading sources|collecting sources|deep researching)\b/i.test(text);
+        /\b(deep researching|searching sources|reading sources|collecting sources)\b/i.test(text) ||
+        (/\bdeep research\b/i.test(text) && /\b(researching|in progress|running)\b/i.test(text));
       const looksLikeActivePlan =
         /\bdeep research\b/i.test(text) &&
         /\b(start|in progress|running|working)\b/i.test(text) &&
@@ -783,17 +881,24 @@
   }
 
   function hasStopControlVisible() {
+    // Keep this STRICT — a bare "Stop" label matches unrelated UI and keeps ads alive forever.
     if (findVisible([
       'button[data-testid="stop-button"]',
       'button[data-testid*="stop-button"]',
       'button[aria-label*="Stop generating"]',
       'button[aria-label*="Stop streaming"]',
       'button[aria-label*="Stop response"]',
+      'button[aria-label="Stop"]',
     ])) return true;
-    return !!findVisibleControlText(['Stop generating', 'Stop streaming', 'Stop response', 'Stop research']);
+    return !!findVisibleControlText([
+      'Stop generating',
+      'Stop streaming',
+      'Stop response',
+      'Stop research',
+    ]);
   }
 
-  // Hide decisions: stop-button edge is authoritative. Do not let stale network delay hide.
+  // True only while the model is actively generating. Used for hide + chain decisions.
   function isAiStillWorking(adapterInstance) {
     if (hasStopControlVisible()) return true;
 
@@ -803,8 +908,11 @@
     }
 
     if (findDeepResearchPlan()) return true;
-    // Fresh chunks only — never the long stale-open-stream window.
+    // Fresh network chunks only — not stale open streams, not answer prose status words.
     if (netWorkingFresh(800)) return true;
+    // DOM generation / thinking indicators — critical on first run when net-probe injected late.
+    if (adapterInstance?.hasVisibleGenerationSignal?.()) return true;
+    if (adapterInstance?.hasVisibleThinkingIndicator?.()) return true;
     return false;
   }
 
@@ -902,22 +1010,33 @@
     return rect.bottom > 0 && rect.top < window.innerHeight && rect.right > 0 && rect.left < window.innerWidth;
   }
 
-  function sendMessage(type, data = {}) {
+  function sendMessage(type, data = {}, timeoutMs = 4000) {
     return new Promise((resolve) => {
+      let settled = false;
+      const finish = (value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(value);
+      };
+      const timer = setTimeout(() => {
+        finish({ error: 'timeout', timedOut: true });
+      }, timeoutMs);
+
       try {
         if (!chrome?.runtime?.id) {
-          resolve({ error: 'extension_context_invalidated' });
+          finish({ error: 'extension_context_invalidated' });
           return;
         }
         chrome.runtime.sendMessage({ type, ...data }, (response) => {
           if (chrome.runtime.lastError) {
-            resolve({ error: chrome.runtime.lastError.message });
+            finish({ error: chrome.runtime.lastError.message });
             return;
           }
-          resolve(response || {});
+          finish(response || {});
         });
       } catch (err) {
-        resolve({ error: err?.message || String(err) });
+        finish({ error: err?.message || String(err) });
       }
     });
   }
@@ -1162,14 +1281,11 @@
 
     updateProgressOnly() {
       if (!this.root || !this.currentAd) return;
-      const ad = this.currentAd;
-      const pending = Math.floor((ad.creditsPerView || 0) * this.progressRatio);
-      const projectedSession = this.sessionCredits + pending;
       const progress = Math.max(0, Math.min(this.progressRatio * 100, 100));
       const bar = this.root.querySelector('.whyl-progress span');
       const tokens = this.root.querySelector('.whyl-footer strong');
       if (bar) bar.style.width = `${progress}%`;
-      if (tokens) tokens.textContent = `+${projectedSession}`;
+      if (tokens) tokens.textContent = `+${formatCredits(displayTokensForProgress(this.progressRatio))}`;
     }
 
     hide(options = {}) {
@@ -1349,9 +1465,8 @@
 
     render() {
       const ad = this.currentAd;
-      const pending = Math.floor((ad.creditsPerView || 0) * this.progressRatio);
-      const projectedSession = this.sessionCredits + pending;
       const progress = Math.max(0, Math.min(this.progressRatio * 100, 100));
+      const shown = displayTokensForProgress(this.progressRatio);
 
       this.root.innerHTML = `
         <div class="whyl-card">
@@ -1367,7 +1482,7 @@
           </div>
           <div class="whyl-footer">
             <span>watching…</span>
-            <strong>+${projectedSession}</strong>
+            <strong>+${formatCredits(shown)}</strong>
           </div>
         </div>
       `;
@@ -1528,13 +1643,32 @@
         }
       };
 
+      // If this file won't play, swap to another bundled creative immediately.
+      if (!video.dataset.errorBound) {
+        video.dataset.errorBound = '1';
+        video.addEventListener('error', () => {
+          const failedId = this.currentAd?.id;
+          const alt = pickAlternateCreative(failedId, this.currentAd?.durationSeconds || 15);
+          if (!alt || !this.root) return;
+          this.currentAd = alt;
+          this.lastPlayedAd = alt;
+          const wrap = this.root.querySelector('.whyl-media');
+          if (wrap) wrap.innerHTML = this.renderMedia(alt);
+          this.ensureVideoPlaying();
+        });
+      }
+
       // Prefer blob: URL so host-page CSP cannot block chrome-extension media.
       const src = video.getAttribute('src') || video.src;
       if (src && src.startsWith('chrome-extension://') && !video.dataset.blobbed) {
         video.dataset.blobbed = '1';
         fetch(src)
-          .then((res) => res.blob())
+          .then((res) => {
+            if (!res.ok) throw new Error(`media ${res.status}`);
+            return res.blob();
+          })
           .then((blob) => {
+            if (!blob || blob.size < 1000) throw new Error('empty media blob');
             const blobUrl = URL.createObjectURL(blob);
             video.src = blobUrl;
             video.load();
@@ -1542,6 +1676,7 @@
             playWithSoundPreference();
           })
           .catch(() => {
+            // Retry once with raw extension URL; if that fails, error handler swaps creative.
             video.addEventListener('loadeddata', playWithSoundPreference, { once: true });
             playWithSoundPreference();
           });
@@ -1605,6 +1740,9 @@
       this.waitClosed = false;
       this.adsPlayedThisWait = 0;
       this.sawStopDuringWait = false;
+      // True from tryActivate start until overlay is shown — blocks hide race during API cold start.
+      this.activating = false;
+      this.overlayShownAt = 0;
     }
 
     openWaitSession(promptTokens = 0, promptText = '') {
@@ -1639,6 +1777,15 @@
     }
 
     beginCandidate(allowWithoutSignal = false, promptTokens = 0, promptText = '') {
+      // Nuclear skip at the door: hi/hello never open (or continue) a wait session.
+      if (shouldNeverShowAd(promptTokens, promptText) && !canOverrideShortPromptSkip()) {
+        if (allowWithoutSignal) {
+          this.closeWaitSession();
+          this.reset();
+        }
+        return;
+      }
+
       // Flicker fix: once this prompt's wait is closed, ignore auto re-activation.
       // A new user send opens a fresh wait session (allowWithoutSignal=true).
       if (allowWithoutSignal) {
@@ -1705,50 +1852,69 @@
       }
 
       this.state = 'active';
+      this.activating = true;
+      this.overlayShownAt = 0;
       this.activeSignalGraceUntil = decision.keepAlive ? Date.now() + RESTORE_KEEPALIVE_MS : 0;
-      // Refresh prediction at activation — live mode (deep research / tools) may have appeared.
+      // Prediction decides immediately: long/medium wait → ad now; short → never.
+      // Do NOT wait N seconds of real elapsed time before showing.
       this.waitEstimate = estimateResponseTiming(this.adapter.id, this.promptTokens, this.promptText);
       this.predictedEndAt = predictedAnswerAt(this.candidateStartedAt, this.adapter.id, this.promptTokens, this.promptText);
 
-      // Local creatives always work even if the API is cold / offline.
-      let auth = {};
-      try {
-        auth = await sendMessage('getAuth');
-      } catch {
-        auth = {};
-      }
-      const loggedIn = !!auth.token && !auth.error;
-      const fittedSeconds = chooseAdDurationSeconds(
-        this.adapter.id,
-        this.promptTokens,
-        Date.now() - this.candidateStartedAt,
-        this.promptText,
-      );
+      const mode = detectLiveWaitMode(this.adapter.id);
 
-      // Not enough remaining wait for a creative yet.
-      if (!fittedSeconds) {
-        // Answer already done → leave quietly (no blip).
-        if (isAnswerFinished(this.adapter) || this.waitClosed) {
-          this.closeWaitSession();
-          this.reset();
-          return;
-        }
-        // Still working — live mode may grow the estimate (deep research on a short prompt).
-        // Stay in candidate and re-check; never flash an undersized ad.
-        this.state = 'candidate';
-        const maxWaitMs = this.userInitiatedWait ? HARD_SESSION_CAP_MS : 45000;
-        if (Date.now() - this.candidateStartedAt < maxWaitMs && isAiStillWorking(this.adapter)) {
-          this.candidateTimer = setTimeout(() => this.tryActivate(), ACTIVATION_RETRY_MS);
-          return;
-        }
+      // hi / hello / tiny chat → never show (deep research plan only override).
+      if (shouldNeverShowAd(this.promptTokens, this.promptText) && !canOverrideShortPromptSkip()) {
+        this.activating = false;
         this.closeWaitSession();
         this.reset();
         return;
       }
 
+      // Short chat with no deep research / tools → skip forever (no flash, no delay).
+      if (isShortChatPrompt(this.promptTokens, this.promptText) && !isLongWaitMode(mode) && !canOverrideShortPromptSkip()) {
+        this.activating = false;
+        this.closeWaitSession();
+        this.reset();
+        return;
+      }
+
+      // Decide from FULL predicted wait (elapsed≈0 at first show), not "wait 4s then see".
+      const fittedSeconds = chooseAdDurationSeconds(
+        this.adapter.id,
+        this.promptTokens,
+        0,
+        this.promptText,
+      );
+
+      if (!fittedSeconds) {
+        // Prediction says too short. Only keep waiting if deep research / tools might still appear.
+        if (isLongWaitMode(mode)) {
+          this.activating = false;
+          this.state = 'candidate';
+          this.candidateTimer = setTimeout(() => this.tryActivate(), ACTIVATION_RETRY_MS);
+          return;
+        }
+        const maybeLong =
+          /\b(deep research|research|essay|detailed|comprehensive|analyze|implement|build)\b/i.test(
+            this.promptText || '',
+          );
+        if (maybeLong && isAiStillWorking(this.adapter) && Date.now() - this.candidateStartedAt < 8000) {
+          this.activating = false;
+          this.state = 'candidate';
+          this.candidateTimer = setTimeout(() => this.tryActivate(), ACTIVATION_RETRY_MS);
+          return;
+        }
+        this.activating = false;
+        this.closeWaitSession();
+        this.reset();
+        return;
+      }
+
+      // SHOW LOCAL CREATIVE FIRST — never block the first ad on cold API / sleeping SW.
       this.overlay.customPos = null;
       let ad = pickLaunchCreative(fittedSeconds);
       if (!ad) {
+        this.activating = false;
         this.state = 'candidate';
         if (isAiStillWorking(this.adapter) && Date.now() - this.candidateStartedAt < HARD_SESSION_CAP_MS) {
           this.candidateTimer = setTimeout(() => this.tryActivate(), ACTIVATION_RETRY_MS);
@@ -1758,55 +1924,27 @@
         this.reset();
         return;
       }
-      let balance = 0;
-
-      if (loggedIn) {
-        const summary = await sendMessage('getSummary');
-        if (!summary.error) balance = summary.balance || 0;
-
-        const session = await sendMessage('startSession', {
-          platform: this.adapter.id,
-          clientSessionId: this.clientSessionId,
-          activationDelayMs: Date.now() - this.candidateStartedAt,
-        });
-
-        if (!session.error) {
-          this.serverSessionId = session.sessionId;
-          const nextAd = await sendMessage('getNextAd');
-          if (!nextAd.error) ad = ensurePlayableAd(nextAd, fittedSeconds) || ad;
-          if (!ad) {
-            this.closeWaitSession();
-            this.reset();
-            return;
-          }
-          const view = await sendMessage('startView', {
-            sessionId: this.serverSessionId,
-            campaignId: ad.id,
-            platform: this.adapter.id,
-          });
-          if (!view.error) this.currentViewId = view.viewId;
-        }
-      }
 
       ad = ensurePlayableAd(ad, fittedSeconds);
       if (!ad) {
+        this.activating = false;
         this.closeWaitSession();
         this.reset();
         return;
       }
 
-      // If the answer already finished while we were fetching, don't flash an ad.
-      if (isAnswerFinished(this.adapter) || this.waitClosed) {
-        if (this.currentViewId) await this.completeCurrentView(false);
-        if (this.serverSessionId) await sendMessage('endSession', { sessionId: this.serverSessionId });
+      // If answer already finished before we could show, bail.
+      if (this.waitClosed || (isAnswerFinished(this.adapter) && !isAiStillWorking(this.adapter))) {
+        this.activating = false;
         this.closeWaitSession();
         this.reset();
         return;
       }
 
       this.currentAd = ad;
-      this.balance = balance;
+      this.balance = 0;
       this.viewStartedAt = Date.now();
+      this.overlayShownAt = Date.now();
       this.adsPlayedThisWait += 1;
       this.overlay.show(ad, {
         balance: this.balance,
@@ -1816,7 +1954,69 @@
         onStop: () => this.stopWatching(),
         onRestore: () => this.restoreFromMini(),
       });
+      this.activating = false;
       this.startAdTimer();
+
+      // Auth + session tracking in the background (timeouts so cold Render can't hang).
+      this.syncSessionInBackground(fittedSeconds, ad).catch(() => {});
+    }
+
+    async syncSessionInBackground(fittedSeconds, shownAd) {
+      let auth = {};
+      try {
+        auth = await sendMessage('getAuth', {}, 2500);
+      } catch {
+        auth = {};
+      }
+      if (!auth.token || auth.error || this.state !== 'active' || this.waitClosed) return;
+
+      try {
+        const summary = await sendMessage('getSummary', {}, 3500);
+        if (!summary.error && this.state === 'active') {
+          this.balance = summary.balance || 0;
+          this.overlay.updateMeta?.({ balance: this.balance, sessionCredits: this.sessionCredits });
+        }
+      } catch {
+        /* offline ok */
+      }
+
+      try {
+        const session = await sendMessage('startSession', {
+          platform: this.adapter.id,
+          clientSessionId: this.clientSessionId,
+          activationDelayMs: Date.now() - this.candidateStartedAt,
+        }, 4000);
+        if (session.error || this.state !== 'active' || this.waitClosed) return;
+        this.serverSessionId = session.sessionId;
+
+        const nextAd = await sendMessage('getNextAd', {}, 3500);
+        // Keep showing the local creative already on screen; only swap if still early
+        // in playback and a better remote creative arrives.
+        if (!nextAd.error && this.state === 'active' && Date.now() - this.overlayShownAt < 2500) {
+          const remote = ensurePlayableAd(nextAd, fittedSeconds);
+          if (remote && remote.id !== shownAd?.id && this.overlay?.show) {
+            this.currentAd = remote;
+            this.overlay.show(remote, {
+              balance: this.balance,
+              sessionCredits: this.sessionCredits,
+              progressRatio: 0,
+              onContinue: () => this.continueEarning(),
+              onStop: () => this.stopWatching(),
+              onRestore: () => this.restoreFromMini(),
+            });
+            shownAd = remote;
+          }
+        }
+
+        const view = await sendMessage('startView', {
+          sessionId: this.serverSessionId,
+          campaignId: (this.currentAd || shownAd)?.id,
+          platform: this.adapter.id,
+        }, 3500);
+        if (!view.error && this.state === 'active') this.currentViewId = view.viewId;
+      } catch {
+        /* keep local ad playing */
+      }
     }
 
     cancelCandidate() {
@@ -1853,19 +2053,29 @@
       this.stopAdTimer();
       this.stopPolling();
 
-      if (this.state === 'active' || this.state === 'finishing') {
-        this.recordObservedWait();
-        await this.completeCurrentView(false);
-      }
-
-      if (this.serverSessionId) {
-        await sendMessage('endSession', { sessionId: this.serverSessionId });
-        this.serverSessionId = null;
-      }
-
-      // Close this prompt's wait permanently — no auto re-show until next send.
+      // HIDE FIRST — never wait on API before removing the video.
+      const wasActive = this.state === 'active' || this.state === 'finishing';
+      const viewId = this.currentViewId;
+      const viewStartedAt = this.viewStartedAt;
+      const serverSessionId = this.serverSessionId;
+      if (wasActive) this.recordObservedWait();
+      this.currentViewId = null;
+      this.viewStartedAt = 0;
+      this.serverSessionId = null;
       this.closeWaitSession();
       this.reset();
+
+      // Network cleanup in the background after the UI is already gone.
+      if (wasActive && viewId) {
+        sendMessage('completeView', {
+          viewId,
+          continued: false,
+          visibleDurationMs: Math.max(0, Date.now() - viewStartedAt),
+        }).catch(() => {});
+      }
+      if (serverSessionId) {
+        sendMessage('endSession', { sessionId: serverSessionId }).catch(() => {});
+      }
     }
 
     async finishToMini() {
@@ -1883,7 +2093,7 @@
       this.beginCandidate(false, this.promptTokens);
     }
 
-    async continueEarning() {
+    async continueEarning(forcedSeconds = 0) {
       // Chain another ad in the SAME wait session (long waits / deep research).
       if (this.state !== 'active') return;
       if (this.waitClosed || !this.waitSessionId) {
@@ -1895,21 +2105,19 @@
         return;
       }
 
-      const remainingMs = (this.predictedEndAt || 0) - Date.now();
-      if (remainingMs < MIN_AD_MS) {
-        await this.endSession();
-        return;
-      }
-
       this.markWorkActivity();
       await this.completeCurrentView(true);
 
-      const fittedSeconds = chooseAdDurationSeconds(
+      let fittedSeconds = forcedSeconds || chooseAdDurationSeconds(
         this.adapter.id,
         this.promptTokens,
         Date.now() - this.candidateStartedAt,
         this.promptText,
       );
+      // Still generating past the original prediction → keep filling with short bumpers.
+      if (!fittedSeconds && isAiStillWorking(this.adapter)) {
+        fittedSeconds = SHORTEST_CREATIVE_SEC;
+      }
       if (!fittedSeconds) {
         await this.endSession();
         return;
@@ -2027,21 +2235,46 @@
       }, POLL_MS);
     }
 
-    // Instant hide path used by stop-button MutationObserver + timers.
+    // Instant hide when the answer is done. Stop-button edge is the primary signal.
     shouldHideForFinishedAnswer() {
-      const stopVisible = hasStopControlVisible();
-      if (stopVisible) {
+      // First-run race: hide poll used to kill the session while the overlay was
+      // still activating, or before stop/net-probe signals appeared.
+      if (this.activating) return false;
+      if (this.overlayShownAt && Date.now() - this.overlayShownAt < 2500) return false;
+
+      if (hasStopControlVisible()) {
         this.sawStopDuringWait = true;
         this.doneSinceAt = 0;
         return false;
       }
-      // Strongest finish signal: stop was visible, then disappeared.
-      if (this.sawStopDuringWait && !netWorkingFresh(500)) return true;
-      return !isAiStillWorking(this.adapter);
+
+      // Claude: streaming flag still on → keep ad.
+      if (this.adapter?.id === 'claude') {
+        const streaming = document.querySelector('[data-is-streaming="true"]');
+        if (streaming && isVisible(streaming)) {
+          this.doneSinceAt = 0;
+          return false;
+        }
+      }
+
+      if (findDeepResearchPlan() || netWorkingFresh(400)) {
+        this.doneSinceAt = 0;
+        return false;
+      }
+
+      // DOM generation / thinking — covers late net-probe inject after extension reload.
+      if (isAiStillWorking(this.adapter)) {
+        this.doneSinceAt = 0;
+        return false;
+      }
+
+      // Stop gone / no streaming → hide immediately.
+      return true;
     }
 
     hideIfAnswerFinished() {
       if (this.waitClosed) return false;
+      if (this.activating) return false;
       if (this.state !== 'active' && this.state !== 'candidate') return false;
       if (!this.shouldHideForFinishedAnswer()) return false;
       this.endSession();
@@ -2159,14 +2392,9 @@
     startAdTimer() {
       this.stopAdTimer();
       this.adStartedAt = Date.now();
-      // Timer = the creative's real file length. Hide early if the answer finishes.
-      // Never inflate past remaining wait, and never invent a longer runtime than the file.
-      const fileMs = Math.max(1000, (this.currentAd?.durationSeconds || 2) * 1000);
-      const remainingMs = Math.max(0, (this.predictedEndAt || 0) - Date.now());
-      const durationMs = remainingMs > 0 ? Math.min(fileMs, remainingMs) : fileMs;
-      if (this.currentAd) {
-        this.currentAd.durationSeconds = Math.max(1, Math.round(durationMs / 1000));
-      }
+      // Always play the FULL creative file. Do not cut to predictedEndAt mid-clip —
+      // that left half the Claude wait empty. Chain another ad if AI is still working.
+      const durationMs = Math.max(1000, (this.currentAd?.durationSeconds || 2) * 1000);
 
       this.adTimer = setInterval(() => {
         const now = Date.now();
@@ -2191,25 +2419,26 @@
 
         if (progressRatio >= 1) {
           this.stopAdTimer();
-          // Chain another ad in the same wait session if still waiting and math allows.
-          const chainSeconds = chooseAdDurationSeconds(
-            this.adapter.id,
-            this.promptTokens,
-            now - this.candidateStartedAt,
-            this.promptText,
-          );
-          if (
-            !this.waitClosed &&
-            this.waitSessionId &&
-            isAiStillWorking(this.adapter) &&
-            chainSeconds > 0
-          ) {
-            this.continueEarning();
+          if (this.waitClosed || !this.waitSessionId) {
+            this.endSession();
+            return;
+          }
+          // Chain only while the model is STILL generating. Never chain after answer done.
+          if (isAiStillWorking(this.adapter) && !this.shouldHideForFinishedAnswer()) {
+            let chainSeconds = chooseAdDurationSeconds(
+              this.adapter.id,
+              this.promptTokens,
+              now - this.candidateStartedAt,
+              this.promptText,
+            );
+            // Past prediction but stop/streaming still live → keep filling.
+            if (!chainSeconds) chainSeconds = SHORTEST_CREATIVE_SEC;
+            this.continueEarning(chainSeconds);
           } else {
             this.endSession();
           }
         }
-      }, 80);
+      }, 40);
     }
 
     stopAdTimer() {
@@ -2249,6 +2478,8 @@
       this.doneSinceAt = 0;
       this.activeSignalGraceUntil = 0;
       this.sawVisibleSignalDuringActive = false;
+      this.activating = false;
+      this.overlayShownAt = 0;
       this.stopPolling();
 
       this.waitClosed = waitClosed;
@@ -2285,9 +2516,24 @@
   let pendingPromptText = '';
 
   function rememberPromptEstimate() {
-    pendingPromptText = getCurrentPromptText(adapter) || pendingPromptText || '';
-    pendingPromptTokens = estimateTokensFromText(pendingPromptText) || pendingPromptTokens || 0;
+    // ONLY the live composer text. Never fall back to the last user bubble —
+    // that reused a previous long message and made "hi" look like an essay.
+    const live = getCurrentPromptText(adapter);
+    if (live) {
+      pendingPromptText = live;
+      pendingPromptTokens = estimateTokensFromText(live);
+    }
     return { tokens: pendingPromptTokens, text: pendingPromptText };
+  }
+
+  function capturePromptForSend() {
+    // Prefer live composer. If ChatGPT already cleared it, keep last typed pending.
+    const live = getCurrentPromptText(adapter);
+    if (live) {
+      pendingPromptText = live;
+      pendingPromptTokens = estimateTokensFromText(live);
+    }
+    return { tokens: pendingPromptTokens || 0, text: pendingPromptText || '' };
   }
 
   function markGenerationIntent() {
@@ -2342,6 +2588,19 @@
     // Wake API early (Render cold start) so the first prompt is not the first network hit.
     sendMessage('ping').catch(() => {});
 
+    // Answer background "are you alive?" so it can re-inject if this tab missed boot.
+    try {
+      chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+        if (message?.type === 'whylContentPing') {
+          sendResponse({ ok: true, booted: true });
+          return true;
+        }
+        return false;
+      });
+    } catch {
+      /* ignore */
+    }
+
     const observer = new MutationObserver(() => {
       if (controller.state === 'idle') return;
       // Instant hide when stop button flips off — don't wait for the poll tick.
@@ -2387,6 +2646,13 @@
       }
     });
 
+    // Capture prompt on pointerdown BEFORE ChatGPT clears the composer on click.
+    document.addEventListener('pointerdown', (event) => {
+      if (adapter.isSendTarget(event.target) || isLikelyWaitAction(event.target)) {
+        rememberPromptEstimate();
+      }
+    }, { passive: true, capture: true });
+
     document.addEventListener('click', (event) => {
       if (isNewChatAction(event.target)) {
         lastGenerationIntentAt = 0;
@@ -2401,7 +2667,7 @@
       if (adapter.isSendTarget(event.target) || isLikelyWaitAction(event.target)) {
         markGenerationIntent();
         controller.markWorkActivity();
-        const prompt = rememberPromptEstimate();
+        const prompt = capturePromptForSend();
         // New send always opens a fresh wait session (can show multiple ads while waiting).
         setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
       }
@@ -2411,9 +2677,20 @@
       if (event.key !== 'Enter' || event.shiftKey || event.isComposing) return;
       if (adapter.isComposerTarget(event.target)) {
         markGenerationIntent();
-        const prompt = rememberPromptEstimate();
+        const prompt = capturePromptForSend();
         setTimeout(() => controller.beginCandidate(true, prompt.tokens, prompt.text), 200);
       }
+    }, { passive: true });
+
+    // Keep prompt estimate fresh while typing — send often clears the composer first.
+    document.addEventListener('input', (event) => {
+      if (!adapter.isComposerTarget(event.target)) return;
+      rememberPromptEstimate();
+    }, { passive: true });
+
+    document.addEventListener('keyup', (event) => {
+      if (!adapter.isComposerTarget(event.target)) return;
+      rememberPromptEstimate();
     }, { passive: true });
 
     // Auto assist only while a wait session is open — never after close (flicker fix).

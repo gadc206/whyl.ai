@@ -8,6 +8,7 @@ import DashboardPage from './pages/DashboardPage';
 import EarningsPage from './pages/EarningsPage';
 import HistoryPage from './pages/HistoryPage';
 import OnboardPage from './pages/OnboardPage';
+import PrivacyPage from './pages/PrivacyPage';
 import ReferralsPage from './pages/ReferralsPage';
 
 interface AuthContextValue {
@@ -119,6 +120,7 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/onboard" element={<OnboardPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
         <Route element={<Protected />}>
           <Route element={<Layout />}>
             <Route path="/" element={<HomeRedirect />} />
