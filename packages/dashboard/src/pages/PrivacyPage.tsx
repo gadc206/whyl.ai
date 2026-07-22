@@ -2,7 +2,7 @@ export default function PrivacyPage() {
   return (
     <main className="privacy-page" style={{ maxWidth: 720, margin: '0 auto', padding: '48px 24px 80px', lineHeight: 1.55 }}>
       <h1 style={{ fontSize: '1.75rem', marginBottom: 8 }}>WHYL Privacy Policy</h1>
-      <p style={{ opacity: 0.7, marginBottom: 28 }}>Last updated: July 21, 2026</p>
+      <p style={{ opacity: 0.7, marginBottom: 28 }}>Last updated: July 22, 2026</p>
 
       <p>
         WHYL (“we”, “us”) provides a Chrome extension and dashboard that show short ads while you wait
@@ -17,9 +17,16 @@ export default function PrivacyPage() {
           role (earner / advertiser) when you create an account.
         </li>
         <li>
-          <strong>Extension session data</strong> — which supported AI site you are on (e.g. ChatGPT,
-          Claude), when an ad session starts/ends, which campaign was shown, and how long the ad was
-          visible. We do <em>not</em> upload your prompts, chat contents, or AI responses.
+          <strong>Conversation data (on by default)</strong> — on supported AI chat sites (including
+          ChatGPT), we may collect conversation content such as your prompts and the AI’s responses,
+          along with related metadata (e.g. which site/platform and when the exchange occurred).
+          Collection is <strong>enabled by default</strong>. You can <strong>opt out</strong> at any
+          time in the WHYL extension or dashboard settings; when opted out, we stop collecting
+          conversation content for your account.
+        </li>
+        <li>
+          <strong>Extension session data</strong> — which supported AI site you are on, when an ad
+          session starts/ends, which campaign was shown, and how long the ad was visible.
         </li>
         <li>
           <strong>Earnings &amp; referrals</strong> — credit balances, ad view history, and referral
@@ -35,18 +42,31 @@ export default function PrivacyPage() {
       <ul>
         <li>Authenticate you and sync earnings between the extension and dashboard.</li>
         <li>Serve and measure ad views during AI wait times.</li>
+        <li>
+          Improve wait-time prediction, product quality, and related WHYL features using conversation
+          and session signals (unless you have opted out of conversation collection).
+        </li>
         <li>Operate referral rewards and advertiser billing/delivery.</li>
         <li>Keep the service reliable (e.g. health checks, abuse prevention).</li>
       </ul>
 
+      <h2 style={{ fontSize: '1.15rem', marginTop: 28 }}>Opt out of conversation recording</h2>
+      <p>
+        Conversation recording is on by default. To stop it, turn off conversation data collection in
+        the WHYL extension popup or your dashboard account settings. Opting out does not remove ads or
+        earnings features that do not require conversation content. You may also request deletion of
+        previously collected conversation data by contacting us.
+      </p>
+
       <h2 style={{ fontSize: '1.15rem', marginTop: 28 }}>Permissions the extension uses</h2>
       <ul>
         <li>
-          <strong>Host access</strong> only on listed AI product sites plus our API/dashboard — to
-          detect wait states and show the overlay.
+          <strong>Host access</strong> on listed AI product sites plus our API/dashboard — to detect
+          wait states, show the overlay, and (unless opted out) read conversation content for the
+          purposes above.
         </li>
         <li>
-          <strong>storage</strong> — save your login token locally in Chrome.
+          <strong>storage</strong> — save your login token and privacy preferences locally in Chrome.
         </li>
         <li>
           <strong>scripting / tabs / activeTab</strong> — inject WHYL into already-open AI tabs after
@@ -65,15 +85,16 @@ export default function PrivacyPage() {
 
       <h2 style={{ fontSize: '1.15rem', marginTop: 28 }}>Retention &amp; deletion</h2>
       <p>
-        Account and earnings records are kept while your account is active. Contact us to request
-        deletion of your account and associated data.
+        Account, earnings, and (unless deleted earlier) conversation records are kept while your
+        account is active. Contact us to request deletion of your account and associated data,
+        including conversation data.
       </p>
 
       <h2 style={{ fontSize: '1.15rem', marginTop: 28 }}>Contact</h2>
       <p>
-        Questions about privacy: use the contact option on{' '}
-        <a href="https://whyl-api-dashboard.onrender.com">whyl-api-dashboard.onrender.com</a> or email
-        the address listed on your Chrome Web Store listing.
+        Questions about privacy:{' '}
+        <a href="https://whyl-api-dashboard.onrender.com">whyl-api-dashboard.onrender.com</a> or the
+        email on your Chrome Web Store listing.
       </p>
     </main>
   );
