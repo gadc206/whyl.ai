@@ -40,7 +40,9 @@ const mediaDir = path.join(extensionDir, 'media');
 if (fs.existsSync(mediaDir)) {
   for (const name of fs.readdirSync(mediaDir)) {
     if (!name.endsWith('.mp4')) continue;
-    fs.copyFileSync(path.join(mediaDir, name), path.join(distDir, 'media', name));
+    const src = path.join(mediaDir, name);
+    if (!fs.existsSync(src)) continue;
+    fs.copyFileSync(src, path.join(distDir, 'media', name));
   }
 }
 
