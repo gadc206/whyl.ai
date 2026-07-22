@@ -7,6 +7,7 @@ import adsRoutes from './routes/ads.js';
 import earningsRoutes from './routes/earnings.js';
 import referralsRoutes from './routes/referrals.js';
 import advertiserRoutes from './routes/advertiser.js';
+import insightsRoutes from './routes/insights.js';
 
 initDb();
 seedDatabase();
@@ -40,6 +41,7 @@ app.use('/api/ads', adsRoutes);
 app.use('/api/earnings', earningsRoutes);
 app.use('/api/referrals', referralsRoutes);
 app.use('/api/advertiser', advertiserRoutes);
+app.use('/api/insights', insightsRoutes);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`WHYL API running on http://0.0.0.0:${PORT}`);

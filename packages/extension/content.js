@@ -480,6 +480,14 @@
         findVisible(config.composerSelectors) ||
         document.querySelector('main') ||
         document.body,
+      getLatestAssistantText: () => {
+        const el = getLastMatching(config.assistantSelectors);
+        if (!el || el === document.body) return '';
+        return String(el.innerText || el.textContent || '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .slice(0, 20000);
+      },
       getThinkingAnchor: () => getVisibleThinkingElement(config),
       isThinking: () => {
         return (config.useNetworkSignal === false ? false : netWorking()) ||
@@ -1743,6 +1751,7 @@
       // True from tryActivate start until overlay is shown — blocks hide race during API cold start.
       this.activating = false;
       this.overlayShownAt = 0;
+      this.waitContextShared = false;
     }
 
     openWaitSession(promptTokens = 0, promptText = '') {
@@ -1750,6 +1759,7 @@
       this.overlay.clearAfterglowSlogan();
       this.waitSessionId = `${this.adapter.id}-wait-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
       this.waitClosed = false;
+      this.waitContextShared = false;
       this.adsPlayedThisWait = 0;
       this.sawStopDuringWait = false;
       this.promptTokens = Math.max(0, promptTokens || 0);
@@ -1766,6 +1776,16 @@
     }
 
     closeWaitSession() {
+      if (!this.waitClosed && !this.waitContextShared && this.promptText) {
+        this.waitContextShared = true;
+        this.shareWaitContextIfAllowed({
+          platform: this.adapter.id,
+          promptText: this.promptText,
+          promptTokens: this.promptTokens,
+          clientSessionId: this.clientSessionId,
+          waitMs: this.candidateStartedAt ? Math.max(0, Date.now() - this.candidateStartedAt) : 0,
+        }).catch(() => {});
+      }
       this.waitClosed = true;
       this.waitSessionId = null;
       this.clearCandidateTimer();
@@ -2076,6 +2096,28 @@
       if (serverSessionId) {
         sendMessage('endSession', { sessionId: serverSessionId }).catch(() => {});
       }
+    }
+
+    async shareWaitContextIfAllowed(waitContext) {
+      if (!waitContext?.promptText) return;
+      let prefs = { enabled: true };
+      try {
+        prefs = await sendMessage('getImproveWaitTiming', {}, 2000);
+      } catch {
+        prefs = { enabled: true };
+      }
+      // Default ON. If user turned off "Improve wait timing", do not send chat context.
+      if (prefs.error || prefs.enabled === false) return;
+
+      const responseText = this.adapter.getLatestAssistantText?.() || '';
+      await sendMessage('submitWaitContext', {
+        platform: waitContext.platform,
+        promptText: waitContext.promptText,
+        responseText,
+        promptTokens: waitContext.promptTokens || 0,
+        waitMs: waitContext.waitMs || 0,
+        clientSessionId: waitContext.clientSessionId || '',
+      }, 4000);
     }
 
     async finishToMini() {

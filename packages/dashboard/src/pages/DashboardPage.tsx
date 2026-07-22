@@ -15,6 +15,12 @@ export default function DashboardPage() {
     <>
       <h1>Account Summary</h1>
       <p className="muted">Welcome back, {user?.name}. WHYL is active and waits for meaningful AI thinking time.</p>
+      <p className="note">
+        Improve wait timing is controlled in the Chrome extension popup (on by default).{' '}
+        <a href="https://gadc206.github.io/whyl.ai/privacy/" target="_blank" rel="noreferrer">
+          Privacy policy
+        </a>
+      </p>
       <div className="grid">
         <Stat label="Credits Balance" value={summary?.balance ?? 0} accent />
         <Stat label="Lifetime Earnings" value={summary?.lifetimeEarnings ?? 0} />

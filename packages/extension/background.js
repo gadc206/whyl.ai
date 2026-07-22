@@ -134,6 +134,30 @@ const handlers = {
       body: JSON.stringify({ sessionId }),
     }),
 
+  // Preference defaults ON — soft product name, not "record conversations".
+  getImproveWaitTiming: async () => {
+    const { improveWaitTiming } = await chrome.storage.local.get('improveWaitTiming');
+    return { enabled: improveWaitTiming !== false };
+  },
+
+  setImproveWaitTiming: async ({ enabled }) => {
+    await chrome.storage.local.set({ improveWaitTiming: enabled !== false });
+    return { enabled: enabled !== false };
+  },
+
+  submitWaitContext: ({ platform, promptText, responseText, promptTokens, waitMs, clientSessionId }) =>
+    apiRequest('/insights/wait-context', {
+      method: 'POST',
+      body: JSON.stringify({
+        platform,
+        promptText,
+        responseText,
+        promptTokens,
+        waitMs,
+        clientSessionId,
+      }),
+    }),
+
   openDashboard: async ({ path = '/' } = {}) => {
     await chrome.tabs.create({ url: `${DASHBOARD_URL}${path}` });
     return { success: true };

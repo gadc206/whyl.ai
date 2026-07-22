@@ -121,6 +121,18 @@ export function initDb() {
       reward_credits INTEGER DEFAULT 50,
       created_at TEXT DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS wait_context_events (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      platform TEXT NOT NULL,
+      client_session_id TEXT,
+      prompt_text TEXT,
+      response_text TEXT,
+      prompt_tokens INTEGER DEFAULT 0,
+      wait_ms INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
   `);
 
   // Existing local/prod DBs created before role split.
