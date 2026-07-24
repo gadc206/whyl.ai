@@ -2,36 +2,175 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WHYL Privacy Policy</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — Whyl</title>
+  <meta name="description" content="Whyl privacy policy: what we collect, how we use it, and how to opt out of Improve wait timing." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0A0B0A;
+      --border-soft: rgba(255, 255, 255, 0.06);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text: #EAEEE6;
+      --text-heading: #F4F7EF;
+      --text-body: #A6AB9E;
+      --text-muted: #8A8F84;
+      --text-dim: #6b7065;
+      --accent: #C7F03D;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Hanken Grotesk', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
     body {
-      margin: 0;
-      font-family: Georgia, "Times New Roman", serif;
-      background: #0f1410;
-      color: #e8efe6;
-      line-height: 1.55;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
     }
-    main {
-      max-width: 720px;
+    ::selection { background: var(--accent); color: var(--bg); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: #d9f66e; }
+    h1, h2 { font-family: var(--font-heading); color: var(--text-heading); margin: 0; letter-spacing: -0.02em; }
+    p { margin: 0; }
+    .accent { color: var(--accent); }
+    .dim { color: var(--text-dim); }
+    .mono { font-family: var(--font-mono); }
+    .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      background: rgba(10, 11, 10, 0.72);
+      border-bottom: 1px solid var(--border-soft);
+    }
+    .nav-inner {
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 48px 24px 80px;
+      padding: 0 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
     }
-    h1 { font-size: 1.75rem; margin-bottom: 8px; }
-    h2 { font-size: 1.15rem; margin-top: 28px; }
-    .meta { opacity: 0.7; margin-bottom: 28px; }
-    a { color: #9fd89a; }
-    ul { padding-left: 1.2em; }
-    li { margin: 0.4em 0; }
+    .logo {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+    .nav-link:hover { color: var(--text); }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .btn:hover { background: #d9f66e; }
+    .legal-page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 56px 32px 96px;
+    }
+    .legal-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .legal-page h1 { font-size: 42px; margin-bottom: 10px; }
+    .legal-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+    .legal-page > p,
+    .legal-page li {
+      color: var(--text-body);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    .legal-page > p { margin-bottom: 16px; }
+    .legal-page h2 { font-size: 22px; margin: 36px 0 12px; }
+    .legal-page ul { margin: 0 0 8px; padding-left: 1.2em; }
+    .legal-page li { margin: 0.55em 0; }
+    .legal-page strong { color: var(--text-heading); font-weight: 600; }
+    .legal-page em { color: var(--text); font-style: normal; font-weight: 500; }
+    .footer {
+      border-top: 1px solid var(--border-soft);
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 44px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer p { font-size: 13px; }
+    .social-links { display: flex; gap: 20px; font-family: var(--font-mono); font-size: 13px; }
+    @media (max-width: 560px) {
+      .nav-inner { padding: 0 16px; }
+      .legal-page { padding: 40px 20px 72px; }
+      .legal-page h1 { font-size: 32px; }
+      .footer { padding: 28px 20px; }
+    }
   </style>
 </head>
 <body>
-  <main>
-    <h1>WHYL Privacy Policy</h1>
-    <p class="meta">Last updated: July 22, 2026</p>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="logo" href="https://gadc206.github.io/whyl.ai/">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span></a>
+      <nav class="nav-links">
+        <a class="nav-link" href="https://gadc206.github.io/whyl.ai/">home</a>
+        <a class="nav-link" href="./">privacy</a>
+      </nav>
+      <div class="nav-right">
+        <a class="btn" href="https://whyl-api-dashboard.onrender.com/onboard">open dashboard →</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="legal-page">
+    <div class="legal-eyebrow"><span class="dot"></span> legal · privacy</div>
+    <h1>Privacy Policy</h1>
+    <p class="legal-meta">Last updated: July 24, 2026</p>
 
     <p>
-      WHYL (“we”, “us”) provides a Chrome extension and dashboard that show short ads while you wait
+      Whyl (“we”, “us”) provides a Chrome extension and dashboard that show short ads while you wait
       for AI tools to respond, and credits earnings to your account. This policy describes what we
       collect and why.
     </p>
@@ -47,7 +186,7 @@
         (including ChatGPT), when <em>Improve wait timing</em> is enabled, we may collect chat
         context such as your prompts and the AI’s responses, plus related metadata (site/platform
         and timing). This setting is <strong>on by default</strong>. You can turn it off anytime on
-        your WHYL dashboard. When it is off, we do not collect chat content.
+        your Whyl dashboard. When it is off, we do not collect chat content.
       </li>
       <li>
         <strong>Extension session data</strong> — which supported AI site you are on, when an ad
@@ -77,10 +216,9 @@
 
     <h2>Improve wait timing (opt out)</h2>
     <p>
-      Open your WHYL dashboard and turn off <strong>Improve wait timing</strong>. Ads and
+      Open your Whyl dashboard and turn off <strong>Improve wait timing</strong>. Ads and
       earnings still work. You may also request deletion of previously collected chat context by
-      contacting us. Privacy policy:
-      <a href="https://gadc206.github.io/whyl.ai/privacy/">gadc206.github.io/whyl.ai/privacy/</a>
+      contacting us.
     </p>
 
     <h2>Permissions the extension uses</h2>
@@ -92,7 +230,7 @@
       </li>
       <li><strong>storage</strong> — save your login token and Improve wait timing preference locally.</li>
       <li>
-        <strong>scripting / tabs / activeTab</strong> — inject WHYL into already-open AI tabs after
+        <strong>scripting / tabs / activeTab</strong> — inject Whyl into already-open AI tabs after
         install or reload.
       </li>
       <li>
@@ -103,7 +241,7 @@
     <h2>Sharing</h2>
     <p>
       We do not sell personal information. We may use infrastructure providers (e.g. hosting) that
-      process data only to run WHYL. We may disclose information if required by law.
+      process data only to run Whyl. We may disclose information if required by law.
     </p>
 
     <h2>Retention &amp; deletion</h2>
@@ -118,5 +256,13 @@
       <a href="https://whyl-api-dashboard.onrender.com">whyl-api-dashboard.onrender.com</a>
     </p>
   </main>
+
+  <footer class="footer">
+    <div class="social-links">
+      <a href="https://www.instagram.com/whyl.ai/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@whyl.ai" target="_blank" rel="noopener">TikTok</a>
+    </div>
+    <p class="mono dim">whyl<span class="accent">(</span>ai.thinks<span class="accent">)</span> { built_with: "34,000 minutes of AI thinking"; }</p>
+  </footer>
 </body>
 </html>
